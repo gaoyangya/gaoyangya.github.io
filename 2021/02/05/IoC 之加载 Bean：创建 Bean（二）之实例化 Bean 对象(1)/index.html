@@ -1,0 +1,2538 @@
+<!DOCTYPE html>
+<html>
+  <!-- meta/link... -->
+  
+
+
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+  <title>21.IoC 之加载 Bean：创建 Bean（二）之实例化 Bean 对象(1) | gy的小站</title>
+
+  <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_1911880_c1nvbyezg17.css">
+  <link href="https://cdn.jsdelivr.net/gh/inkss/fontawesome@5.15.3/css/all.min.css" rel="stylesheet">
+  <link href="/js/swiper/swiper@5.4.1.min.css" rel="stylesheet">
+  
+  
+    <script>
+        var themeModelId = '';
+        if (themeModelId) {
+            localStorage.setItem('modelId', themeModelId);
+        }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/gh/yuang01/live2d-widget@latest/autoload.js"></script>
+    <script>
+        var live2dOpen = eval('true') || false;
+        if (!live2dOpen) {
+            localStorage.setItem('waifu-display', 1609323474481);
+        }
+    </script>
+  
+  
+  
+<link rel="stylesheet" href="/css/animate.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/shareJs/share.min.css">
+
+  
+  <style>
+        @media (max-width: 992px) {
+            #waifu {
+                display: none;
+            }
+        }
+    </style>
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+    
+
+    <!-- import link -->
+    
+        
+            
+        
+            
+        
+    
+    <!-- import script -->
+    
+        
+            
+        
+            
+        
+    
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+  
+  <!-- 依赖于jquery和vue -->
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+
+  
+  
+  <body>
+    <!-- 预加载动画 -->
+    <!-- 页面预加载动画 -->
+
+<div id='loader'>
+  <link rel="stylesheet" href="/js/loaded/index.css" >
+  <div class="loading-left-bg"></div>
+  <div class="loading-right-bg"></div>
+  <div class="spinner-box">
+    <div class="configure-border-1">
+      <div class="configure-core"></div>
+    </div>
+    <div class="configure-border-2">
+      <div class="configure-core"></div>
+    </div>
+    <div class="loading-word">加载中...</div>
+  </div>
+</div>
+
+<script>
+  var endLoading = function () {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loader').classList.add("loading");
+  }
+  window.addEventListener('DOMContentLoaded',endLoading);
+  
+</script>
+
+    
+    <!-- 判断是否为暗黑风格 -->
+    <!-- 判断是否为黑夜模式 -->
+<script>
+  let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+
+  if (isDark) {
+    $(document.body).addClass('darkModel');
+  }
+</script>
+
+    <!-- 需要在上面加载的js -->
+    <script>
+  function loadScript(src, cb) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var HEAD = document.getElementsByTagName("head")[0] || document.documentElement;
+        var script = document.createElement("script");
+        script.setAttribute("type", "text/javascript");
+        if (cb) {
+          if (JSON.stringify(cb)) {
+            for (let p in cb) {
+              if (p == "onload") {
+                script[p] = () => {
+                  cb[p]()
+                  resolve()
+                }
+              } else {
+                script[p] = cb[p]
+                script.onload = resolve
+              }
+            }
+          } else {
+            script.onload = () => {
+              cb()
+              resolve()
+            };
+          }
+        } else {
+          script.onload = resolve
+        }
+        script.setAttribute("src", src);
+        HEAD.appendChild(script);
+      });
+    });
+  }
+
+  //https://github.com/filamentgroup/loadCSS
+  var loadCSS = function (href, before, media, attributes) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.href = src;
+        link.onload = resolve;
+        document.getElementsByTagName("head")[0].appendChild(link);
+      });
+    });
+  };
+
+</script> 
+
+<!-- 轮播图所需要的js -->
+<script src="/js/swiper/swiper.min.js"></script>
+<script src="/js/swiper/vue-awesome-swiper.js"></script>
+<script src="/js/swiper/swiper.animate1.0.3.min.js"></script>
+
+<script type="text/javascript">
+  Vue.use(window.VueAwesomeSwiper)
+</script>
+
+
+  <script src="/js/vue-typed-js/index.js"></script>
+
+
+<!-- 首页的公告滚动插件的js需要重新加载 -->
+<script src="/js/vue-seamless-scroll/index.js"></script>
+
+<!-- 打字机效果js -->
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+
+
+    <div id="safearea">
+      <main class="main" id="pjax-container">
+        <!-- 头部导航 -->
+        
+<header class="header   " 
+  id="navHeader"
+  style="position: fixed;
+  left: 0; top: 0; z-index: 10;width: 100%;"
+>
+  <div class="header-content">
+    <div class="bars">
+      <div id="appDrawer" class="sidebar-image">
+  <div class="drawer-box-icon">
+    <i class="fas fa-bars" aria-hidden="true" @click="showDialogDrawer"></i>
+  </div>
+  
+  <transition name="fade">
+    <div class="drawer-box_mask" v-cloak style="display: none;" v-show="visible" @click.self="cancelDialogDrawer">
+    </div>
+  </transition>
+  <div class="drawer-box" :class="{'active': visible}">
+    <div class="drawer-box-head bg-color">
+      <img class="drawer-box-head_logo lazyload placeholder" src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+      <h3 class="drawer-box-head_title">gy的小站</h3>
+      <h5 class="drawer-box-head_desc">滴水穿石不是水的力量,而是坚持的力量</h5>
+    </div>
+    
+    <div class="drawer-box-content">
+      <ul class="drawer-box-content_menu">
+        
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/archives" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/tags" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/categories" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/about" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/friends" class="drawer-menu-item-link">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="javascript:;" class="drawer-menu-item-link has-children" @click="openOrCloseMenu(6)">
+                  <span>
+                    
+                      <i class="fas fa-link"></i>
+                    
+                    <span class="name">更多</span>
+                  </span>
+                  <i class="fas fa-chevron-left arrow " :class="{'icon-rotate': isOpen(6)}" aria-hidden="true"></i>
+                </a>
+                <ul class="drawer-sub-menu" v-if="isOpen(6)">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+        
+          <li class="drawer-box-content_item">
+            <a target="_blank" rel="noopener" href="https://github.com/gaoyangya">
+              <i class="fas fa-github" aria-hidden="true"></i>
+              <span>Github</span>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDrawer',
+    data: {
+      visible: false,
+      top: 0,
+      openArr: [],
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      isOpen(index) {
+        if (this.openArr.includes(index)) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      openOrCloseMenu(curIndex) {
+        const index = this.openArr.indexOf(curIndex);
+        if (index !== -1) {
+          this.openArr.splice(index, 1);
+        } else {
+          this.openArr.push(curIndex);
+        }
+      },
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'width: 100%; height: 100%;overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      }
+    },
+    created() {}
+  })
+</script>
+
+    </div>
+    <div class="blog-title" id="author-avatar">
+      
+        <div class="avatar">
+          <img src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+        </div>
+      
+      <a href="/" class="logo">gy的小站</a>
+    </div>
+    <nav class="navbar">
+      <ul class="menu">
+        
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/" class="menu-item-link" title="首页">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/archives" class="menu-item-link" title="归档">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/tags" class="menu-item-link" title="标签">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/categories" class="menu-item-link" title="分类">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/about" class="menu-item-link" title="关于">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/friends" class="menu-item-link" title="友情链接">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="javascript:;" class="menu-item-link" title="更多">
+                  
+                    <i class="fas fa-link"></i>
+                  
+                  <span class="name">更多</span>
+                  <i class="fas fa-chevron-down arrow" aria-hidden="true"></i>
+                </a>
+                <ul class="sub-menu">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+      </ul>
+      
+      
+        <div id="appSearch">
+  <div class="search"  @click="showDialog()"><i class="fas fa-search" aria-hidden="true"></i></div>
+  <transition name="fade">
+    <div class="message-box_wrapper" style="display: none;" v-cloak v-show="dialogVisible" @click.self="cancelDialogVisible()">
+      <div class="message-box animated bounceInDown">
+        <h2>
+          <span>
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <span class="title">本地搜索</span>
+          </span>
+          <i class="fas fa-times close" pointer style="float:right;" aria-hidden="true" @click.self="cancelDialogVisible()"></i>
+        </h2>
+        <form class="site-search-form">
+          <input type="text"
+            placeholder="请输入关键字"
+            id="local-search-input" 
+            @click="getSearchFile()"
+            class="st-search-input"
+            v-model="searchInput"
+          />
+        </form>
+        <div class="result-wrapper">
+          <div id="local-search-result" class="local-search-result-cls"></div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+<script src="/js/local_search.js"></script>
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appSearch',
+    data: {
+      dialogVisible: false,
+      searchInput: '',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+      window.addEventListener('pjax:complete', () => {
+        this.cancelDialogVisible();
+      })
+    },
+    methods: {
+      showDialog() {
+        this.dialogVisible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'overflow: hidden;';
+      },
+      getSearchFile() {
+        if (!this.searchInput) {
+          getSearchFile("/search.xml");
+        }
+      },
+      cancelDialogVisible() {
+        this.dialogVisible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+    },
+    created() {}
+  })
+</script>
+<!-- 解决刷新页面闪烁问题，可以在元素上添加display: none, 或者用vue.extend方法，详情：https://blog.csdn.net/qq_31393401/article/details/81017912 -->
+<!-- 下面是搜索基本写法 -->
+<!-- <script type="text/javascript" id="local.search.active">
+  var inputArea = document.querySelector("#local-search-input");
+  inputArea.onclick   = function(){ getSearchFile(); this.onclick = null }
+  inputArea.onkeydown = function(){ if(event.keyCode == 13) return false }
+</script> -->
+
+      
+
+    </nav>
+  </div>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/gaoyangya" class="github-corner color-primary" aria-label="View source on GitHub"><svg width="60" height="60" viewBox="0 0 250 250" style="fill:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+  
+  
+    <div id="he-plugin-simple"></div>
+    <script>
+      WIDGET = {
+        CONFIG: {
+          "modules": "012",
+          "background": 5,
+          "tmpColor": "4A4A4A",
+          "tmpSize": 16,
+          "cityColor": "4A4A4A",
+          "citySize": 16,
+          "aqiSize": 16,
+          "weatherIconSize": 24,
+          "alertIconSize": 18,
+          "padding": "10px 10px 10px 10px",
+          "shadow": "1",
+          "language": "auto",
+          "borderRadius": 5,
+          "fixed": "false",
+          "vertical": "middle",
+          "horizontal": "center",
+          "key": "2784dd3fcb1e4f0f9a9b579bf69641f2"
+        }
+      }
+    </script>
+    <script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script> 
+    
+</header>
+        <!-- 内容区域 -->
+        
+ <!-- prismjs 代码高亮 -->
+ 
+    
+    <link href="/js/prism/prism-line-numbers.css" rel="stylesheet">
+    
+        <link href="/js/prism/prism.min.css" rel="stylesheet">
+    
+
+    <style>
+        pre[class*="language-"] {
+            overflow-y: hidden;
+        }
+        .line-numbers .line-numbers-rows {
+            border: none;
+        }
+    </style>
+  
+
+
+<div class="bg-dark-floor" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -1;"></div>
+
+
+  <!-- 文章详情页顶部图片和标题 -->
+
+
+
+
+<div class="post-detail-header" id="thumbnail_canvas" style="background-repeat: no-repeat; background-size: cover; 
+  background-position: center center;position: relative;background-image:url('/medias/6.jpg')">
+  <div class="post-detail-header-mask"></div>
+  <canvas id="header_canvas"style="position:absolute;bottom:0;pointer-events:none;"></canvas>
+  
+  <div class="post-detail-header_info-box">
+    <div class="title-box">
+      <span class="title">
+        21.IoC 之加载 Bean：创建 Bean（二）之实例化 Bean 对象(1)
+      </span>
+    </div>
+    
+    
+      
+        <span class="post-detail-header_date">
+          <i class="fas fa-calendar"></i> 发表于：2021-02-05 |
+        </span>
+      
+
+      
+        <span class="post-detail-header_categories">
+          <i class="iconfont iconbookmark1"></i> 分类：
+          
+            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-detail-header_category">
+              后端
+            </a>
+          
+            <a href="/categories/%E5%90%8E%E7%AB%AF/Spring%E6%BA%90%E7%A0%81/" class="post-detail-header_category">
+              Spring源码
+            </a>
+          
+        </span>
+      
+
+      
+    
+  </div>
+  
+  
+    <script src="/js/bubble/bubble.js"></script>
+  
+</div>
+
+
+
+
+
+<div class="row justify-position" 
+  style="padding-top: 0px;">
+  <div class="main-content">
+    <article class="post post-detail">
+      <div class="post-content">
+        <h1 id="1-createBeanInstance"><a href="#1-createBeanInstance" class="headerlink" title="1. createBeanInstance"></a>1. createBeanInstance</h1><p>﻿这篇我们关注创建 bean 过程中的<strong>第一个</strong>步骤：实例化 bean，对应的方法为 <code>#createBeanInstance(String beanName, RootBeanDefinition mbd, Object[] args)</code> 。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractAutowireCapableBeanFactory.java
+
+protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) &#123;
+    &#x2F;&#x2F; Make sure bean class is actually resolved at this point.
+    &#x2F;&#x2F; 解析 bean ，将 bean 类名解析为 class 引用。
+    Class&lt;?&gt; beanClass &#x3D; resolveBeanClass(mbd, beanName);
+
+    if (beanClass !&#x3D; null &amp;&amp; !Modifier.isPublic(beanClass.getModifiers()) &amp;&amp; !mbd.isNonPublicAccessAllowed()) &#123; &#x2F;&#x2F; 校验
+        throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+                &quot;Bean class isn&#39;t public, and non-public access not allowed: &quot; + beanClass.getName());
+    &#125;
+
+    &#x2F;&#x2F; &lt;1&gt; 如果存在 Supplier 回调，则使用给定的回调方法初始化策略
+    Supplier&lt;?&gt; instanceSupplier &#x3D; mbd.getInstanceSupplier();
+    if (instanceSupplier !&#x3D; null) &#123;
+        return obtainFromSupplier(instanceSupplier, beanName);
+    &#125;
+
+    &#x2F;&#x2F; &lt;2&gt; 使用 FactoryBean 的 factory-method 来创建，支持静态工厂和实例工厂
+    if (mbd.getFactoryMethodName() !&#x3D; null)  &#123;
+        return instantiateUsingFactoryMethod(beanName, mbd, args);
+    &#125;
+
+    &#x2F;&#x2F; &lt;3&gt; Shortcut when re-creating the same bean...
+    boolean resolved &#x3D; false;
+    boolean autowireNecessary &#x3D; false;
+    if (args &#x3D;&#x3D; null) &#123;
+        &#x2F;&#x2F; constructorArgumentLock 构造函数的常用锁
+        synchronized (mbd.constructorArgumentLock) &#123;
+            &#x2F;&#x2F; 如果已缓存的解析的构造函数或者工厂方法不为空，则可以利用构造函数解析
+            &#x2F;&#x2F; 因为需要根据参数确认到底使用哪个构造函数，该过程比较消耗性能，所有采用缓存机制
+            if (mbd.resolvedConstructorOrFactoryMethod !&#x3D; null) &#123;
+                resolved &#x3D; true;
+                autowireNecessary &#x3D; mbd.constructorArgumentsResolved;
+            &#125;
+        &#125;
+    &#125;
+    &#x2F;&#x2F; 已经解析好了，直接注入即可
+    if (resolved) &#123;
+        &#x2F;&#x2F; &lt;3.1&gt; autowire 自动注入，调用构造函数自动注入
+        if (autowireNecessary) &#123;
+            return autowireConstructor(beanName, mbd, null, null);
+        &#125; else &#123;
+            &#x2F;&#x2F; &lt;3.2&gt; 使用默认构造函数构造
+            return instantiateBean(beanName, mbd);
+        &#125;
+    &#125;
+
+    &#x2F;&#x2F; Candidate constructors for autowiring?
+    &#x2F;&#x2F; &lt;4&gt; 确定解析的构造函数
+    &#x2F;&#x2F; 主要是检查已经注册的 SmartInstantiationAwareBeanPostProcessor
+    Constructor&lt;?&gt;[] ctors &#x3D; determineConstructorsFromBeanPostProcessors(beanClass, beanName);
+    &#x2F;&#x2F; &lt;4.1&gt; 有参数情况时，创建 Bean 。先利用参数个数，类型等，确定最精确匹配的构造方法。
+    if (ctors !&#x3D; null || mbd.getResolvedAutowireMode() &#x3D;&#x3D; AUTOWIRE_CONSTRUCTOR ||
+            mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args))  &#123;
+        return autowireConstructor(beanName, mbd, ctors, args);
+    &#125;
+
+    &#x2F;&#x2F; Preferred constructors for default construction?
+    &#x2F;&#x2F; &lt;4.1&gt; 选择构造方法，创建 Bean 。
+    ctors &#x3D; mbd.getPreferredConstructors();
+    if (ctors !&#x3D; null) &#123;
+        return autowireConstructor(beanName, mbd, ctors, null); &#x2F;&#x2F; args &#x3D; null
+    &#125;
+
+    &#x2F;&#x2F; No special handling: simply use no-arg constructor.
+    &#x2F;&#x2F; &lt;4.2&gt; 有参数时，又没获取到构造方法，则只能调用无参构造方法来创建实例了(兜底方法)
+    return instantiateBean(beanName, mbd);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>实例化 Bean 对象，是一个<strong>复杂</strong>的过程，其主要的逻辑为：</p>
+<ul>
+<li><code>&lt;1&gt;</code>处，如果存在 Supplier 回调，则调用<code>obtainFromSupplier(Supplier&lt;?&gt; instanceSupplier, String beanName)</code>方法，进行初始化。<ul>
+<li>详细解析，见 「1.1 obtainFromSupplier」</li>
+</ul>
+</li>
+<li><code>&lt;2&gt;</code>处，如果存在工厂方法，则使用工厂方法进行初始化。<ul>
+<li>详细解析，见 「1.2 instantiateUsingFactoryMethod」</li>
+</ul>
+</li>
+<li><code>&lt;3&gt;</code>处，首先判断缓存，如果缓存中存在，即已经解析过了，则直接使用已经解析了的。根据<code>constructorArgumentsResolved</code> 参数来判断：<ul>
+<li><code>&lt;3.1&gt;</code>处，是使用构造函数自动注入，即调用<code>autowireConstructor(String beanName, RootBeanDefinition mbd, Constructor&lt;?&gt;[] ctors, Object[] explicitArgs)</code>方法。<ul>
+<li>详细解析，《【死磕 Spring】—— IoC 之加载 Bean：创建 Bean（三）之实例化 Bean 对象(2)》</li>
+</ul>
+</li>
+<li><code>&lt;3.2&gt;</code>处，还是默认构造函数，即调用<code>instantiateBean(final String beanName, final RootBeanDefinition mbd)</code>方法。<ul>
+<li>详细解析，《【死磕 Spring】—— IoC 之加载 Bean：创建 Bean（三）之实例化 Bean 对象(2)》</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>&lt;4&gt;</code>处，如果缓存中没有，则需要先确定到底使用哪个构造函数来完成解析工作，因为一个类有多个构造函数，每个构造函数都有不同的构造参数，所以需要根据参数来锁定构造函数并完成初始化。<ul>
+<li><code>&lt;4.1&gt;</code>处，如果存在参数，则使用相应的带有参数的构造函数，即调用<code>autowireConstructor(String beanName, RootBeanDefinition mbd, Constructor&lt;?&gt;[] ctors, Object[] explicitArgs)</code>方法。<ul>
+<li>详细解析，《【死磕 Spring】—— IoC 之加载 Bean：创建 Bean（三）之实例化 Bean 对象(2)》</li>
+</ul>
+</li>
+<li><code>&lt;4.2&gt;</code>处，否则，使用默认构造函数，即调用<code>instantiateBean(final String beanName, final RootBeanDefinition mbd)</code>方法。<ul>
+<li>详细解析，《【死磕 Spring】—— IoC 之加载 Bean：创建 Bean（三）之实例化 Bean 对象(2)》</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>😈 下面就上面四种情况做分别说明。</p>
+<h2 id="1-1-obtainFromSupplier"><a href="#1-1-obtainFromSupplier" class="headerlink" title="1.1 obtainFromSupplier"></a>1.1 obtainFromSupplier</h2><p>调用对应代码块如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractAutowireCapableBeanFactory.java
+&#x2F;&#x2F; protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) &#123;&#125;
+
+Supplier&lt;?&gt; instanceSupplier &#x3D; mbd.getInstanceSupplier();
+if (instanceSupplier !&#x3D; null) &#123;
+    return obtainFromSupplier(instanceSupplier, beanName);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>首先,从 BeanDefinition 中获取 Supplier 对象。如果不为空，则调用 <code>#obtainFromSupplier(final String beanName, final RootBeanDefinition mbd)</code> 方法。</li>
+</ul>
+<h3 id="1-1-1-Supplier"><a href="#1-1-1-Supplier" class="headerlink" title="1.1.1 Supplier"></a>1.1.1 Supplier</h3><p>那么 Supplier 是什么呢？在这之前也没有提到过这个字段。<code>java.util.function.Supplier</code> 接口，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">public interface Supplier&lt;T&gt; &#123;
+
+    T get();
+    
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>Supplier 接口仅有一个功能性的 <code>#get()</code> 方法，该方法会返回一个 <code>&lt;T&gt;</code> 类型的对象，有点儿类似工厂方法。</li>
+<li>这个接口有什么作用？用于指定创建 bean 的回调。如果我们设置了这样的回调，那么其他的构造器或者工厂方法都会没有用。</li>
+</ul>
+<p>在什么设置该 Supplier 参数呢？Spring 提供了相应的 setter 方法，如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractBeanDefinition.java
+
+&#x2F;**
+ * 创建 Bean 的 Supplier 对象
+ *&#x2F;
+@Nullable
+private Supplier&lt;?&gt; instanceSupplier;
+
+public void setInstanceSupplier(@Nullable Supplier&lt;?&gt; instanceSupplier) &#123;
+	this.instanceSupplier &#x3D; instanceSupplier;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p>在构造 BeanDefinition 对象的时候，设置了 <code>instanceSupplier</code> 该值，代码如下（以 RootBeanDefinition 为例）：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; RootBeanDefinition.java
+
+public &lt;T&gt; RootBeanDefinition(@Nullable Class&lt;T&gt; beanClass, String scope, @Nullable Supplier&lt;T&gt; instanceSupplier) &#123;
+	super();
+	setBeanClass(beanClass);
+	setScope(scope);
+	&#x2F;&#x2F; 设置 instanceSupplier 属性
+	setInstanceSupplier(instanceSupplier);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
+</ul>
+<h3 id="1-1-2-obtainFromSupplier"><a href="#1-1-2-obtainFromSupplier" class="headerlink" title="1.1.2 obtainFromSupplier"></a>1.1.2 obtainFromSupplier</h3><p>如果设置了 <code>instanceSupplier</code> 属性，则可以调用 <code>#obtainFromSupplier(Supplier&lt;?&gt; instanceSupplier, String beanName)</code> 方法，完成 Bean 的初始化。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractAutowireCapableBeanFactory.java
+
+&#x2F;**
+ * 当前线程，正在创建的 Bean 对象的名字
+ *
+ * The name of the currently created bean, for implicit dependency registration
+ * on getBean etc invocations triggered from a user-specified Supplier callback.
+ *&#x2F;
+private final NamedThreadLocal&lt;String&gt; currentlyCreatedBean &#x3D; new NamedThreadLocal&lt;&gt;(&quot;Currently created bean&quot;);
+
+protected BeanWrapper obtainFromSupplier(Supplier&lt;?&gt; instanceSupplier, String beanName) &#123;
+    Object instance;
+    &#x2F;&#x2F; 获得原创建的 Bean 的对象名
+    String outerBean &#x3D; this.currentlyCreatedBean.get();
+    &#x2F;&#x2F; 设置新的 Bean 的对象名，到 currentlyCreatedBean 中
+    this.currentlyCreatedBean.set(beanName);
+    try &#123;
+        &#x2F;&#x2F; &lt;1&gt; 调用 Supplier 的 get()，返回一个 Bean 对象
+        instance &#x3D; instanceSupplier.get();
+    &#125; finally &#123;
+        &#x2F;&#x2F; 设置原创建的 Bean 的对象名，到 currentlyCreatedBean 中
+        if (outerBean !&#x3D; null) &#123;
+            this.currentlyCreatedBean.set(outerBean);
+        &#125; else &#123;
+            this.currentlyCreatedBean.remove();
+        &#125;
+    &#125;
+
+    &#x2F;&#x2F; 未创建 Bean 对象，则创建 NullBean 对象
+    if (instance &#x3D;&#x3D; null) &#123;
+        instance &#x3D; new NullBean();
+    &#125;
+    &#x2F;&#x2F; &lt;2&gt; 创建 BeanWrapper 对象
+    BeanWrapper bw &#x3D; new BeanWrapperImpl(instance);
+    &#x2F;&#x2F; &lt;3&gt; 初始化 BeanWrapper 对象
+    initBeanWrapper(bw);
+    return bw;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>代码很简单，流程如下：</p>
+<ul>
+<li><code>&lt;1&gt;</code> 首先，调用 Supplier 的 <code>get()</code> 方法，获得一个 Bean 实例对象。</li>
+<li><code>&lt;2&gt;</code> 然后，根据该实例对象构造一个 BeanWrapper 对象 <code>bw</code> 。</li>
+<li><code>&lt;3&gt;</code> 最后，初始化该对象。</li>
+</ul>
+<p>有关于 BeanWrapper ，后面专门出文讲解。</p>
+<h2 id="1-2-instantiateUsingFactoryMethod"><a href="#1-2-instantiateUsingFactoryMethod" class="headerlink" title="1.2 instantiateUsingFactoryMethod()"></a>1.2 instantiateUsingFactoryMethod()</h2><p>如果存在工厂方法，则调用 <code>#instantiateUsingFactoryMethod(String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs)</code> 方法完成 bean 的初始化工作（方法实现比较长，细节比较复杂，<strong>各位就硬着头皮看吧</strong>）。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractAutowireCapableBeanFactory.java
+
+protected BeanWrapper instantiateUsingFactoryMethod(String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs) &#123;
+	return new ConstructorResolver(this).instantiateUsingFactoryMethod(beanName, mbd, explicitArgs);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>构造一个 ConstructorResolver 对象，然后调用其 <code>#instantiateUsingFactoryMethod(EvaluationContext context, String typeName, List&lt;TypeDescriptor&gt; argumentTypes)</code> 方法。</li>
+</ul>
+<h3 id="1-2-1-ConstructorResolver"><a href="#1-2-1-ConstructorResolver" class="headerlink" title="1.2.1 ConstructorResolver"></a>1.2.1 ConstructorResolver</h3><p><code>org.springframework.expression.ConstructorResolver</code> 是构造方法或者工厂类初始化 bean 的委托类。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConstructorResolver.java
+
+public BeanWrapper instantiateUsingFactoryMethod(
+        String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs) &#123;
+    &#x2F;&#x2F; 构造 BeanWrapperImpl 对象
+    BeanWrapperImpl bw &#x3D; new BeanWrapperImpl();
+    &#x2F;&#x2F; 初始化 BeanWrapperImpl
+    &#x2F;&#x2F; 向BeanWrapper对象中添加 ConversionService 对象和属性编辑器 PropertyEditor 对象
+    this.beanFactory.initBeanWrapper(bw);
+
+    &#x2F;&#x2F; &lt;1&gt; 获得 factoryBean、factoryClass、isStatic、factoryBeanName 属性
+    Object factoryBean;
+    Class&lt;?&gt; factoryClass;
+    boolean isStatic;
+    String factoryBeanName &#x3D; mbd.getFactoryBeanName();
+
+    &#x2F;&#x2F; 工厂名不为空
+    if (factoryBeanName !&#x3D; null) &#123;
+        if (factoryBeanName.equals(beanName)) &#123; &#x2F;&#x2F; 抛出 BeanDefinitionStoreException 异常
+            throw new BeanDefinitionStoreException(mbd.getResourceDescription(), beanName,
+                    &quot;factory-bean reference points back to the same bean definition&quot;);
+        &#125;
+        &#x2F;&#x2F; 获取工厂实例
+        factoryBean &#x3D; this.beanFactory.getBean(factoryBeanName);
+        if (mbd.isSingleton() &amp;&amp; this.beanFactory.containsSingleton(beanName)) &#123; &#x2F;&#x2F; 抛出 ImplicitlyAppearedSingletonException 异常
+            throw new ImplicitlyAppearedSingletonException();
+        &#125;
+        factoryClass &#x3D; factoryBean.getClass();
+        isStatic &#x3D; false;
+    &#125; else &#123;
+        &#x2F;&#x2F; 工厂名为空，则其可能是一个静态工厂
+        &#x2F;&#x2F; 静态工厂创建bean，必须要提供工厂的全类名
+        &#x2F;&#x2F; It&#39;s a static factory method on the bean class.
+        if (!mbd.hasBeanClass()) &#123;
+            throw new BeanDefinitionStoreException(mbd.getResourceDescription(), beanName,
+                    &quot;bean definition declares neither a bean class nor a factory-bean reference&quot;);
+        &#125;
+        factoryBean &#x3D; null;
+        factoryClass &#x3D; mbd.getBeanClass();
+        isStatic &#x3D; true;
+    &#125;
+
+    &#x2F;&#x2F; &lt;2&gt; 获得 factoryMethodToUse、argsHolderToUse、argsToUse 属性
+    Method factoryMethodToUse &#x3D; null;  &#x2F;&#x2F; 工厂方法
+    ArgumentsHolder argsHolderToUse &#x3D; null;
+    Object[] argsToUse &#x3D; null; &#x2F;&#x2F; 参数
+
+    &#x2F;&#x2F; &lt;2.1&gt; 如果指定了构造参数则直接使用
+    &#x2F;&#x2F; 在调用 getBean 方法的时候指定了方法参数
+    if (explicitArgs !&#x3D; null) &#123;
+        argsToUse &#x3D; explicitArgs;
+    &#125; else &#123;
+        &#x2F;&#x2F; 没有指定，则尝试从配置文件中解析
+        Object[] argsToResolve &#x3D; null;
+        &#x2F;&#x2F; &lt;2.2&gt; 首先尝试从缓存中获取
+        synchronized (mbd.constructorArgumentLock) &#123;
+            &#x2F;&#x2F; 获取缓存中的构造函数或者工厂方法
+            factoryMethodToUse &#x3D; (Method) mbd.resolvedConstructorOrFactoryMethod;
+            if (factoryMethodToUse !&#x3D; null &amp;&amp; mbd.constructorArgumentsResolved) &#123;
+                &#x2F;&#x2F; Found a cached factory method...
+                &#x2F;&#x2F; 获取缓存中的构造参数
+                argsToUse &#x3D; mbd.resolvedConstructorArguments;
+                if (argsToUse &#x3D;&#x3D; null) &#123;
+                    &#x2F;&#x2F; 获取缓存中的构造函数参数的包可见字段
+                    argsToResolve &#x3D; mbd.preparedConstructorArguments;
+                &#125;
+            &#125;
+        &#125;
+        &#x2F;&#x2F; 缓存中存在,则解析存储在 BeanDefinition 中的参数
+        &#x2F;&#x2F; 如给定方法的构造函数 A(int ,int )，则通过此方法后就会把配置文件中的(&quot;1&quot;,&quot;1&quot;)转换为 (1,1)
+        &#x2F;&#x2F; 缓存中的值可能是原始值也有可能是最终值
+        if (argsToResolve !&#x3D; null) &#123;
+            argsToUse &#x3D; resolvePreparedArguments(beanName, mbd, bw, factoryMethodToUse, argsToResolve, true);
+        &#125;
+    &#125;
+
+    &#x2F;&#x2F; &lt;3&gt; 
+    if (factoryMethodToUse &#x3D;&#x3D; null || argsToUse &#x3D;&#x3D; null) &#123;
+        &#x2F;&#x2F; Need to determine the factory method...
+        &#x2F;&#x2F; Try all methods with this name to see if they match the given arguments.
+        &#x2F;&#x2F; 获取工厂方法的类全名称
+        factoryClass &#x3D; ClassUtils.getUserClass(factoryClass);
+
+        &#x2F;&#x2F; 获取所有待定方法
+        Method[] rawCandidates &#x3D; getCandidateMethods(factoryClass, mbd);
+        &#x2F;&#x2F; 检索所有方法，这里是对方法进行过滤
+        List&lt;Method&gt; candidateList &#x3D; new ArrayList&lt;&gt;();
+        for (Method candidate : rawCandidates) &#123;
+            &#x2F;&#x2F; 如果有static 且为工厂方法，则添加到 candidateSet 中
+            if (Modifier.isStatic(candidate.getModifiers()) &#x3D;&#x3D; isStatic &amp;&amp; mbd.isFactoryMethod(candidate)) &#123;
+                candidateList.add(candidate);
+            &#125;
+        &#125;
+
+        &#x2F;&#x2F; TODO 芋艿 创建 Bean
+        if (candidateList.size() &#x3D;&#x3D; 1 &amp;&amp; explicitArgs &#x3D;&#x3D; null &amp;&amp; !mbd.hasConstructorArgumentValues()) &#123;
+            Method uniqueCandidate &#x3D; candidateList.get(0);
+            if (uniqueCandidate.getParameterCount() &#x3D;&#x3D; 0) &#123;
+                synchronized (mbd.constructorArgumentLock) &#123;
+                    mbd.resolvedConstructorOrFactoryMethod &#x3D; uniqueCandidate;
+                    mbd.constructorArgumentsResolved &#x3D; true;
+                    mbd.resolvedConstructorArguments &#x3D; EMPTY_ARGS;
+                &#125;
+                bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, uniqueCandidate, EMPTY_ARGS));
+                return bw;
+            &#125;
+        &#125;
+
+        Method[] candidates &#x3D; candidateList.toArray(new Method[0]);
+        &#x2F;&#x2F; 排序构造函数
+        &#x2F;&#x2F; public 构造函数优先参数数量降序，非 public 构造函数参数数量降序
+        AutowireUtils.sortFactoryMethods(candidates);
+
+        &#x2F;&#x2F; 用于承载解析后的构造函数参数的值
+        ConstructorArgumentValues resolvedValues &#x3D; null;
+        boolean autowiring &#x3D; (mbd.getResolvedAutowireMode() &#x3D;&#x3D; AutowireCapableBeanFactory.AUTOWIRE_CONSTRUCTOR);
+        int minTypeDiffWeight &#x3D; Integer.MAX_VALUE;
+        Set&lt;Method&gt; ambiguousFactoryMethods &#x3D; null;
+
+        int minNrOfArgs;
+        if (explicitArgs !&#x3D; null) &#123;
+            minNrOfArgs &#x3D; explicitArgs.length;
+        &#125; else &#123;
+            &#x2F;&#x2F; We don&#39;t have arguments passed in programmatically, so we need to resolve the
+            &#x2F;&#x2F; arguments specified in the constructor arguments held in the bean definition.
+            &#x2F;&#x2F; &lt;2.3&gt; getBean() 没有传递参数，则需要解析保存在 BeanDefinition 构造函数中指定的参数
+            if (mbd.hasConstructorArgumentValues()) &#123;
+                &#x2F;&#x2F; 构造函数的参数
+                ConstructorArgumentValues cargs &#x3D; mbd.getConstructorArgumentValues();
+                resolvedValues &#x3D; new ConstructorArgumentValues();
+                &#x2F;&#x2F; 解析构造函数的参数
+                &#x2F;&#x2F; 将该 bean 的构造函数参数解析为 resolvedValues 对象，其中会涉及到其他 bean
+                minNrOfArgs &#x3D; resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
+            &#125; else &#123;
+                minNrOfArgs &#x3D; 0;
+            &#125;
+        &#125;
+
+        LinkedList&lt;UnsatisfiedDependencyException&gt; causes &#x3D; null; &#x2F;&#x2F; 记录 UnsatisfiedDependencyException 异常的集合
+        &#x2F;&#x2F; 遍历 candidates 数组
+        for (Method candidate : candidates) &#123;
+            &#x2F;&#x2F; 方法体的参数
+            Class&lt;?&gt;[] paramTypes &#x3D; candidate.getParameterTypes();
+
+            if (paramTypes.length &gt;&#x3D; minNrOfArgs) &#123;
+                &#x2F;&#x2F; 保存参数的对象
+                ArgumentsHolder argsHolder;
+
+                &#x2F;&#x2F; #getBean(...) 传递了参数
+                if (explicitArgs !&#x3D; null) &#123;
+                    &#x2F;&#x2F; Explicit arguments given -&gt; arguments length must match exactly.
+                    &#x2F;&#x2F; 显示给定参数，参数长度必须完全匹配
+                    if (paramTypes.length !&#x3D; explicitArgs.length) &#123;
+                        continue;
+                    &#125;
+                    &#x2F;&#x2F; 根据参数创建参数持有者 ArgumentsHolder 对象
+                    argsHolder &#x3D; new ArgumentsHolder(explicitArgs);
+                &#125; else &#123;
+                    &#x2F;&#x2F; Resolved constructor arguments: type conversion and&#x2F;or autowiring necessary.
+                    &#x2F;&#x2F; 为提供参数，解析构造参数
+                    try &#123;
+                        String[] paramNames &#x3D; null;
+                        &#x2F;&#x2F; 获取 ParameterNameDiscoverer 对象
+                        &#x2F;&#x2F; ParameterNameDiscoverer 是用于解析方法和构造函数的参数名称的接口，为参数名称探测器
+                        ParameterNameDiscoverer pnd &#x3D; this.beanFactory.getParameterNameDiscoverer();
+                        &#x2F;&#x2F; 获取指定构造函数的参数名称
+                        if (pnd !&#x3D; null) &#123;
+                            paramNames &#x3D; pnd.getParameterNames(candidate);
+                        &#125;
+                        &#x2F;&#x2F; 在已经解析的构造函数参数值的情况下，创建一个参数持有者 ArgumentsHolder 对象
+                        argsHolder &#x3D; createArgumentArray(beanName, mbd, resolvedValues, bw,
+                                paramTypes, paramNames, candidate, autowiring, candidates.length &#x3D;&#x3D; 1);
+                    &#125; catch (UnsatisfiedDependencyException ex) &#123;
+                        &#x2F;&#x2F; 若发生 UnsatisfiedDependencyException 异常，添加到 causes 中。
+                        if (logger.isTraceEnabled()) &#123;
+                            logger.trace(&quot;Ignoring factory method [&quot; + candidate + &quot;] of bean &#39;&quot; + beanName + &quot;&#39;: &quot; + ex);
+                        &#125;
+                        &#x2F;&#x2F; Swallow and try next overloaded factory method.
+                        if (causes &#x3D;&#x3D; null) &#123;
+                            causes &#x3D; new LinkedList&lt;&gt;();
+                        &#125;
+                        causes.add(ex);
+                        continue; &#x2F;&#x2F; continue ，继续执行
+                    &#125;
+                &#125;
+
+                &#x2F;&#x2F; isLenientConstructorResolution 判断解析构造函数的时候是否以宽松模式还是严格模式
+                &#x2F;&#x2F; 严格模式：解析构造函数时，必须所有的都需要匹配，否则抛出异常
+                &#x2F;&#x2F; 宽松模式：使用具有&quot;最接近的模式&quot;进行匹配
+                &#x2F;&#x2F; typeDiffWeight：类型差异权重
+                int typeDiffWeight &#x3D; (mbd.isLenientConstructorResolution() ?
+                        argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
+                &#x2F;&#x2F; Choose this factory method if it represents the closest match.
+                &#x2F;&#x2F; 代表最接近的类型匹配，则选择作为构造函数
+                if (typeDiffWeight &lt; minTypeDiffWeight) &#123;
+                    factoryMethodToUse &#x3D; candidate;
+                    argsHolderToUse &#x3D; argsHolder;
+                    argsToUse &#x3D; argsHolder.arguments;
+                    minTypeDiffWeight &#x3D; typeDiffWeight;
+                    ambiguousFactoryMethods &#x3D; null;
+                &#125;
+                &#x2F;&#x2F; Find out about ambiguity: In case of the same type difference weight
+                &#x2F;&#x2F; for methods with the same number of parameters, collect such candidates
+                &#x2F;&#x2F; and eventually raise an ambiguity exception.
+                &#x2F;&#x2F; However, only perform that check in non-lenient constructor resolution mode,
+                &#x2F;&#x2F; and explicitly ignore overridden methods (with the same parameter signature).
+                &#x2F;&#x2F; 如果具有相同参数数量的方法具有相同的类型差异权重，则收集此类型选项
+                &#x2F;&#x2F; 但是，仅在非宽松构造函数解析模式下执行该检查，并显式忽略重写方法（具有相同的参数签名）
+                else if (factoryMethodToUse !&#x3D; null &amp;&amp; typeDiffWeight &#x3D;&#x3D; minTypeDiffWeight &amp;&amp;
+                        !mbd.isLenientConstructorResolution() &amp;&amp;
+                        paramTypes.length &#x3D;&#x3D; factoryMethodToUse.getParameterCount() &amp;&amp;
+                        !Arrays.equals(paramTypes, factoryMethodToUse.getParameterTypes())) &#123;
+                    &#x2F;&#x2F; 查找到多个可匹配的方法
+                    if (ambiguousFactoryMethods &#x3D;&#x3D; null) &#123;
+                        ambiguousFactoryMethods &#x3D; new LinkedHashSet&lt;&gt;();
+                        ambiguousFactoryMethods.add(factoryMethodToUse);
+                    &#125;
+                    ambiguousFactoryMethods.add(candidate);
+                &#125;
+            &#125;
+        &#125;
+
+        &#x2F;&#x2F; 没有可执行的工厂方法，抛出异常
+        if (factoryMethodToUse &#x3D;&#x3D; null) &#123;
+            if (causes !&#x3D; null) &#123;
+                UnsatisfiedDependencyException ex &#x3D; causes.removeLast();
+                for (Exception cause : causes) &#123;
+                    this.beanFactory.onSuppressedException(cause);
+                &#125;
+                throw ex;
+            &#125;
+            List&lt;String&gt; argTypes &#x3D; new ArrayList&lt;&gt;(minNrOfArgs);
+            if (explicitArgs !&#x3D; null) &#123;
+                for (Object arg : explicitArgs) &#123;
+                    argTypes.add(arg !&#x3D; null ? arg.getClass().getSimpleName() : &quot;null&quot;);
+                &#125;
+            &#125; else if (resolvedValues !&#x3D; null) &#123;
+                Set&lt;ValueHolder&gt; valueHolders &#x3D; new LinkedHashSet&lt;&gt;(resolvedValues.getArgumentCount());
+                valueHolders.addAll(resolvedValues.getIndexedArgumentValues().values());
+                valueHolders.addAll(resolvedValues.getGenericArgumentValues());
+                for (ValueHolder value : valueHolders) &#123;
+                    String argType &#x3D; (value.getType() !&#x3D; null ? ClassUtils.getShortName(value.getType()) :
+                            (value.getValue() !&#x3D; null ? value.getValue().getClass().getSimpleName() : &quot;null&quot;));
+                    argTypes.add(argType);
+                &#125;
+            &#125;
+            String argDesc &#x3D; StringUtils.collectionToCommaDelimitedString(argTypes);
+            throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+                    &quot;No matching factory method found: &quot; +
+                    (mbd.getFactoryBeanName() !&#x3D; null ?
+                        &quot;factory bean &#39;&quot; + mbd.getFactoryBeanName() + &quot;&#39;; &quot; : &quot;&quot;) +
+                    &quot;factory method &#39;&quot; + mbd.getFactoryMethodName() + &quot;(&quot; + argDesc + &quot;)&#39;. &quot; +
+                    &quot;Check that a method with the specified name &quot; +
+                    (minNrOfArgs &gt; 0 ? &quot;and arguments &quot; : &quot;&quot;) +
+                    &quot;exists and that it is &quot; +
+                    (isStatic ? &quot;static&quot; : &quot;non-static&quot;) + &quot;.&quot;);
+        &#125; else if (void.class &#x3D;&#x3D; factoryMethodToUse.getReturnType()) &#123;
+            throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+                    &quot;Invalid factory method &#39;&quot; + mbd.getFactoryMethodName() +
+                    &quot;&#39;: needs to have a non-void return type!&quot;);
+        &#125; else if (ambiguousFactoryMethods !&#x3D; null) &#123;
+            throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+                    &quot;Ambiguous factory method matches found in bean &#39;&quot; + beanName + &quot;&#39; &quot; +
+                    &quot;(hint: specify index&#x2F;type&#x2F;name arguments for simple parameters to avoid type ambiguities): &quot; +
+                    ambiguousFactoryMethods);
+        &#125;
+
+        if (explicitArgs &#x3D;&#x3D; null &amp;&amp; argsHolderToUse !&#x3D; null) &#123;
+            &#x2F;&#x2F; 将解析的构造函数加入缓存
+            argsHolderToUse.storeCache(mbd, factoryMethodToUse);
+        &#125;
+    &#125;
+
+    &#x2F;&#x2F; 创建 Bean 对象，并设置到 bw 中
+    bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, factoryMethodToUse, argsToUse));
+    return bw;
+&#125;
+
+private Object instantiate(
+        String beanName, RootBeanDefinition mbd, Constructor constructorToUse, Object[] argsToUse) &#123;
+
+    try &#123;
+        InstantiationStrategy strategy &#x3D; this.beanFactory.getInstantiationStrategy();
+        if (System.getSecurityManager() !&#x3D; null) &#123;
+            return AccessController.doPrivileged((PrivilegedAction&lt;Object&gt;) () -&gt;
+                    strategy.instantiate(mbd, beanName, this.beanFactory, constructorToUse, argsToUse),
+                    this.beanFactory.getAccessControlContext());
+        &#125; else &#123;
+            return strategy.instantiate(mbd, beanName, this.beanFactory, constructorToUse, argsToUse);
+        &#125;
+    &#125; catch (Throwable ex) &#123;
+        throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+                &quot;Bean instantiation via constructor failed&quot;, ex);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><code>#instantiateUsingFactoryMethod(...)</code> 方法，实在是<strong>太大</strong>了，处理细节感觉很复杂，LZ是硬着头皮看完的，中间断断续续的。吐槽这里的代码风格，完全不符合我们前面看的 Spring 代码风格。Spring 的一贯做法是将一个复杂逻辑进行拆分，分为多个细小的模块进行嵌套，每个模块负责一部分功能，模块与模块之间层层嵌套，上一层一般都是对下一层的总结和概括，这样就会使得每一层的逻辑变得清晰易懂。</li>
+<li>回归到上面的方法体，虽然代码体量大，但是总体我们还是可看清楚这个方法要做的事情。<strong>一句话概括就是</strong>：确定工厂对象，然后获取构造函数和构造参数，最后调用 InstantiationStrategy 对象的 <code>#instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner, Constructor&lt;?&gt; ctor, Object... args)</code> 方法，<strong>来创建 Bean 实例</strong>。</li>
+</ul>
+<p>下面我们就这个句概括的话进行拆分并详细说明。</p>
+<h4 id="1-2-1-1-确定工厂对象"><a href="#1-2-1-1-确定工厂对象" class="headerlink" title="1.2.1.1 确定工厂对象"></a>1.2.1.1 确定工厂对象</h4><blockquote>
+<p>对应 <code>&lt;1&gt;</code> 处。</p>
+</blockquote>
+<p>首先获取工厂方法名：</p>
+<ul>
+<li>若工厂方法名不为空，则调用 <code>AbstractAutowireCapableBeanFactory#getBean(String name)</code> 方法，获取工厂对象，</li>
+<li>若为空，则可能为一个静态工厂，对于静态工厂则必须提供工厂类的全类名，同时设置 <code>factoryBean = null</code> 。</li>
+</ul>
+<h4 id="1-2-1-2-构造参数确认"><a href="#1-2-1-2-构造参数确认" class="headerlink" title="1.2.1.2 构造参数确认"></a>1.2.1.2 构造参数确认</h4><blockquote>
+<p>对应 <code>&lt;2&gt;</code> 处。</p>
+</blockquote>
+<p>工厂对象确定后，则是确认构造参数。构造参数的确认主要分为<strong>三种</strong>情况：</p>
+<ul>
+<li><code>explicitArgs</code> 参数</li>
+<li>缓存中获取</li>
+<li>配置文件中解析</li>
+</ul>
+<h5 id="1-2-1-2-1-explicitArgs-参数"><a href="#1-2-1-2-1-explicitArgs-参数" class="headerlink" title="1.2.1.2.1 explicitArgs 参数"></a>1.2.1.2.1 explicitArgs 参数</h5><blockquote>
+<p>对应 <code>&lt;2.1&gt;</code> 处。</p>
+</blockquote>
+<p><code>explicitArgs</code> 参数，是我们调用 <code>#getBean(...)</code> 方法时传递进来的。一般该参数，该参数就是用于初始化 Bean 时所传递的参数。如果该参数不为空，则可以确定构造函数的参数就是它了。</p>
+<h5 id="1-2-1-2-2-缓存中获取"><a href="#1-2-1-2-2-缓存中获取" class="headerlink" title="1.2.1.2.2 缓存中获取"></a>1.2.1.2.2 缓存中获取</h5><blockquote>
+<p>对应 <code>&lt;2.2&gt;</code> 处。</p>
+</blockquote>
+<p>在该方法的最后，我们会发现这样一段 <code>argsHolderToUse.storeCache(mbd, factoryMethodToUse)</code> 代码。这段代码主要是将构造函数、构造参数保存到缓存中，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConstructorResolver.ArgumentsHolder.java
+
+public void storeCache(RootBeanDefinition mbd, Executable constructorOrFactoryMethod) &#123;
+	synchronized (mbd.constructorArgumentLock) &#123;
+		mbd.resolvedConstructorOrFactoryMethod &#x3D; constructorOrFactoryMethod;
+		mbd.constructorArgumentsResolved &#x3D; true;
+		if (this.resolveNecessary) &#123;
+			mbd.preparedConstructorArguments &#x3D; this.preparedArguments;
+		&#125; else &#123;
+			mbd.resolvedConstructorArguments &#x3D; this.arguments;
+		&#125;
+	&#125;
+&#125;
+
+&#x2F;&#x2F; RootBeanDefinition.java
+
+&#x2F;** Common lock for the four constructor fields below. *&#x2F;
+final Object constructorArgumentLock &#x3D; new Object(); &#x2F;&#x2F; 构造函数的缓存锁
+
+&#x2F;** Package-visible field for caching the resolved constructor or factory method. *&#x2F;
+@Nullable
+Executable resolvedConstructorOrFactoryMethod; &#x2F;&#x2F; 缓存已经解析的构造函数或者工厂方法
+
+&#x2F;** Package-visible field that marks the constructor arguments as resolved. *&#x2F;
+boolean constructorArgumentsResolved &#x3D; false; &#x2F;&#x2F; 标记字段，标记构造函数、参数已经解析了。默认为 &#96;false&#96; 。
+
+&#x2F;** Package-visible field for caching fully resolved constructor arguments. *&#x2F;
+@Nullable
+Object[] resolvedConstructorArguments; &#x2F;&#x2F; 缓存已经解析的构造函数参数，包可见字段。
+
+&#x2F;** Package-visible field for caching partly prepared constructor arguments. *&#x2F;
+@Nullable
+Object[] preparedConstructorArguments;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>其中涉及到的几个参数，都是跟构造函数、构造函数缓存有关的。如下：</p>
+<ul>
+<li><code>constructorArgumentLock</code> ：构造函数的缓存锁。</li>
+<li><code>resolvedConstructorOrFactoryMethod</code> ：缓存已经解析的构造函数或者工厂方法。</li>
+<li><code>constructorArgumentsResolved</code> ：标记字段，标记构造函数、参数已经解析了。默认为 <code>false</code> 。</li>
+<li><code>resolvedConstructorArguments</code> ：缓存已经解析的构造函数参数，包可见字段 。</li>
+<li><code>preparedConstructorArguments</code></li>
+</ul>
+<hr>
+<p>所以，从缓存中获取就是提取这几个参数的值。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConstructorResolver.java
+
+&#x2F;&#x2F; 没有指定，则尝试从配置文件中解析
+Object[] argsToResolve &#x3D; null;
+&#x2F;&#x2F; &lt;2.2&gt; 首先尝试从缓存中获取
+synchronized (mbd.constructorArgumentLock) &#123;
+    &#x2F;&#x2F; 获取缓存中的构造函数或者工厂方法
+    factoryMethodToUse &#x3D; (Method) mbd.resolvedConstructorOrFactoryMethod;
+    if (factoryMethodToUse !&#x3D; null &amp;&amp; mbd.constructorArgumentsResolved) &#123;
+        &#x2F;&#x2F; Found a cached factory method...
+        &#x2F;&#x2F; 获取缓存中的构造参数
+        argsToUse &#x3D; mbd.resolvedConstructorArguments;
+        if (argsToUse &#x3D;&#x3D; null) &#123;
+            &#x2F;&#x2F; 获取缓存中的构造函数参数的包可见字段
+            argsToResolve &#x3D; mbd.preparedConstructorArguments;
+        &#125;
+    &#125;
+&#125;
+&#x2F;&#x2F; 缓存中存在,则解析存储在 BeanDefinition 中的参数
+&#x2F;&#x2F; 如给定方法的构造函数 A(int ,int )，则通过此方法后就会把配置文件中的(&quot;1&quot;,&quot;1&quot;)转换为 (1,1)
+&#x2F;&#x2F; 缓存中的值可能是原始值也有可能是最终值
+if (argsToResolve !&#x3D; null) &#123;
+    argsToUse &#x3D; resolvePreparedArguments(beanName, mbd, bw, factoryMethodToUse, argsToResolve, true);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>如果缓存中存在构造参数，则需要调用<code>resolvePreparedArguments(String beanName, RootBeanDefinition mbd,</code><br><code> BeanWrapper bw, Executable executable, Object[] argsToResolve, boolean fallback)</code>方法，进行转换。<ul>
+<li>本文不详细解析该方法，感兴趣的胖友，可以自己查看。</li>
+</ul>
+</li>
+<li>因为缓存中的值有可能是最终值，<strong>也有可能不是最终值</strong>。比如我们构造函数中的类型为 Integer 类型的 1 ，但是原始的参数类型有可能是 String 类型的 <code>&quot;1&quot;</code> ，所以即便是从缓存中得到了构造参数，也<strong>需要经过一番的类型转换确保参数类型完全对应</strong>。</li>
+</ul>
+<h5 id="1-2-1-2-3-配置文件中解析"><a href="#1-2-1-2-3-配置文件中解析" class="headerlink" title="1.2.1.2.3 配置文件中解析"></a>1.2.1.2.3 配置文件中解析</h5><blockquote>
+<p>对应 <code>&lt;2.3&gt;</code> 处。</p>
+</blockquote>
+<p>即没有通过传递参数的方式传递构造参数，缓存中也没有，那就只能通过解析配置文件获取构造参数了。</p>
+<p>在 bean 解析类的博文中我们了解了，配置文件中的信息都会转换到 BeanDefinition 实例对象中，所以配置文件中的参数可以直接通过 BeanDefinition 对象获取。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractAutowireCapableBeanFactory.java
+
+&#x2F;&#x2F; &lt;2.3&gt; getBean() 没有传递参数，则需要解析保存在 BeanDefinition 构造函数中指定的参数
+if (mbd.hasConstructorArgumentValues()) &#123;
+    &#x2F;&#x2F; &lt;2.3.1&gt; 构造函数的参数
+    ConstructorArgumentValues cargs &#x3D; mbd.getConstructorArgumentValues();
+    resolvedValues &#x3D; new ConstructorArgumentValues();
+    &#x2F;&#x2F; &lt;2.3.2&gt; 解析构造函数的参数
+    &#x2F;&#x2F; 将该 bean 的构造函数参数解析为 resolvedValues 对象，其中会涉及到其他 bean
+    minNrOfArgs &#x3D; resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><code>&lt;2.3.1&gt;</code> ，通过 BeanDefinition 的 <code>#getConstructorArgumentValues()</code> 方法，就可以获取构造信息了。</li>
+<li><code>&lt;2.3.2&gt;</code> ，有了构造信息就可以获取相关的参数值信息了，获取的参数信息包括直接值和引用，这一步骤的处理交由 <code>#resolveConstructorArguments(String beanName, RootBeanDefinition mbd, BeanWrapper bw, ConstructorArgumentValues cargs, ConstructorArgumentValues resolvedValues)</code> 方法来完成。该方法会将构造参数信息解析为 <code>resolvedValues</code> 对象 并返回解析到的参数个数 <code>minNrOfArgs</code> 。</li>
+</ul>
+<h4 id="1-2-1-3-构造函数"><a href="#1-2-1-3-构造函数" class="headerlink" title="1.2.1.3 构造函数"></a>1.2.1.3 构造函数</h4><blockquote>
+<p>对应 <code>&lt;3&gt;</code> 处。</p>
+</blockquote>
+<p>确定构造参数后，下一步则是确定构造函数。</p>
+<ul>
+<li>第一步，是通过 <code>#getCandidateMethods()</code> 方法，获取所有的构造方法，同时对构造方法进行刷选。</li>
+<li>然后，在对其进行排序处理（<code>AutowireUtils.sortFactoryMethods(candidates)</code>）。排序的主要目的，是为了能够<strong>更加方便的</strong>找到匹配的构造函数，因为构造函数的确认是根据参数个数确认的。排序的规则是：先按照 <code>public</code> / 非 <code>public</code> 构造函数<strong>升序</strong>，再按照构造参数数量<strong>降序</strong>。</li>
+</ul>
+<p>通过迭代 <code>candidates</code>（包含了所有要匹配的构造函数）的方式，依次比较其参数：</p>
+<ul>
+<li>如果显示提供了参数（<code>explicitArgs != null</code>），则直接比较两者<strong>长度</strong>是否相等，如果相等则表示找到了，否则继续比较。</li>
+<li>如果没有显示提供参数，则需要获取 <code>org.springframework.core.ParameterNameDiscoverer</code> 对象。该对象为参数名称探测器，主要用于发现方法和构造函数的参数名称。</li>
+</ul>
+<p>将参数包装成 <code>ConstructorResolver.ArgumentsHolder</code> 对象。该对象用于保存参数，我们称之为参数持有者。当将对象包装成 ArgumentsHolder 对象后，我们就可以通过它来进行构造函数<strong>匹配</strong>。匹配分为严格模式和宽松模式：</p>
+<ul>
+<li>严格模式：解析构造函数时，必须所有参数都需要匹配，否则抛出异常。</li>
+<li>宽松模式：使用具有”最接近的模式”进行匹配。</li>
+</ul>
+<p>判断的依据是根据 BeanDefinition 的 <code>isLenientConstructorResolution</code> 属性（该参数是我们在构造 AbstractBeanDefinition 对象是传递的）来获取类型差异权重（<code>typeDiffWeight</code>） 的。</p>
+<ul>
+<li>如果 <code>typeDiffWeight &lt; minTypeDiffWeight</code> ，则代表“最接近的模式”，选择其作为构造函数。</li>
+<li>否则，只有两者具有相同的参数数量，且类型差异权重相等才会纳入考虑范围。</li>
+</ul>
+<p>至此，构造函数已经确认了。</p>
+<h4 id="1-2-1-4-创建-bean-实例"><a href="#1-2-1-4-创建-bean-实例" class="headerlink" title="1.2.1.4 创建 bean 实例"></a>1.2.1.4 创建 bean 实例</h4><blockquote>
+<p>对应 <code>&lt;4&gt;</code> 处。</p>
+</blockquote>
+<p>工厂对象、构造函数、构造参数都已经确认了，则最后一步就是调用 <code>org.springframework.beans.factory.support.InstantiationStrategy</code> 对象的 <code>#instantiate(RootBeanDefinition bd, String beanName, BeanFactory owner, Object factoryBean, final Method factoryMethod, @Nullable Object... args)</code> 方法，来创建 bean 实例。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; SimpleInstantiationStrategy.java
+
+&#x2F;**
+ * 线程变量，正在创建 Bean 的 Method 对象
+ *&#x2F;
+private static final ThreadLocal&lt;Method&gt; currentlyInvokedFactoryMethod &#x3D; new ThreadLocal&lt;&gt;();
+
+@Override
+public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner,
+        @Nullable Object factoryBean, final Method factoryMethod, Object... args) &#123;
+    try &#123;
+        &#x2F;&#x2F; 设置 Method 可访问
+        if (System.getSecurityManager() !&#x3D; null) &#123;
+            AccessController.doPrivileged((PrivilegedAction&lt;Object&gt;) () -&gt; &#123;
+                ReflectionUtils.makeAccessible(factoryMethod);
+                return null;
+            &#125;);
+        &#125; else &#123;
+            ReflectionUtils.makeAccessible(factoryMethod);
+        &#125;
+
+        &#x2F;&#x2F; 获得原 Method 对象
+        Method priorInvokedFactoryMethod &#x3D; currentlyInvokedFactoryMethod.get();
+        try &#123;
+            &#x2F;&#x2F; 设置新的 Method 对象，到 currentlyInvokedFactoryMethod 中
+            currentlyInvokedFactoryMethod.set(factoryMethod);
+            &#x2F;&#x2F; &lt;x&gt; 创建 Bean 对象
+            Object result &#x3D; factoryMethod.invoke(factoryBean, args);
+            &#x2F;&#x2F; 未创建，则创建 NullBean 对象
+            if (result &#x3D;&#x3D; null) &#123;
+                result &#x3D; new NullBean();
+            &#125;
+            return result;
+        &#125; finally &#123;
+            &#x2F;&#x2F; 设置老的 Method 对象，到 currentlyInvokedFactoryMethod 中
+            if (priorInvokedFactoryMethod !&#x3D; null) &#123;
+                currentlyInvokedFactoryMethod.set(priorInvokedFactoryMethod);
+            &#125; else &#123;
+                currentlyInvokedFactoryMethod.remove();
+            &#125;
+        &#125;
+    &#125; catch (IllegalArgumentException ex) &#123;
+        throw new BeanInstantiationException(factoryMethod,
+                &quot;Illegal arguments to factory method &#39;&quot; + factoryMethod.getName() + &quot;&#39;; &quot; +
+                &quot;args: &quot; + StringUtils.arrayToCommaDelimitedString(args), ex);
+    &#125; catch (IllegalAccessException ex) &#123;
+        throw new BeanInstantiationException(factoryMethod,
+                &quot;Cannot access factory method &#39;&quot; + factoryMethod.getName() + &quot;&#39;; is it public?&quot;, ex);
+    &#125; catch (InvocationTargetException ex) &#123;
+        String msg &#x3D; &quot;Factory method &#39;&quot; + factoryMethod.getName() + &quot;&#39; threw exception&quot;;
+        if (bd.getFactoryBeanName() !&#x3D; null &amp;&amp; owner instanceof ConfigurableBeanFactory &amp;&amp;
+                ((ConfigurableBeanFactory) owner).isCurrentlyInCreation(bd.getFactoryBeanName())) &#123;
+            msg &#x3D; &quot;Circular reference involving containing bean &#39;&quot; + bd.getFactoryBeanName() + &quot;&#39; - consider &quot; +
+                    &quot;declaring the factory method as static for independence from its containing instance. &quot; + msg;
+        &#125;
+        throw new BeanInstantiationException(factoryMethod, msg, ex.getTargetException());
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p>核心的部分，在于 <code>&lt;x&gt;</code> 处，利用 Java 反射执行工厂方法并返回创建好的实例，也就是这段代码：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; SimpleInstantiationStrategy.java
+
+Object result &#x3D; factoryMethod.invoke(factoryBean, args);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre></li>
+</ul>
+<h2 id="1-2-2-独白"><a href="#1-2-2-独白" class="headerlink" title="1.2.2 独白"></a>1.2.2 独白</h2><p>到这里 <code>#instantiateUsingFactoryMethod(...)</code> 方法，已经分析完毕了。这里， LZ 有些题外话需要说下，<strong>看源码真心是一个痛苦的过程，尤其是复杂的源码，比如这个方法我看了三天才弄清楚点皮毛，当然这里跟 LZ 的智商有些关系（智商捉急 ┭┮﹏┭┮），写这篇博客也花了五天时间才写完（最后截稿日为：2018.08.10 01:23:49），所以每一个坚持写博客的都是折翼的天使，值得各位尊敬</strong></p>
+<h1 id="2-小结"><a href="#2-小结" class="headerlink" title="2. 小结"></a>2. 小结</h1><p><code>#createBeanInstance(...)</code> 方法中，还有两个重要方法：</p>
+<ul>
+<li><code>autowireConstructor(...)</code> 方法</li>
+<li><code>#instantiateBean(...)</code> 方法</li>
+</ul>
+<p>由于篇幅问题，所以将这两个方法放在下篇博客分析。敬请期待！！！</p>
+
+      </div>
+      <div class="post-tags-categories">
+        
+        <div class="tags">
+          
+            <a href="/tags/%E6%AD%BB%E7%A3%95Spring/" class="">
+              死磕Spring
+            </a>
+          
+        </div>
+        
+      </div>
+      
+        <div class="copyright">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+    <strong>作者:  </strong>高小天</a>
+    </li>
+    <li class="post-copyright-link">
+    <strong>文章链接:  </strong>
+    <a href="/2021/02/05/IoC 之加载 Bean：创建 Bean（二）之实例化 Bean 对象(1)/" target="_blank" title="21.IoC 之加载 Bean：创建 Bean（二）之实例化 Bean 对象(1)">https://gaoyang.world/2021/02/05/IoC 之加载 Bean：创建 Bean（二）之实例化 Bean 对象(1)/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明:   </strong>
+      本网站所有文章除特别声明外,均采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+      许可协议。转载请注明出处!
+    </li>
+  </ul>
+<div>
+      
+    </article>
+    <!-- 上一篇文章和下一篇文章 -->
+    
+      <!-- 文章详情页的上一页和下一页 -->
+<div class="post-nav">
+
+
+
+  
+  <div class="post-nav-prev post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="https://ssyerv1.oss-cn-hangzhou.aliyuncs.com/picture/c080ff4434354e35af9dab0a3ee1b9f7.jpg!sswm" class="lazyload placeholder" data-srcset="https://ssyerv1.oss-cn-hangzhou.aliyuncs.com/picture/c080ff4434354e35af9dab0a3ee1b9f7.jpg!sswm" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="">
+    </div>
+    <a href="/2021/02/06/IoC%20%E4%B9%8B%E5%8A%A0%E8%BD%BD%20Bean%EF%BC%9A%E5%88%9B%E5%BB%BA%20Bean%EF%BC%88%E4%B8%89%EF%BC%89%E4%B9%8B%E5%AE%9E%E4%BE%8B%E5%8C%96%20Bean%20%E5%AF%B9%E8%B1%A1(2)/" class="post-nav-link">
+      <div class="title">
+        <i class="fas fa-angle-left"></i> 上一篇:
+        <div class="title-text">22.IoC 之加载 Bean：创建 Bean（三）之实例化 Bean 对象(2)</div>
+      </div>
+      
+      <!-- <div class="content">
+        createBeanInstance(String beanName, RootBeanDefinition mbd, 
+      </div> -->
+    </a>
+  </div>
+
+
+
+  
+  <div class="post-nav-next post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="https://ssyerv1.oss-cn-hangzhou.aliyuncs.com/picture/c080ff4434354e35af9dab0a3ee1b9f7.jpg!sswm" class="lazyload placeholder" data-srcset="https://ssyerv1.oss-cn-hangzhou.aliyuncs.com/picture/c080ff4434354e35af9dab0a3ee1b9f7.jpg!sswm" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" src="" alt="">
+    </div>
+    <a href="/2021/02/04/IoC%20%E4%B9%8B%E5%8A%A0%E8%BD%BD%20Bean%EF%BC%9A%E5%88%9B%E5%BB%BA%20Bean%EF%BC%88%E4%B8%80%EF%BC%89%E4%B9%8B%E4%B8%BB%E6%B5%81%E7%A8%8B/" class="post-nav-link">
+      <div class="title">
+        下一篇: <i class="fas fa-angle-right"></i>
+        <div class="title-text">20.IoC 之加载 Bean：创建 Bean（一）之主流程</div>
+      </div>
+      <!-- <div class="content">
+        1. createBean 抽象方法﻿在上篇博客 《【死磕 Spring】—— IoC 之加载 Bean：分析各 sco
+      </div> -->
+    </a>
+  </div>
+
+</div>
+
+    
+    
+
+    <!-- 打赏 -->
+    
+      <div id="appDonate" class="post-donate">
+  <div id="donate_board" class="donate_bar center" ref="donate">
+    <a id="btn_donate" class="btn_donate" href="javascript:;" title="打赏" @click="showDialogDrawer()"></a>
+  </div>
+  <transition name="fade">
+    <div 
+      class="donate-box-mask"
+      v-cloak 
+      v-show="visible"
+      @click="cancelDialogDrawer()"
+    >
+    </div>
+  </transition>
+  <transition name="bounce">
+    <div class="donate-box" v-cloak v-show="visible">
+      <div class="donate-box_close">
+        <i class="fas fa-times" aria-hidden="true" @click="cancelDialogDrawer" pointer></i>
+      </div>
+      <div class="donate-box_title">
+        <h4>
+          你的赏识是我前进的动力
+        </h4>
+      </div>
+      <div class="donate-box_tab">
+        <div class="Alipay" pointer :class="{'active': tabActive === 'Alipay'}" @click="changeTabActive('Alipay')">
+          支付宝
+        </div>
+        <div class="WeChatpay" pointer :class="{'active': tabActive === 'WeChatpay'}" @click="changeTabActive('WeChatpay')">
+          微信
+        </div>
+      </div>
+      <div class="donate-box_img">
+        <div class="AlipayImg" v-show="tabActive === 'Alipay'">
+          <img src="/medias/zfb.jpg" class="lazyload placeholder" data-srcset="/medias/zfb.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="支付宝打赏" />
+        </div> 
+        <div class="WeChatpayImg" v-show="tabActive === 'WeChatpay'">
+          <img src="/medias/wx.jpg" class="lazyload placeholder" data-srcset="/medias/wx.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="微信打赏" />
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDonate',
+    data: {
+      visible: false,
+      tabActive: 'Alipay',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        // function getScroll() {
+        //   return {
+        //     left: window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0,
+        //     top: window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+        //   };
+        // }
+        this.top = $(document).scrollTop() // or getScroll().top
+        // console.log('aa', $('.main-content'));
+        body.style.cssText = 'overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+      changeTabActive(name) {
+        this.tabActive = name;
+      }
+    },
+    created() {}
+  })
+</script>
+    
+
+    <!-- 分享 -->
+    
+      <!-- https://github.com/overtrue/share.js -->
+<!-- 文章详情页的分享 -->
+<div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+
+<script src="/js/shareJs/social-share.min.js"></script>
+</script>
+
+<style>
+  .social-share {
+    margin: 20px 0;
+  }
+</style>
+
+
+    
+    
+    <!-- 评论 -->
+    <!-- 评论 -->
+
+  <div id="myComment">
+    
+      <div id="gitment-container"></div>
+
+    
+  </div>
+
+<!-- comment script in themes\hexo-theme-bamboo\layout\_partial\scripts\index.ejs -->
+
+
+  </div>
+
+  <!-- 目录 -->
+  <!-- 文章详情页右侧目录 -->
+
+
+<script>
+  function closeToc(init) {
+    $(".toc-aside").css({'width': 0, 'padding': 0, 'transition': init ?  'noe' : 'width 0.3s' });
+    $(".toc-content").css({'width': 0});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'none'});
+    $(".main-content").css({'width': '75%', 'margin': '10px auto'});
+  };
+  function openToc() {
+    $(".main-content").css({'width': '65%', 'margin-right': '10px', 'margin-left': 'calc(35% - 350px)'});
+    $(".toc-aside").css({'width': '300px', 'padding': '0 10px', 'transition': 'width 0.3s'});
+    $(".toc-content").css({'width': '300px'});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'inline-block'});
+  }
+  function openBtnClickFn () {
+    let openOrCloseBtn = $('.toc-aside .toc-aside-title .toc-open-close');
+    let open = eval('false' || 'true');
+    openOrCloseBtn.click(function() {
+      if (open) {
+        closeToc();
+        open = false;
+      } else {
+        openToc();
+        open = true;
+      }
+    });
+  };
+  openBtnClickFn();
+  initCloseTocWidth(true);
+
+  function initCloseTocWidth(init) {
+    if (window.innerWidth >= 992) {
+      let isClose = true;
+      isClose && closeToc(init)
+    }
+  }
+
+  document.addEventListener('pjax:complete', function () {
+    $(".toc-aside").css({'transition': 'no'});
+  })
+  document.addEventListener('pjax:complete', function () {
+    openBtnClickFn();
+  })
+  
+</script>
+
+  <!-- 图片放大 Wrap images with fancybox support -->
+  <script src="/js/wrapImage.js"></script>
+</div>
+
+<!-- 文章详情页背景图 -->
+<div id="appBgSwiper" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -2;"
+	:style="{'background-color': bgColor ? bgColor : 'transparent'}">
+	<transition-group tag="ul" :name="names">
+		<li v-for='(image,index) in img' :key='index' v-show="index === mark" class="bg-swiper-box">
+			<img :src="image" class="bg-swiper-img no-lazy">
+		</li>
+	</transition-group>
+</div>
+<script>
+	var vm = new Vue({
+		el: '#appBgSwiper',
+		data: {
+			names: '' || 'fade' || 'fade', // translate-fade fade
+			mark: 0,
+			img: [],
+			bgColor: '',
+			time: null
+		},
+		methods: {   //添加方法
+			change(i, m) {
+				if (i > m) {
+					// this.names = 'fade';
+				} else if (i < m) {
+					// this.names = 'fade';
+				} else {
+					return;
+				}
+				this.mark = i;
+			},
+			prev() {
+				// this.names = 'fade';
+				this.mark--;
+				if (this.mark === -1) {
+					this.mark = 3;
+					return
+				}
+			},
+			next() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			autoPlay() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			play() {
+				let bgImgDelay = '' || '180000'
+				let delay = parseInt(bgImgDelay) || 180000;
+				this.time = setInterval(this.autoPlay, delay);
+			},
+			enter() {
+				clearInterval(this.time);
+			},
+			leave() {
+				this.play();
+			}
+		},
+		created() {
+			this.play()
+		},
+		beforeDestroy() {
+			clearInterval(this.time);
+		},
+		mounted() {
+			let prop = '' || '';
+			let isImg = prop.includes('.bmp') || prop.includes('.jpg') || prop.includes('.png') || prop.includes('.tif') || prop.includes('.gif') || prop.includes('.pcx') || prop.includes('.tga') || prop.includes('.exif') || prop.includes('.fpx') || prop.includes('.psd') || prop.includes('.cdr') || prop.includes('.pcd') || prop.includes('.dxf') || prop.includes('.ufo') || prop.includes('.eps') || prop.includes('.ai') || prop.includes('.raw') || prop.includes('.WMF') || prop.includes('.webp') || prop.includes('.jpeg') || prop.includes('http://') || prop.includes('https://')
+			if (isImg) {
+				let img = prop.split(',');
+				let configRoot = '/'
+				let arrImg = [];
+				img.forEach(el => {
+					var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+					var objExp = new RegExp(Expression);
+
+					if (objExp.test(el)) {
+						// http or https
+						arrImg.push(el);
+					} else {
+						// 非http or https开头
+						// 本地文件
+						let firstStr = el.charAt(0);
+						if (firstStr == '/') {
+							el = el.substr(1); // 删除第一个字符 '/',因为 configRoot最后一个字符为 /
+						}
+						el = configRoot + el;
+						arrImg.push(el);
+					}
+				})
+				this.img = arrImg;
+			} else {
+				this.bgColor = prop;
+			}
+		}
+	})
+</script>
+
+<style>
+	.bg-swiper-box {
+		position: absolute;
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.bg-swiper-img {
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+
+
+
+  <script>
+  function loadMermaid() {
+    if (document.getElementsByClassName('mermaid').length) {
+      if (window.mermaidJsLoad) mermaid.init()
+      else {
+        loadScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+          window.mermaidJsLoad = true
+          mermaid.initialize({
+            theme: 'default',
+          })
+          if ('true') {
+            mermaid.init();
+          }
+        })
+      }
+    }
+  };
+  document.addEventListener("DOMContentLoaded", function () {
+    loadMermaid();
+  })
+
+  document.addEventListener('pjax:complete', function () {
+    loadMermaid();
+  })
+  
+</script>
+
+
+      </main>
+    </div>
+
+    <!-- 页脚 -->
+    
+  
+  <div class="footer bg-color">
+    <div class="footer-main">
+      
+        
+          <div class="link">
+            
+          </div>
+        
+      
+        
+          <div class="footer-copyright">
+            <p>Copyright © 2019 - 2020  </p>
+
+          </div>
+        
+      
+        
+          
+            <!-- 不蒜子统计 -->
+            <!-- 不蒜子统计 -->
+<span id="busuanzi_container_site_pv">
+      <i class="fas fa-eye" aria-hidden="true"></i>本站总访问量：<span id="busuanzi_value_site_pv"></span> 次
+</span>
+<span class="post-meta-divider">|</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+      <i class="fas fa-users" aria-hidden="true"></i>本站访客数：<span id="busuanzi_value_site_uv"></span> 人
+</span>
+
+          
+        
+      
+        
+          <div class="footer-custom">
+            
+          </div>
+        
+      
+    </div>
+  </div>
+
+
+
+    <!-- 渲染暗黑按钮 -->
+    
+      <div class="dark">
+  <div class="dark-content">
+    <i class="fas fa-moon" aria-hidden="true"></i>
+    <!-- <span>关灯</span> -->
+  </div>
+  
+</div>
+
+<script>
+  $(function() {
+    let isDark = JSON.parse(localStorage.getItem('dark'))  || JSON.parse('false');
+    if (isDark) {
+      $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+    }
+    $('.dark').click(function() {
+      if ($(document.body).is('.darkModel')) {
+        $(document.body).removeClass('darkModel');
+        localStorage.setItem('dark', false);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      } else {
+        $(document.body).addClass('darkModel');
+        localStorage.setItem('dark', true);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      }
+    })
+  })
+</script>
+    
+    <!-- 渲染回到顶部按钮 -->
+    
+      <div class="goTop top-btn-color" pointer>
+  <i class="fas fa-arrow-up" aria-hidden="true"></i>
+</div>
+<script src="/js/goTop.js"></script>
+
+    
+    <!-- 渲染左下角音乐播放器 -->
+    
+      <link rel="stylesheet" href="/js/aplayer/APlayer@1.10.1.min.css">
+<style>
+.aplayer .aplayer-lrc p {
+  
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px !important;
+}
+
+.aplayer .aplayer-lrc p.aplayer-lrc-current {
+  
+  font-size: 15px;
+  color: #42b983;
+}
+
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+  left: -66px !important;
+}
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+  left: 0px !important;
+}
+
+
+</style>
+<meting-js  
+  class=""
+  server="tencent"
+  type="playlist"
+  id="8062553743"
+  fixed='true'
+  autoplay='false'
+  theme='#42b983'
+  loop='all'
+  order='random'
+  preload='auto'
+  volume='0.7'
+  list-folded='true'
+>
+</meting-js>
+
+<!-- <style>
+  #aplayer {
+    position: fixed;
+    left: 0;
+    bottom: 300px;
+  }
+</style> -->
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    
+
+    <!-- 图片放大 -->
+    
+      <script src="/js/fancybox/jquery.fancybox.min.js"></script>
+    
+
+    <!-- 百度解析 -->
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <!-- 背景彩带 -->
+    
+      <script type="text/javascript" size="100" alpha='0.4' zIndex="-1" src="/js/ribbon.min.js"></script>
+    
+
+    <script src="/js/utils/index.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <!-- 文章目录所需js -->
+<link href="/js/tocbot/tocbot.css" rel="stylesheet">
+<script src="/js/tocbot/tocbot.min.js"></script>
+
+<script>
+  var headerEl = 'h2, h3, h4',  //headers 
+    content = '.post-detail',//文章容器
+    idArr = {};  //标题数组以确定是否增加索引id
+  //add #id
+  var option = {
+    // Where to render the table of contents.
+    tocSelector: '.toc',
+    // Where to grab the headings to build the table of contents.
+    contentSelector: content,
+    // Which headings to grab inside of the contentSelector element.
+    headingSelector: headerEl,
+    scrollSmooth: true,
+    scrollSmoothOffset: -80,
+    headingsOffset: -($(window).height() * 0.4 - 45),
+    positionFixedSelector: '.toc-main',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    activeLinkClass: 'is-active-link',
+    // onClick: function (e) {},
+  }
+  if ($('.toc').length > 0) {
+
+    $(content).children(headerEl).each(function () {
+      //去除空格以及多余标点
+      var headerId = $(this).text().replace(/[\s|\~|`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\+|\=|\||\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?|\：|\，|\。]/g, '');
+
+      headerId = headerId.toLowerCase();
+      if (idArr[headerId]) {
+        //id已经存在
+        $(this).attr('id', headerId + '-' + idArr[headerId]);
+        idArr[headerId]++;
+      }
+      else {
+        //id未存在
+        idArr[headerId] = 1;
+        $(this).attr('id', headerId);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      tocbot.init(option);
+      mobileTocClick();
+    });
+
+  }
+
+  window.tocScrollFn = function () {
+    return bamboo.throttle(function () {
+      findHeadPosition();
+    }, 100)()
+  }
+  window.addEventListener('scroll', tocScrollFn);
+
+  const findHeadPosition = function (top) {
+    if ($('.toc-list').length <= 0) {
+      return false;
+    }
+    setTimeout(() => {  // or DOMContentLoaded 
+      autoScrollToc();
+    }, 0);
+  }
+
+  const autoScrollToc = function () {
+    const $activeItem = document.querySelector('.is-active-link');
+    const $cardToc = document.querySelector('.toc-content');
+    const activePosition = $activeItem.getBoundingClientRect().top
+    const sidebarScrollTop = $cardToc.scrollTop
+    if (activePosition > (document.documentElement.clientHeight - 100)) {
+      $cardToc.scrollTop = sidebarScrollTop + 150
+    }
+    if (activePosition < 100) {
+      $cardToc.scrollTop = sidebarScrollTop - 150
+    }
+  }
+
+  document.addEventListener('pjax:send', function () {
+    if ($('.toc').length) {
+      tocbot.destroy();
+    }
+  });
+
+  document.addEventListener('pjax:complete', function () {
+    if ($('.toc').length) {
+      tocbot.init(option);
+      mobileTocClick();
+    }
+  });
+  
+  // 手机端toc按钮点击出现目录
+  const mobileTocClick = function () {
+    const $cardTocLayout = document.getElementsByClassName('toc-aside')[0];
+    const $cardToc = $cardTocLayout.getElementsByClassName('toc-content')[0];
+    let right = '45px';
+    if (window.innerWidth >= 551 && window.innerWidth <= 992) {
+      right = '100px'
+    }
+    const mobileToc = {
+      open: () => {
+        $cardTocLayout.style.cssText = 'animation: toc-open .3s; opacity: 1; right: ' + right
+      },
+
+      close: () => {
+        $cardTocLayout.style.animation = 'toc-close .2s'
+        setTimeout(() => {
+          $cardTocLayout.style.cssText = "opacity:''; animation: ''; right: ''"
+        }, 100)
+      }
+    }
+    document.getElementById('toc-mobile-btn').addEventListener('click', () => {
+      if (window.getComputedStyle($cardTocLayout).getPropertyValue('opacity') === '0') mobileToc.open()
+      else mobileToc.close()
+    })
+
+    $cardToc.addEventListener('click', (e) => {
+      if (window.innerWidth < 992) { // 小于992px的时候
+        mobileToc.close()
+      }
+    })
+  }
+</script>
+
+<style>
+  .is-position-fixed {
+    position: sticky !important;
+    top: 74px;
+  }
+
+  .toc-main ul {
+    counter-reset: show-list;
+  }
+
+  .toc-main ul li::before {
+    content: counter(item)".";
+    display: block;
+    position: absolute;
+    left: 12px;
+    top: 0;
+  }
+</style> 
+
+<!-- 设置导航背景 -->
+<script>
+  let setHeaderClass = () => {
+    const headerMenuTransparent = true;
+    if (!headerMenuTransparent) { return; }
+    const nav = $('#navHeader');
+    const navTop = nav.outerHeight();
+    const winTop = $(window).scrollTop();
+    if(winTop > navTop) {
+      nav.addClass('header-bg-color');
+    }
+    else {
+      nav.removeClass('header-bg-color');
+    }
+  };
+
+  let scrollCollect = () => {
+    return bamboo.throttle(function (e) {
+      setHeaderClass();
+    }, 200)()
+  }
+
+  let initHeaderBg = () => {
+    setHeaderClass();
+  }
+
+  setHeaderClass();
+  window.addEventListener('scroll', scrollCollect);
+
+  document.addEventListener('pjax:send', function () {
+    window.removeEventListener('scroll', scrollCollect)
+  })
+  document.addEventListener('pjax:complete', function () {
+    window.addEventListener('scroll', scrollCollect);
+    setHeaderClass();
+  })
+</script> 
+
+<!-- 渲染issues标签里的内容 -->
+<script>
+  function loadIssuesJS() {
+    if ($(".post-detail").find(".issues-api").length == 0) {
+      return;
+    } 
+    loadScript('/js/issues/index.js');
+  };
+  $(function () {
+    loadIssuesJS();
+  });
+  document.addEventListener('pjax:complete', function () {
+    if (typeof IssuesAPI == "undefined") {
+      loadIssuesJS();
+    }
+  })
+</script>
+
+<!-- 输入框打字特效 -->
+<!-- 输入框打字特效 -->
+
+  <script src="/js/activate-power-mode.js"></script>
+  <script>
+    POWERMODE.colorful = true;  // 打开随机颜色特效
+    POWERMODE.shake = false;    // 关闭输入框抖动
+    document.body.addEventListener('input', POWERMODE);//监听打字事件
+  </script>
+
+
+<!-- markdown代码一键复制功能 -->
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.css">
+  <script src="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.umd.min.js"></script>
+  <script src="/js/clipboard/clipboard.min.js"></script>
+  <div id="appCopy">
+  </div>
+  <script data-pjax>
+    var vm = new Vue({
+      el: '#appCopy',
+      data: {
+      },
+      computed: {
+      },
+      mounted() {
+        const that = this;
+        var copy = '复制';
+        /* code */
+        var initCopyCode = function () {
+          var copyHtml = '';
+          copyHtml += '<button class="btn-copy" data-clipboard-snippet="" style="position:absolute;top:0;right:0;z-index:1;">';
+          copyHtml += '<i class="fas fa-copy"></i><span>' + copy + '</span>';
+          copyHtml += '</button>';
+          $(".post-detail pre").not('.gutter pre').wrap("<div class='codeBox' style='position:relative;width:100%;'></div>")
+          $(".post-detail pre").not('.gutter pre').before(copyHtml);
+          new ClipboardJS('.btn-copy', {
+            target: function (trigger) {
+              return trigger.nextElementSibling;
+            }
+          });
+        }
+        initCopyCode();
+        $('.btn-copy').unbind('click').bind('click', function () {
+          doSomething();
+        })
+        $(document).unbind('keypress').bind('keypress', function (e) {
+          if (e.ctrlKey && e.keyCode == 67) {
+            doSomething();
+          }
+        })
+
+        function doSomething() {
+          that.$notify({
+            title: "成功",
+            content: "代码已复制，请遵守相关授权协议。",
+            type: 'success'
+          })
+        }
+      },
+      methods: {
+      },
+      created() { }
+    })
+  </script>
+  
+
+<!-- 图片懒加载 -->
+<script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazyload",
+    threshold: 0
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    lazyLoadInstance.update();
+  });
+  document.addEventListener('pjax:complete', function () {
+    lazyLoadInstance.update();
+  });
+</script>
+
+
+<!-- 卡片滚动动画 -->
+   
+
+<!-- 评论所需js -->
+
+  
+    <script type="text/javascript">
+  var utteranceCommon = {};
+
+  function check_utterance() {
+    let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+    if (isDark) {
+      utteranceCommon.Theme = 'github-dark';
+    } else {
+      utteranceCommon.Theme = 'github-light';
+    }
+
+    return document.getElementById("gitment-container");
+  }
+  comment_el = '#gitment-container';
+  load_utterance = function () {
+    if ($(comment_el).length) {
+      // 匿名函数，防止污染全局变量
+      const HEAD = check_utterance();
+
+      var utterances = document.createElement('script');
+      utterances.type = 'text/javascript';
+      utterances.async = true;
+      utterances.setAttribute('issue-term', 'pathname')
+      utterances.setAttribute('theme', utteranceCommon.Theme)
+      utterances.setAttribute('repo', '')
+      utterances.crossorigin = 'anonymous';
+      utterances.src = 'https://utteranc.es/client.js';
+      // content 是要插入评论的地方
+      document.getElementById('gitment-container').appendChild(utterances);
+
+    }
+  }
+
+  function dark_utterance() {
+    const HEAD = check_utterance();
+    if (!HEAD) return;
+    const message = {
+      type: 'set-theme',
+      theme: utteranceCommon.Theme
+    };
+    const utteranceIframe = document.querySelector('iframe');
+    utteranceIframe.contentWindow.postMessage(message, 'https://utteranc.es');
+  }
+
+  $(document).ready(load_utterance);
+  document.addEventListener('pjax:complete', function () {
+    load_utterance();
+  });
+
+  $('.dark').click(function () {
+    setTimeout(() => {
+      dark_utterance();
+    });
+  })
+
+</script>
+
+<style>
+  .utterances {
+    max-width: inherit !important;
+  }
+</style>
+  
+
+
+<!-- 鼠标点击特效 -->
+<!-- 爱心点击 -->
+
+  
+    <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 999; pointer-events: none;" ></canvas>
+    <script src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+    <script src="/js/cursor/explosion.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-pjax></script>
+
+
+    <!-- pjax -->
+    
+
+<!-- pjax -->
+
+
+  <script src="/js/pjax@0.2.8/index.js"></script>
+  
+    <!-- 样式位于：source/css/_third-party/pjaxanimate.styl -->
+
+<div class="pjax-animate">
+  
+    <div class="loading-circle"><div id="loader-circle"></div></div>
+    <script>
+      window.ShowLoading = function() {
+        $(".loading-circle").css("display", "block");
+      };
+      window.HideLoading = function() {
+        $(".loading-circle").css("display", "none");
+      }
+    </script>
+  
+	<script>
+    document.addEventListener('pjax:complete', function () {
+      window.HideLoading();
+    })
+    document.addEventListener('pjax:send', function () {
+      window.ShowLoading();
+    })
+    document.addEventListener('pjax:error', function () {
+      window.HideLoading();
+    })
+	</script>
+</div>
+
+  
+
+  <script>
+    var pjax = new Pjax({
+      elements: 'a[href]:not([href^="#"]):not([href="javascript:void(0)"]):not([no-pjax])',   // 拦截正常带链接的 a 标签
+      selectors: ["#pjax-container","title"],                                   // 根据实际需要确认重载区域
+      cacheBust: false,   // url 地址追加时间戳，用以避免浏览器缓存
+      timeout: 5000
+    });
+
+    document.addEventListener('pjax:send', function (e) {
+
+      try {
+        var currentUrl = window.location.pathname;
+        var targetUrl = e.triggerElement.href;
+        var banUrl = [""];
+        if (banUrl[0] != "") {
+          banUrl.forEach(item => {
+            if(currentUrl.indexOf(item) != -1 || targetUrl.indexOf(item) != -1) {
+              window.location.href = targetUrl;
+            }
+          });
+        }
+      } catch (error) {}
+
+      $(window).unbind('resize');
+      $(window).unbind('scroll');
+      $(document).unbind('scroll');
+      $(document).unbind('click');
+      $('body').unbind('click');
+
+    })
+    
+    document.addEventListener('pjax:complete', function () {
+      $('script[data-pjax], .pjax-reload script').each(function () {
+        $(this).parent().append($(this).remove());
+      });
+    });
+
+    document.addEventListener('pjax:error', function (e) {
+      window.location.href = e.triggerElement.href;
+    })
+    
+    // 刷新不从顶部开始
+    document.addEventListener("DOMContentLoaded", function () {
+      history.scrollRestoration = 'auto';
+    })
+  </script>
+
+
+
+  </body>
+</html>

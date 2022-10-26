@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html>
+  <!-- meta/link... -->
+  
+
+
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+  <title>41.深入分析 ApplicationContext 的 refresh() | gy的小站</title>
+
+  <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_1911880_c1nvbyezg17.css">
+  <link href="https://cdn.jsdelivr.net/gh/inkss/fontawesome@5.15.3/css/all.min.css" rel="stylesheet">
+  <link href="/js/swiper/swiper@5.4.1.min.css" rel="stylesheet">
+  
+  
+    <script>
+        var themeModelId = '';
+        if (themeModelId) {
+            localStorage.setItem('modelId', themeModelId);
+        }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/gh/yuang01/live2d-widget@latest/autoload.js"></script>
+    <script>
+        var live2dOpen = eval('true') || false;
+        if (!live2dOpen) {
+            localStorage.setItem('waifu-display', 1609323474481);
+        }
+    </script>
+  
+  
+  
+<link rel="stylesheet" href="/css/animate.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/shareJs/share.min.css">
+
+  
+  <style>
+        @media (max-width: 992px) {
+            #waifu {
+                display: none;
+            }
+        }
+    </style>
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+    
+
+    <!-- import link -->
+    
+        
+            
+        
+            
+        
+    
+    <!-- import script -->
+    
+        
+            
+        
+            
+        
+    
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+  
+  <!-- 依赖于jquery和vue -->
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+
+  
+  
+  <body>
+    <!-- 预加载动画 -->
+    <!-- 页面预加载动画 -->
+
+<div id='loader'>
+  <link rel="stylesheet" href="/js/loaded/index.css" >
+  <div class="loading-left-bg"></div>
+  <div class="loading-right-bg"></div>
+  <div class="spinner-box">
+    <div class="configure-border-1">
+      <div class="configure-core"></div>
+    </div>
+    <div class="configure-border-2">
+      <div class="configure-core"></div>
+    </div>
+    <div class="loading-word">加载中...</div>
+  </div>
+</div>
+
+<script>
+  var endLoading = function () {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loader').classList.add("loading");
+  }
+  window.addEventListener('DOMContentLoaded',endLoading);
+  
+</script>
+
+    
+    <!-- 判断是否为暗黑风格 -->
+    <!-- 判断是否为黑夜模式 -->
+<script>
+  let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+
+  if (isDark) {
+    $(document.body).addClass('darkModel');
+  }
+</script>
+
+    <!-- 需要在上面加载的js -->
+    <script>
+  function loadScript(src, cb) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var HEAD = document.getElementsByTagName("head")[0] || document.documentElement;
+        var script = document.createElement("script");
+        script.setAttribute("type", "text/javascript");
+        if (cb) {
+          if (JSON.stringify(cb)) {
+            for (let p in cb) {
+              if (p == "onload") {
+                script[p] = () => {
+                  cb[p]()
+                  resolve()
+                }
+              } else {
+                script[p] = cb[p]
+                script.onload = resolve
+              }
+            }
+          } else {
+            script.onload = () => {
+              cb()
+              resolve()
+            };
+          }
+        } else {
+          script.onload = resolve
+        }
+        script.setAttribute("src", src);
+        HEAD.appendChild(script);
+      });
+    });
+  }
+
+  //https://github.com/filamentgroup/loadCSS
+  var loadCSS = function (href, before, media, attributes) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.href = src;
+        link.onload = resolve;
+        document.getElementsByTagName("head")[0].appendChild(link);
+      });
+    });
+  };
+
+</script> 
+
+<!-- 轮播图所需要的js -->
+<script src="/js/swiper/swiper.min.js"></script>
+<script src="/js/swiper/vue-awesome-swiper.js"></script>
+<script src="/js/swiper/swiper.animate1.0.3.min.js"></script>
+
+<script type="text/javascript">
+  Vue.use(window.VueAwesomeSwiper)
+</script>
+
+
+  <script src="/js/vue-typed-js/index.js"></script>
+
+
+<!-- 首页的公告滚动插件的js需要重新加载 -->
+<script src="/js/vue-seamless-scroll/index.js"></script>
+
+<!-- 打字机效果js -->
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+
+
+    <div id="safearea">
+      <main class="main" id="pjax-container">
+        <!-- 头部导航 -->
+        
+<header class="header   " 
+  id="navHeader"
+  style="position: fixed;
+  left: 0; top: 0; z-index: 10;width: 100%;"
+>
+  <div class="header-content">
+    <div class="bars">
+      <div id="appDrawer" class="sidebar-image">
+  <div class="drawer-box-icon">
+    <i class="fas fa-bars" aria-hidden="true" @click="showDialogDrawer"></i>
+  </div>
+  
+  <transition name="fade">
+    <div class="drawer-box_mask" v-cloak style="display: none;" v-show="visible" @click.self="cancelDialogDrawer">
+    </div>
+  </transition>
+  <div class="drawer-box" :class="{'active': visible}">
+    <div class="drawer-box-head bg-color">
+      <img class="drawer-box-head_logo lazyload placeholder" src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+      <h3 class="drawer-box-head_title">gy的小站</h3>
+      <h5 class="drawer-box-head_desc">滴水穿石不是水的力量,而是坚持的力量</h5>
+    </div>
+    
+    <div class="drawer-box-content">
+      <ul class="drawer-box-content_menu">
+        
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/archives" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/tags" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/categories" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/about" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/friends" class="drawer-menu-item-link">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="javascript:;" class="drawer-menu-item-link has-children" @click="openOrCloseMenu(6)">
+                  <span>
+                    
+                      <i class="fas fa-link"></i>
+                    
+                    <span class="name">更多</span>
+                  </span>
+                  <i class="fas fa-chevron-left arrow " :class="{'icon-rotate': isOpen(6)}" aria-hidden="true"></i>
+                </a>
+                <ul class="drawer-sub-menu" v-if="isOpen(6)">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+        
+          <li class="drawer-box-content_item">
+            <a target="_blank" rel="noopener" href="https://github.com/gaoyangya">
+              <i class="fas fa-github" aria-hidden="true"></i>
+              <span>Github</span>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDrawer',
+    data: {
+      visible: false,
+      top: 0,
+      openArr: [],
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      isOpen(index) {
+        if (this.openArr.includes(index)) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      openOrCloseMenu(curIndex) {
+        const index = this.openArr.indexOf(curIndex);
+        if (index !== -1) {
+          this.openArr.splice(index, 1);
+        } else {
+          this.openArr.push(curIndex);
+        }
+      },
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'width: 100%; height: 100%;overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      }
+    },
+    created() {}
+  })
+</script>
+
+    </div>
+    <div class="blog-title" id="author-avatar">
+      
+        <div class="avatar">
+          <img src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+        </div>
+      
+      <a href="/" class="logo">gy的小站</a>
+    </div>
+    <nav class="navbar">
+      <ul class="menu">
+        
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/" class="menu-item-link" title="首页">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/archives" class="menu-item-link" title="归档">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/tags" class="menu-item-link" title="标签">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/categories" class="menu-item-link" title="分类">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/about" class="menu-item-link" title="关于">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/friends" class="menu-item-link" title="友情链接">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="javascript:;" class="menu-item-link" title="更多">
+                  
+                    <i class="fas fa-link"></i>
+                  
+                  <span class="name">更多</span>
+                  <i class="fas fa-chevron-down arrow" aria-hidden="true"></i>
+                </a>
+                <ul class="sub-menu">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+      </ul>
+      
+      
+        <div id="appSearch">
+  <div class="search"  @click="showDialog()"><i class="fas fa-search" aria-hidden="true"></i></div>
+  <transition name="fade">
+    <div class="message-box_wrapper" style="display: none;" v-cloak v-show="dialogVisible" @click.self="cancelDialogVisible()">
+      <div class="message-box animated bounceInDown">
+        <h2>
+          <span>
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <span class="title">本地搜索</span>
+          </span>
+          <i class="fas fa-times close" pointer style="float:right;" aria-hidden="true" @click.self="cancelDialogVisible()"></i>
+        </h2>
+        <form class="site-search-form">
+          <input type="text"
+            placeholder="请输入关键字"
+            id="local-search-input" 
+            @click="getSearchFile()"
+            class="st-search-input"
+            v-model="searchInput"
+          />
+        </form>
+        <div class="result-wrapper">
+          <div id="local-search-result" class="local-search-result-cls"></div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+<script src="/js/local_search.js"></script>
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appSearch',
+    data: {
+      dialogVisible: false,
+      searchInput: '',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+      window.addEventListener('pjax:complete', () => {
+        this.cancelDialogVisible();
+      })
+    },
+    methods: {
+      showDialog() {
+        this.dialogVisible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'overflow: hidden;';
+      },
+      getSearchFile() {
+        if (!this.searchInput) {
+          getSearchFile("/search.xml");
+        }
+      },
+      cancelDialogVisible() {
+        this.dialogVisible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+    },
+    created() {}
+  })
+</script>
+<!-- 解决刷新页面闪烁问题，可以在元素上添加display: none, 或者用vue.extend方法，详情：https://blog.csdn.net/qq_31393401/article/details/81017912 -->
+<!-- 下面是搜索基本写法 -->
+<!-- <script type="text/javascript" id="local.search.active">
+  var inputArea = document.querySelector("#local-search-input");
+  inputArea.onclick   = function(){ getSearchFile(); this.onclick = null }
+  inputArea.onkeydown = function(){ if(event.keyCode == 13) return false }
+</script> -->
+
+      
+
+    </nav>
+  </div>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/gaoyangya" class="github-corner color-primary" aria-label="View source on GitHub"><svg width="60" height="60" viewBox="0 0 250 250" style="fill:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+  
+  
+    <div id="he-plugin-simple"></div>
+    <script>
+      WIDGET = {
+        CONFIG: {
+          "modules": "012",
+          "background": 5,
+          "tmpColor": "4A4A4A",
+          "tmpSize": 16,
+          "cityColor": "4A4A4A",
+          "citySize": 16,
+          "aqiSize": 16,
+          "weatherIconSize": 24,
+          "alertIconSize": 18,
+          "padding": "10px 10px 10px 10px",
+          "shadow": "1",
+          "language": "auto",
+          "borderRadius": 5,
+          "fixed": "false",
+          "vertical": "middle",
+          "horizontal": "center",
+          "key": "2784dd3fcb1e4f0f9a9b579bf69641f2"
+        }
+      }
+    </script>
+    <script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script> 
+    
+</header>
+        <!-- 内容区域 -->
+        
+ <!-- prismjs 代码高亮 -->
+ 
+    
+    <link href="/js/prism/prism-line-numbers.css" rel="stylesheet">
+    
+        <link href="/js/prism/prism.min.css" rel="stylesheet">
+    
+
+    <style>
+        pre[class*="language-"] {
+            overflow-y: hidden;
+        }
+        .line-numbers .line-numbers-rows {
+            border: none;
+        }
+    </style>
+  
+
+
+<div class="bg-dark-floor" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -1;"></div>
+
+
+  <!-- 文章详情页顶部图片和标题 -->
+
+
+
+
+<div class="post-detail-header" id="thumbnail_canvas" style="background-repeat: no-repeat; background-size: cover; 
+  background-position: center center;position: relative;background-image:url('/medias/9.jpg')">
+  <div class="post-detail-header-mask"></div>
+  <canvas id="header_canvas"style="position:absolute;bottom:0;pointer-events:none;"></canvas>
+  
+  <div class="post-detail-header_info-box">
+    <div class="title-box">
+      <span class="title">
+        41.深入分析 ApplicationContext 的 refresh()
+      </span>
+    </div>
+    
+    
+      
+        <span class="post-detail-header_date">
+          <i class="fas fa-calendar"></i> 发表于：2021-04-14 |
+        </span>
+      
+
+      
+        <span class="post-detail-header_categories">
+          <i class="iconfont iconbookmark1"></i> 分类：
+          
+            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-detail-header_category">
+              后端
+            </a>
+          
+            <a href="/categories/%E5%90%8E%E7%AB%AF/Spring%E6%BA%90%E7%A0%81/" class="post-detail-header_category">
+              Spring源码
+            </a>
+          
+        </span>
+      
+
+      
+    
+  </div>
+  
+  
+    <script src="/js/bubble/bubble.js"></script>
+  
+</div>
+
+
+
+
+
+<div class="row justify-position" 
+  style="padding-top: 0px;">
+  <div class="main-content">
+    <article class="post post-detail">
+      <div class="post-content">
+        <p>上篇博客只是对 ApplicationContext 相关的接口做了一个简单的介绍，作为一个高富帅级别的 Spring 容器，它涉及的方法实在是太多了，全部介绍是不可能的，而且大部分功能都已经在前面系列博客中做了详细的介绍，所以这篇博问介绍 ApplicationContext 最重要的方法（小编认为的） ：<code>#refresh()</code> 方法。</p>
+<blockquote>
+<p>艿艿：我也这么认为，<code>#refresh()</code> 方法是关键的关键！</p>
+</blockquote>
+<p><code>#refresh()</code> 方法，是定义在 ConfigurableApplicationContext 类中的，如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConfigurableApplicationContext.java
+
+&#x2F;**
+ * Load or refresh the persistent representation of the configuration,
+ * which might an XML file, properties file, or relational database schema.
+ * As this is a startup method, it should destroy already created singletons
+ * if it fails, to avoid dangling resources. In other words, after invocation
+ * of that method, either all or no singletons at all should be instantiated.
+ * @throws BeansException if the bean factory could not be initialized
+ * @throws IllegalStateException if already initialized and multiple refresh
+ * attempts are not supported
+ *&#x2F;
+void refresh() throws BeansException, IllegalStateException;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>作用就是：<strong>刷新 Spring 的应用上下文</strong>。</li>
+</ul>
+<p>其实现是在 AbstractApplicationContext 中实现。如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+@Override
+public void refresh() throws BeansException, IllegalStateException &#123;
+	synchronized (this.startupShutdownMonitor) &#123;
+		&#x2F;&#x2F; 准备刷新上下文环境
+		prepareRefresh();
+
+		&#x2F;&#x2F; 创建并初始化 BeanFactory
+		ConfigurableListableBeanFactory beanFactory &#x3D; obtainFreshBeanFactory();
+
+		&#x2F;&#x2F; 填充BeanFactory功能
+		prepareBeanFactory(beanFactory);
+
+		try &#123;
+			&#x2F;&#x2F; 提供子类覆盖的额外处理，即子类处理自定义的BeanFactoryPostProcess
+			postProcessBeanFactory(beanFactory);
+
+			&#x2F;&#x2F; 激活各种BeanFactory处理器
+			invokeBeanFactoryPostProcessors(beanFactory);
+
+			&#x2F;&#x2F; 注册拦截Bean创建的Bean处理器，即注册 BeanPostProcessor
+			registerBeanPostProcessors(beanFactory);
+
+			&#x2F;&#x2F; 初始化上下文中的资源文件，如国际化文件的处理等
+			initMessageSource();
+
+			&#x2F;&#x2F; 初始化上下文事件广播器
+			initApplicationEventMulticaster();
+
+			&#x2F;&#x2F; 给子类扩展初始化其他Bean
+			onRefresh();
+
+			&#x2F;&#x2F; 在所有bean中查找listener bean，然后注册到广播器中
+			registerListeners();
+
+			&#x2F;&#x2F; 初始化剩下的单例Bean(非延迟加载的)
+			finishBeanFactoryInitialization(beanFactory);
+
+			&#x2F;&#x2F; 完成刷新过程,通知生命周期处理器lifecycleProcessor刷新过程,同时发出ContextRefreshEvent通知别人
+			finishRefresh();
+		&#125; catch (BeansException ex) &#123;
+			if (logger.isWarnEnabled()) &#123;
+				logger.warn(&quot;Exception encountered during context initialization - &quot; +
+						&quot;cancelling refresh attempt: &quot; + ex);
+			&#125;
+
+			&#x2F;&#x2F;  销毁已经创建的Bean
+			destroyBeans();
+
+			&#x2F;&#x2F; 重置容器激活标签
+			cancelRefresh(ex);
+
+			&#x2F;&#x2F; 抛出异常
+			throw ex;
+		&#125; finally &#123;
+			&#x2F;&#x2F; Reset common introspection caches in Spring&#39;s core, since we
+			&#x2F;&#x2F; might not ever need metadata for singleton beans anymore...
+			resetCommonCaches();
+		&#125;
+	&#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这里每一个方法都非常重要，需要一个一个地解释说明。</p>
+<h1 id="1-prepareRefresh"><a href="#1-prepareRefresh" class="headerlink" title="1. prepareRefresh()"></a>1. prepareRefresh()</h1><blockquote>
+<p>初始化上下文环境，对系统的环境变量或者系统属性进行准备和校验,如环境变量中必须设置某个值才能运行，否则不能运行，这个时候可以在这里加这个校验，重写 initPropertySources 方法就好了</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+protected void prepareRefresh() &#123;
+   &#x2F;&#x2F; 设置启动日期
+	this.startupDate &#x3D; System.currentTimeMillis();
+	&#x2F;&#x2F; 设置 context 当前状态
+	this.closed.set(false);
+	this.active.set(true);
+
+	if (logger.isInfoEnabled()) &#123;
+		logger.info(&quot;Refreshing &quot; + this);
+	&#125;
+
+	&#x2F;&#x2F; 初始化context environment（上下文环境）中的占位符属性来源
+	initPropertySources();
+
+	&#x2F;&#x2F; 对属性进行必要的验证
+	getEnvironment().validateRequiredProperties();
+
+	this.earlyApplicationEvents &#x3D; new LinkedHashSet&lt;&gt;();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>该方法主要是做一些准备工作，如：</p>
+<ol>
+<li>设置 context 启动时间</li>
+<li>设置 context 的当前状态</li>
+<li>初始化 context environment 中占位符</li>
+<li>对属性进行必要的验证</li>
+</ol>
+<h1 id="2-obtainFreshBeanFactory"><a href="#2-obtainFreshBeanFactory" class="headerlink" title="2. obtainFreshBeanFactory()"></a>2. obtainFreshBeanFactory()</h1><blockquote>
+<p>创建并初始化 BeanFactory</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+protected ConfigurableListableBeanFactory obtainFreshBeanFactory() &#123;
+   &#x2F;&#x2F; 刷新 BeanFactory
+	refreshBeanFactory();
+	&#x2F;&#x2F; 获取 BeanFactory
+	ConfigurableListableBeanFactory beanFactory &#x3D; getBeanFactory();
+	if (logger.isDebugEnabled()) &#123;
+		logger.debug(&quot;Bean factory for &quot; + getDisplayName() + &quot;: &quot; + beanFactory);
+	&#125;
+	return beanFactory;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>核心方法就在 <code>#refreshBeanFactory()</code> 方法，该方法的核心任务就是创建 BeanFactory 并对其就行一番初始化。如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractRefreshableApplicationContext.java
+
+@Override
+protected final void refreshBeanFactory() throws BeansException &#123;
+    &#x2F;&#x2F; 若已有 BeanFactory ，销毁它的 Bean 们，并销毁 BeanFactory
+    if (hasBeanFactory()) &#123;
+        destroyBeans();
+        closeBeanFactory();
+    &#125;
+    try &#123;
+        &#x2F;&#x2F; 创建 BeanFactory 对象
+        DefaultListableBeanFactory beanFactory &#x3D; createBeanFactory();
+        &#x2F;&#x2F; 指定序列化编号
+        beanFactory.setSerializationId(getId());
+        &#x2F;&#x2F; 定制 BeanFactory 设置相关属性
+        customizeBeanFactory(beanFactory);
+        &#x2F;&#x2F; 加载 BeanDefinition 们
+        loadBeanDefinitions(beanFactory);
+        &#x2F;&#x2F; 设置 Context 的 BeanFactory
+        synchronized (this.beanFactoryMonitor) &#123;
+            this.beanFactory &#x3D; beanFactory;
+        &#125;
+    &#125; catch (IOException ex) &#123;
+        throw new ApplicationContextException(&quot;I&#x2F;O error parsing bean definition source for &quot; + getDisplayName(), ex);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol>
+<li>判断当前容器是否存在一个 BeanFactory，如果存在则对其进行销毁和关闭</li>
+<li>调用 <code>#createBeanFactory()</code> 方法，创建一个 BeanFactory 实例，其实就是 DefaultListableBeanFactory 。</li>
+<li>自定义 BeanFactory</li>
+<li>加载 BeanDefinition 。</li>
+<li>将创建好的 bean 工厂的引用交给的 context 来管理</li>
+</ol>
+<p>上面 5 个步骤，都是比较简单的，但是有必要讲解下第 4 步：加载 BeanDefinition。如果各位看过 【死磕 Spring】系列的话，在刚刚开始分析源码的时候，小编就是以 <code>BeanDefinitionReader#loadBeanDefinitions(Resource resource)</code> 方法，作为入口来分析的，示例如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; 示例代码
+
+ClassPathResource resource &#x3D; new ClassPathResource(&quot;bean.xml&quot;);
+DefaultListableBeanFactory factory &#x3D; new DefaultListableBeanFactory();
+XmlBeanDefinitionReader reader &#x3D; new XmlBeanDefinitionReader(factory);
+reader.loadBeanDefinitions(resource);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>只不过这段代码的 <code>BeanDefinitionReader#loadBeanDefinitions(Resource)</code> 方法，是定义在 BeanDefinitionReader 中，而此处的 <code>#loadBeanDefinitions(DefaultListableBeanFactory beanFactory)</code> 则是定义在 AbstractRefreshableApplicationContext 中，如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractRefreshableApplicationContext.java
+
+protected abstract void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>由具体的子类实现，我们以 AbstractXmlApplicationContext 为例，实现如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractXmlApplicationContext.java
+
+@Override
+protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException &#123;
+    &#x2F;&#x2F; Create a new XmlBeanDefinitionReader for the given BeanFactory.
+    &#x2F;&#x2F; 创建 XmlBeanDefinitionReader 对象
+    XmlBeanDefinitionReader beanDefinitionReader &#x3D; new XmlBeanDefinitionReader(beanFactory);
+
+    &#x2F;&#x2F; Configure the bean definition reader with this context&#39;s
+    &#x2F;&#x2F; resource loading environment.
+    &#x2F;&#x2F; 对 XmlBeanDefinitionReader 进行环境变量的设置
+    beanDefinitionReader.setEnvironment(this.getEnvironment());
+    beanDefinitionReader.setResourceLoader(this);
+    beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));
+
+    &#x2F;&#x2F; Allow a subclass to provide custom initialization of the reader,
+    &#x2F;&#x2F; then proceed with actually loading the bean definitions.
+    &#x2F;&#x2F; 对 XmlBeanDefinitionReader 进行设置，可以进行覆盖
+    initBeanDefinitionReader(beanDefinitionReader);
+
+    &#x2F;&#x2F; 从 Resource 们中，加载 BeanDefinition 们
+    loadBeanDefinitions(beanDefinitionReader);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p>新建 XmlBeanDefinitionReader 实例对象 beanDefinitionReader，调用 <code>initBeanDefinitionReader()</code> 对其进行初始化，然后调用 <code>loadBeanDefinitions()</code> 加载 BeanDefinition。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractXmlApplicationContext.java
+
+protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException &#123;
+    &#x2F;&#x2F; 从配置文件 Resource 中，加载 BeanDefinition 们
+    Resource[] configResources &#x3D; getConfigResources();
+    if (configResources !&#x3D; null) &#123;
+        reader.loadBeanDefinitions(configResources);
+    &#125;
+    &#x2F;&#x2F; 从配置文件地址中，加载 BeanDefinition 们
+    String[] configLocations &#x3D; getConfigLocations();
+    if (configLocations !&#x3D; null) &#123;
+        reader.loadBeanDefinitions(configLocations);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>到这里我们发现，其实内部依然是调用 <code>BeanDefinitionReader#loadBeanDefinitionn()</code> 进行 BeanDefinition 的加载进程。</li>
+</ul>
+</li>
+</ul>
+<h1 id="3-prepareBeanFactory-beanFactory"><a href="#3-prepareBeanFactory-beanFactory" class="headerlink" title="3. prepareBeanFactory(beanFactory)"></a>3. prepareBeanFactory(beanFactory)</h1><blockquote>
+<p>填充 BeanFactory 功能</p>
+</blockquote>
+<p>上面获取获取的 BeanFactory 除了加载了一些 BeanDefinition 就没有其他任何东西了，这个时候其实还不能投入生产，因为还少配置了一些东西，比如 context的 ClassLoader 和 后置处理器等等。</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) &#123;
+	&#x2F;&#x2F; 设置beanFactory的classLoader
+	beanFactory.setBeanClassLoader(getClassLoader());
+
+	&#x2F;&#x2F; 设置beanFactory的表达式语言处理器,Spring3开始增加了对语言表达式的支持,默认可以使用#&#123;bean.xxx&#125;的形式来调用相关属性值
+	beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+	&#x2F;&#x2F; 为beanFactory增加一个默认的propertyEditor
+	beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
+
+	&#x2F;&#x2F; 添加ApplicationContextAwareProcessor
+	beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+	&#x2F;&#x2F; 设置忽略自动装配的接口
+    beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
+	beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
+	beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
+	beanFactory.ignoreDependencyInterface(ApplicationEventPublisherAware.class);
+	beanFactory.ignoreDependencyInterface(MessageSourceAware.class);
+	beanFactory.ignoreDependencyInterface(ApplicationContextAware.class);
+
+	&#x2F;&#x2F; 设置几个自动装配的特殊规则
+	beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
+	beanFactory.registerResolvableDependency(ResourceLoader.class, this);
+	beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
+	beanFactory.registerResolvableDependency(ApplicationContext.class, this);
+
+	&#x2F;&#x2F; Register early post-processor for detecting inner beans as ApplicationListeners.
+	beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
+
+	&#x2F;&#x2F; 增加对AspectJ的支持
+	if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) &#123;
+		beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+		&#x2F;&#x2F; Set a temporary ClassLoader for type matching.
+		beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+	&#125;
+
+	&#x2F;&#x2F; 注册默认的系统环境bean
+	if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) &#123;
+		beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
+	&#125;
+	if (!beanFactory.containsLocalBean(SYSTEM_PROPERTIES_BEAN_NAME)) &#123;
+		beanFactory.registerSingleton(SYSTEM_PROPERTIES_BEAN_NAME, getEnvironment().getSystemProperties());
+	&#125;
+	if (!beanFactory.containsLocalBean(SYSTEM_ENVIRONMENT_BEAN_NAME)) &#123;
+		beanFactory.registerSingleton(SYSTEM_ENVIRONMENT_BEAN_NAME, getEnvironment().getSystemEnvironment());
+	&#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>看上面的源码知道这个就是对 BeanFactory 设置各种各种的功能。</p>
+<h1 id="4-postProcessBeanFactory"><a href="#4-postProcessBeanFactory" class="headerlink" title="4. postProcessBeanFactory()"></a>4. postProcessBeanFactory()</h1><blockquote>
+<p>提供子类覆盖的额外处理，即子类处理自定义的BeanFactoryPostProcess</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) &#123;
+	beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(this.servletContext, this.servletConfig));
+	beanFactory.ignoreDependencyInterface(ServletContextAware.class);
+	beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
+
+	WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, this.servletContext);
+	WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext, this.servletConfig);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ol>
+<li>添加 ServletContextAwareProcessor 到 BeanFactory 容器中，该 processor 实现 BeanPostProcessor 接口，主要用于将ServletContext 传递给实现了 ServletContextAware 接口的 bean</li>
+<li>忽略 ServletContextAware、ServletConfigAware</li>
+<li>注册 WEB 应用特定的域（scope）到 beanFactory 中，以便 WebApplicationContext 可以使用它们。比如 “request” , “session” , “globalSession” , “application”</li>
+<li>注册 WEB 应用特定的 Environment bean 到 beanFactory 中，以便WebApplicationContext 可以使用它们。如：”contextParameters”, “contextAttributes”</li>
+</ol>
+<h1 id="5-invokeBeanFactoryPostProcessors"><a href="#5-invokeBeanFactoryPostProcessors" class="headerlink" title="5. invokeBeanFactoryPostProcessors()"></a>5. invokeBeanFactoryPostProcessors()</h1><blockquote>
+<p>激活各种BeanFactory处理器</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+public static void invokeBeanFactoryPostProcessors(
+		ConfigurableListableBeanFactory beanFactory, List&lt;BeanFactoryPostProcessor&gt; beanFactoryPostProcessors) &#123;
+
+	&#x2F;&#x2F; 定义一个 set 保存所有的 BeanFactoryPostProcessors
+	Set&lt;String&gt; processedBeans &#x3D; new HashSet&lt;&gt;();
+
+	&#x2F;&#x2F; 如果当前 BeanFactory 为 BeanDefinitionRegistry
+	if (beanFactory instanceof BeanDefinitionRegistry) &#123;
+		BeanDefinitionRegistry registry &#x3D; (BeanDefinitionRegistry) beanFactory;
+		&#x2F;&#x2F; BeanFactoryPostProcessor 集合
+		List&lt;BeanFactoryPostProcessor&gt; regularPostProcessors &#x3D; new ArrayList&lt;&gt;();
+		&#x2F;&#x2F; BeanDefinitionRegistryPostProcessor 集合
+		List&lt;BeanDefinitionRegistryPostProcessor&gt; registryProcessors &#x3D; new ArrayList&lt;&gt;();
+
+		&#x2F;&#x2F; 迭代注册的 beanFactoryPostProcessors
+		for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) &#123;
+			&#x2F;&#x2F; 如果是 BeanDefinitionRegistryPostProcessor，则调用 postProcessBeanDefinitionRegistry 进行注册，
+			&#x2F;&#x2F; 同时加入到 registryProcessors 集合中
+			if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) &#123;
+				BeanDefinitionRegistryPostProcessor registryProcessor &#x3D;
+						(BeanDefinitionRegistryPostProcessor) postProcessor;
+				registryProcessor.postProcessBeanDefinitionRegistry(registry);
+				registryProcessors.add(registryProcessor);
+			&#125;
+			else &#123;
+				&#x2F;&#x2F; 否则当做普通的 BeanFactoryPostProcessor 处理
+				&#x2F;&#x2F; 添加到 regularPostProcessors 集合中即可，便于后面做后续处理
+				regularPostProcessors.add(postProcessor);
+			&#125;
+		&#125;
+
+		&#x2F;&#x2F; 用于保存当前处理的 BeanDefinitionRegistryPostProcessor
+		List&lt;BeanDefinitionRegistryPostProcessor&gt; currentRegistryProcessors &#x3D; new ArrayList&lt;&gt;();
+
+		&#x2F;&#x2F; 首先处理实现了 PriorityOrdered (有限排序接口)的 BeanDefinitionRegistryPostProcessor
+		String[] postProcessorNames &#x3D;
+				beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+		for (String ppName : postProcessorNames) &#123;
+			if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) &#123;
+				currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+				processedBeans.add(ppName);
+			&#125;
+		&#125;
+
+		&#x2F;&#x2F; 排序
+		sortPostProcessors(currentRegistryProcessors, beanFactory);
+
+		&#x2F;&#x2F; 加入registryProcessors集合
+		registryProcessors.addAll(currentRegistryProcessors);
+
+		&#x2F;&#x2F; 调用所有实现了 PriorityOrdered 的 BeanDefinitionRegistryPostProcessors 的 postProcessBeanDefinitionRegistry()
+		invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+
+		&#x2F;&#x2F; 清空，以备下次使用
+		currentRegistryProcessors.clear();
+
+		&#x2F;&#x2F; 其次，调用是实现了 Ordered（普通排序接口）的 BeanDefinitionRegistryPostProcessors
+		&#x2F;&#x2F; 逻辑和 上面一样
+		postProcessorNames &#x3D; beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+		for (String ppName : postProcessorNames) &#123;
+			if (!processedBeans.contains(ppName) &amp;&amp; beanFactory.isTypeMatch(ppName, Ordered.class)) &#123;
+				currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+				processedBeans.add(ppName);
+			&#125;
+		&#125;
+		sortPostProcessors(currentRegistryProcessors, beanFactory);
+		registryProcessors.addAll(currentRegistryProcessors);
+		invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+		currentRegistryProcessors.clear();
+
+		&#x2F;&#x2F; 最后调用其他的 BeanDefinitionRegistryPostProcessors
+		boolean reiterate &#x3D; true;
+		while (reiterate) &#123;
+			reiterate &#x3D; false;
+			&#x2F;&#x2F; 获取 BeanDefinitionRegistryPostProcessor
+			postProcessorNames &#x3D; beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+			for (String ppName : postProcessorNames) &#123;
+
+				&#x2F;&#x2F; 没有包含在 processedBeans 中的（因为包含了的都已经处理了）
+				if (!processedBeans.contains(ppName)) &#123;
+					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+					processedBeans.add(ppName);
+					reiterate &#x3D; true;
+				&#125;
+			&#125;
+
+			&#x2F;&#x2F; 与上面处理逻辑一致
+			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			registryProcessors.addAll(currentRegistryProcessors);
+			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+			currentRegistryProcessors.clear();
+		&#125;
+
+		&#x2F;&#x2F; 调用所有 BeanDefinitionRegistryPostProcessor (包括手动注册和通过配置文件注册)
+		&#x2F;&#x2F; 和 BeanFactoryPostProcessor(只有手动注册)的回调函数(postProcessBeanFactory())
+		invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
+		invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
+	&#125;
+
+	else &#123;
+		&#x2F;&#x2F; 如果不是 BeanDefinitionRegistry 只需要调用其回调函数（postProcessBeanFactory()）即可
+		invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
+	&#125;
+
+	&#x2F;&#x2F;
+	String[] postProcessorNames &#x3D;
+			beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class, true, false);
+
+	&#x2F;&#x2F; 这里同样需要区分 PriorityOrdered 、Ordered 和 no Ordered
+	List&lt;BeanFactoryPostProcessor&gt; priorityOrderedPostProcessors &#x3D; new ArrayList&lt;&gt;();
+	List&lt;String&gt; orderedPostProcessorNames &#x3D; new ArrayList&lt;&gt;();
+	List&lt;String&gt; nonOrderedPostProcessorNames &#x3D; new ArrayList&lt;&gt;();
+	for (String ppName : postProcessorNames) &#123;
+		&#x2F;&#x2F; 已经处理过了的，跳过
+		if (processedBeans.contains(ppName)) &#123;
+			&#x2F;&#x2F; skip - already processed in first phase above
+		&#125;
+		&#x2F;&#x2F; PriorityOrdered
+		else if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) &#123;
+			priorityOrderedPostProcessors.add(beanFactory.getBean(ppName, BeanFactoryPostProcessor.class));
+		&#125;
+		&#x2F;&#x2F; Ordered
+		else if (beanFactory.isTypeMatch(ppName, Ordered.class)) &#123;
+			orderedPostProcessorNames.add(ppName);
+		&#125;
+		&#x2F;&#x2F; no Ordered
+		else &#123;
+			nonOrderedPostProcessorNames.add(ppName);
+		&#125;
+	&#125;
+
+	&#x2F;&#x2F; First, PriorityOrdered 接口
+	sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
+	invokeBeanFactoryPostProcessors(priorityOrderedPostProcessors, beanFactory);
+
+	&#x2F;&#x2F; Next, Ordered 接口
+	List&lt;BeanFactoryPostProcessor&gt; orderedPostProcessors &#x3D; new ArrayList&lt;&gt;();
+	for (String postProcessorName : orderedPostProcessorNames) &#123;
+		orderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
+	&#125;
+	sortPostProcessors(orderedPostProcessors, beanFactory);
+	invokeBeanFactoryPostProcessors(orderedPostProcessors, beanFactory);
+
+	&#x2F;&#x2F; Finally, no ordered
+	List&lt;BeanFactoryPostProcessor&gt; nonOrderedPostProcessors &#x3D; new ArrayList&lt;&gt;();
+	for (String postProcessorName : nonOrderedPostProcessorNames) &#123;
+		nonOrderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
+	&#125;
+	invokeBeanFactoryPostProcessors(nonOrderedPostProcessors, beanFactory);
+
+	&#x2F;&#x2F; Clear cached merged bean definitions since the post-processors might have
+	&#x2F;&#x2F; modified the original metadata, e.g. replacing placeholders in values...
+	beanFactory.clearMetadataCache();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上述代码较长，但是处理逻辑较为单一，就是对所有的 BeanDefinitionRegistryPostProcessors 、手动注册的 BeanFactoryPostProcessor 以及通过配置文件方式的 BeanFactoryPostProcessor 按照 PriorityOrdered 、 Ordered、no ordered 三种方式分开处理、调用。</p>
+<h1 id="6-registerBeanPostProcessors"><a href="#6-registerBeanPostProcessors" class="headerlink" title="6. registerBeanPostProcessors"></a>6. registerBeanPostProcessors</h1><blockquote>
+<p>注册拦截Bean创建的Bean处理器，即注册 BeanPostProcessor</p>
+</blockquote>
+<p>与 BeanFactoryPostProcessor 一样，也是委托给 PostProcessorRegistrationDelegate 来实现的。</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+public static void registerBeanPostProcessors(
+		ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) &#123;
+
+	&#x2F;&#x2F; 所有的 BeanPostProcessors
+	String[] postProcessorNames &#x3D; beanFactory.getBeanNamesForType(BeanPostProcessor.class, true, false);
+
+	&#x2F;&#x2F; 注册 BeanPostProcessorChecker
+	&#x2F;&#x2F; 主要用于记录一些 bean 的信息，这些 bean 不符合所有 BeanPostProcessors 处理的资格时
+	int beanProcessorTargetCount &#x3D; beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
+	beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
+
+	&#x2F;&#x2F; 区分 PriorityOrdered、Ordered 、 no ordered
+	List&lt;BeanPostProcessor&gt; priorityOrderedPostProcessors &#x3D; new ArrayList&lt;&gt;();
+	List&lt;String&gt; orderedPostProcessorNames &#x3D; new ArrayList&lt;&gt;();
+	List&lt;String&gt; nonOrderedPostProcessorNames &#x3D; new ArrayList&lt;&gt;();
+	&#x2F;&#x2F; MergedBeanDefinition
+	List&lt;BeanPostProcessor&gt; internalPostProcessors &#x3D; new ArrayList&lt;&gt;();
+	for (String ppName : postProcessorNames) &#123;
+		if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) &#123;
+			BeanPostProcessor pp &#x3D; beanFactory.getBean(ppName, BeanPostProcessor.class);
+			priorityOrderedPostProcessors.add(pp);
+			if (pp instanceof MergedBeanDefinitionPostProcessor) &#123;
+				internalPostProcessors.add(pp);
+			&#125;
+		&#125;
+		else if (beanFactory.isTypeMatch(ppName, Ordered.class)) &#123;
+			orderedPostProcessorNames.add(ppName);
+		&#125;
+		else &#123;
+			nonOrderedPostProcessorNames.add(ppName);
+		&#125;
+	&#125;
+
+	&#x2F;&#x2F; First, PriorityOrdered
+	sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
+	registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors);
+
+	&#x2F;&#x2F; Next, Ordered
+	List&lt;BeanPostProcessor&gt; orderedPostProcessors &#x3D; new ArrayList&lt;&gt;();
+	for (String ppName : orderedPostProcessorNames) &#123;
+		BeanPostProcessor pp &#x3D; beanFactory.getBean(ppName, BeanPostProcessor.class);
+		orderedPostProcessors.add(pp);
+		if (pp instanceof MergedBeanDefinitionPostProcessor) &#123;
+			internalPostProcessors.add(pp);
+		&#125;
+	&#125;
+	sortPostProcessors(orderedPostProcessors, beanFactory);
+	registerBeanPostProcessors(beanFactory, orderedPostProcessors);
+
+	&#x2F;&#x2F; onOrdered
+	List&lt;BeanPostProcessor&gt; nonOrderedPostProcessors &#x3D; new ArrayList&lt;&gt;();
+	for (String ppName : nonOrderedPostProcessorNames) &#123;
+		BeanPostProcessor pp &#x3D; beanFactory.getBean(ppName, BeanPostProcessor.class);
+		nonOrderedPostProcessors.add(pp);
+		if (pp instanceof MergedBeanDefinitionPostProcessor) &#123;
+			internalPostProcessors.add(pp);
+		&#125;
+	&#125;
+	registerBeanPostProcessors(beanFactory, nonOrderedPostProcessors);
+
+	&#x2F;&#x2F; Finally, all internal BeanPostProcessors.
+	sortPostProcessors(internalPostProcessors, beanFactory);
+	registerBeanPostProcessors(beanFactory, internalPostProcessors);
+
+	&#x2F;&#x2F; 重新注册用来自动探测内部ApplicationListener的post-processor，这样可以将他们移到处理器链条的末尾
+	beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(applicationContext));
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h1 id="7-initMessageSource"><a href="#7-initMessageSource" class="headerlink" title="7. initMessageSource"></a>7. initMessageSource</h1><blockquote>
+<p>初始化上下文中的资源文件，如国际化文件的处理等</p>
+</blockquote>
+<p>其实该方法就是初始化一个 MessageSource 接口的实现类，主要用于国际化/i18n。</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+protected void initMessageSource() &#123;
+	ConfigurableListableBeanFactory beanFactory &#x3D; getBeanFactory();
+	&#x2F;&#x2F; 包含 “messageSource” bean
+	if (beanFactory.containsLocalBean(MESSAGE_SOURCE_BEAN_NAME)) &#123;
+		this.messageSource &#x3D; beanFactory.getBean(MESSAGE_SOURCE_BEAN_NAME, MessageSource.class);
+		&#x2F;&#x2F; 如果有父类
+		&#x2F;&#x2F; HierarchicalMessageSource 分级处理的 MessageSource
+		if (this.parent !&#x3D; null &amp;&amp; this.messageSource instanceof HierarchicalMessageSource) &#123;
+			HierarchicalMessageSource hms &#x3D; (HierarchicalMessageSource) this.messageSource;
+			if (hms.getParentMessageSource() &#x3D;&#x3D; null) &#123;
+				&#x2F;&#x2F; 如果没有注册父 MessageSource，则设置为父类上下文的的 MessageSource
+				hms.setParentMessageSource(getInternalParentMessageSource());
+			&#125;
+		&#125;
+		if (logger.isDebugEnabled()) &#123;
+			logger.debug(&quot;Using MessageSource [&quot; + this.messageSource + &quot;]&quot;);
+		&#125;
+	&#125;
+	else &#123;
+		&#x2F;&#x2F; 使用 空 MessageSource
+		DelegatingMessageSource dms &#x3D; new DelegatingMessageSource();
+		dms.setParentMessageSource(getInternalParentMessageSource());
+		this.messageSource &#x3D; dms;
+		beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
+		if (logger.isDebugEnabled()) &#123;
+			logger.debug(&quot;Unable to locate MessageSource with name &#39;&quot; + MESSAGE_SOURCE_BEAN_NAME +
+					&quot;&#39;: using default [&quot; + this.messageSource + &quot;]&quot;);
+		&#125;
+	&#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h1 id="8-initApplicationEventMulticaster"><a href="#8-initApplicationEventMulticaster" class="headerlink" title="8. initApplicationEventMulticaster"></a>8. initApplicationEventMulticaster</h1><blockquote>
+<p>初始化上下文事件广播器</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+protected void initApplicationEventMulticaster() &#123;
+	ConfigurableListableBeanFactory beanFactory &#x3D; getBeanFactory();
+
+	&#x2F;&#x2F; 如果存在 applicationEventMulticaster bean，则获取赋值
+	if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) &#123;
+		this.applicationEventMulticaster &#x3D;
+				beanFactory.getBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
+		if (logger.isDebugEnabled()) &#123;
+			logger.debug(&quot;Using ApplicationEventMulticaster [&quot; + this.applicationEventMulticaster + &quot;]&quot;);
+		&#125;
+	&#125;
+	else &#123;
+		&#x2F;&#x2F; 没有则新建 SimpleApplicationEventMulticaster，并完成 bean 的注册
+		this.applicationEventMulticaster &#x3D; new SimpleApplicationEventMulticaster(beanFactory);
+		beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
+		if (logger.isDebugEnabled()) &#123;
+			logger.debug(&quot;Unable to locate ApplicationEventMulticaster with name &#39;&quot; +
+					APPLICATION_EVENT_MULTICASTER_BEAN_NAME +
+					&quot;&#39;: using default [&quot; + this.applicationEventMulticaster + &quot;]&quot;);
+		&#125;
+	&#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果当前容器中存在 applicationEventMulticaster 的 bean，则对 applicationEventMulticaster 赋值，否则新建一个 SimpleApplicationEventMulticaster 的对象（默认的），并完成注册。</p>
+<h1 id="9-onRefresh"><a href="#9-onRefresh" class="headerlink" title="9. onRefresh"></a>9. onRefresh</h1><blockquote>
+<p>给子类扩展初始化其他Bean</p>
+</blockquote>
+<p>预留给 AbstractApplicationContext 的子类用于初始化其他特殊的 bean，该方法需要在所有单例 bean 初始化之前调用。</p>
+<h1 id="10-registerListeners"><a href="#10-registerListeners" class="headerlink" title="10. registerListeners"></a>10. registerListeners</h1><blockquote>
+<p>在所有 bean 中查找 listener bean，然后注册到广播器中</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+protected void registerListeners() &#123;
+	&#x2F;&#x2F; 注册静态 监听器
+	for (ApplicationListener&lt;?&gt; listener : getApplicationListeners()) &#123;
+		getApplicationEventMulticaster().addApplicationListener(listener);
+	&#125;
+
+	String[] listenerBeanNames &#x3D; getBeanNamesForType(ApplicationListener.class, true, false);
+	for (String listenerBeanName : listenerBeanNames) &#123;
+		getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+	&#125;
+
+	&#x2F;&#x2F; 至此，已经完成将监听器注册到ApplicationEventMulticaster中，下面将发布前期的事件给监听器。
+	Set&lt;ApplicationEvent&gt; earlyEventsToProcess &#x3D; this.earlyApplicationEvents;
+	this.earlyApplicationEvents &#x3D; null;
+	if (earlyEventsToProcess !&#x3D; null) &#123;
+		for (ApplicationEvent earlyEvent : earlyEventsToProcess) &#123;
+			getApplicationEventMulticaster().multicastEvent(earlyEvent);
+		&#125;
+	&#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h1 id="10-finishBeanFactoryInitialization"><a href="#10-finishBeanFactoryInitialization" class="headerlink" title="10. finishBeanFactoryInitialization"></a>10. finishBeanFactoryInitialization</h1><blockquote>
+<p>初始化剩下的单例Bean(非延迟加载的)</p>
+</blockquote>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+
+protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) &#123;
+	&#x2F;&#x2F; 初始化转换器
+	if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &amp;&amp;
+			beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) &#123;
+		beanFactory.setConversionService(
+				beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
+	&#125;
+
+	&#x2F;&#x2F; 如果之前没有注册 bean 后置处理器（例如PropertyPlaceholderConfigurer），则注册默认的解析器
+	if (!beanFactory.hasEmbeddedValueResolver()) &#123;
+		beanFactory.addEmbeddedValueResolver(strVal -&gt; getEnvironment().resolvePlaceholders(strVal));
+	&#125;
+
+	&#x2F;&#x2F; 初始化 Initialize LoadTimeWeaverAware beans early to allow for registering their transformers early.
+	String[] weaverAwareNames &#x3D; beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
+	for (String weaverAwareName : weaverAwareNames) &#123;
+		getBean(weaverAwareName);
+	&#125;
+
+	&#x2F;&#x2F; 停止使用临时的 ClassLoader
+	beanFactory.setTempClassLoader(null);
+
+	&#x2F;&#x2F;
+	beanFactory.freezeConfiguration();
+
+	&#x2F;&#x2F; 初始化所有剩余的单例（非延迟初始化）
+	beanFactory.preInstantiateSingletons();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h1 id="11-finishRefresh"><a href="#11-finishRefresh" class="headerlink" title="11. finishRefresh"></a>11. finishRefresh</h1><blockquote>
+<p>完成刷新过程,通知生命周期处理器 lifecycleProcessor 刷新过程,同时发出 ContextRefreshEvent 通知别人</p>
+</blockquote>
+<p>主要是调用 <code>LifecycleProcessor#onRefresh()</code> ，并且发布事件（ContextRefreshedEvent）。</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractApplicationContext.java
+	
+protected void finishRefresh() &#123;
+	&#x2F;&#x2F; Clear context-level resource caches (such as ASM metadata from scanning).
+	clearResourceCaches();
+
+	&#x2F;&#x2F; Initialize lifecycle processor for this context.
+	initLifecycleProcessor();
+
+	&#x2F;&#x2F; Propagate refresh to lifecycle processor first.
+	getLifecycleProcessor().onRefresh();
+
+	&#x2F;&#x2F; Publish the final event.
+	publishEvent(new ContextRefreshedEvent(this));
+
+	&#x2F;&#x2F; Participate in LiveBeansView MBean, if active.
+	LiveBeansView.registerApplicationContext(this);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+      </div>
+      <div class="post-tags-categories">
+        
+        <div class="tags">
+          
+            <a href="/tags/%E6%AD%BB%E7%A3%95Spring/" class="">
+              死磕Spring
+            </a>
+          
+        </div>
+        
+      </div>
+      
+        <div class="copyright">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+    <strong>作者:  </strong>高小天</a>
+    </li>
+    <li class="post-copyright-link">
+    <strong>文章链接:  </strong>
+    <a href="/2021/04/14/深入分析 ApplicationContext 的 refresh()/" target="_blank" title="41.深入分析 ApplicationContext 的 refresh()">https://gaoyang.world/2021/04/14/深入分析 ApplicationContext 的 refresh()/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明:   </strong>
+      本网站所有文章除特别声明外,均采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+      许可协议。转载请注明出处!
+    </li>
+  </ul>
+<div>
+      
+    </article>
+    <!-- 上一篇文章和下一篇文章 -->
+    
+      <!-- 文章详情页的上一页和下一页 -->
+<div class="post-nav">
+
+
+
+  
+  <div class="post-nav-prev post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="/medias/7.jpg" class="lazyload placeholder" data-srcset="/medias/7.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="">
+    </div>
+    <a href="/2021/04/15/4%20%E5%BC%A0%E5%9B%BE%E5%B8%A6%E4%BD%A0%E8%AF%BB%E6%87%82%20Spring%20IoC%20%E7%9A%84%E4%B8%96%E7%95%8C/" class="post-nav-link">
+      <div class="title">
+        <i class="fas fa-angle-left"></i> 上一篇:
+        <div class="title-text">42.4 张图带你读懂 Spring IoC 的世界</div>
+      </div>
+      
+      <!-- <div class="content">
+        1. Bean 的转换过程下面这张图演示了一个可用的 bean 是如何从 xml 配置文件中演变过来的。
+
+2. App
+      </div> -->
+    </a>
+  </div>
+
+
+
+  
+  <div class="post-nav-next post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="/medias/2.jpg" class="lazyload placeholder" data-srcset="/medias/2.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" src="" alt="">
+    </div>
+    <a href="/2021/04/14/ApplicationContext%20%E7%9B%B8%E5%85%B3%E6%8E%A5%E5%8F%A3%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/" class="post-nav-link">
+      <div class="title">
+        下一篇: <i class="fas fa-angle-right"></i>
+        <div class="title-text">40.ApplicationContext 相关接口架构分析</div>
+      </div>
+      <!-- <div class="content">
+        ﻿在前面 40 篇博客中都是基于 BeanFactory 这个容器来进行分析的，BeanFactory 容器有点儿简单，
+      </div> -->
+    </a>
+  </div>
+
+</div>
+
+    
+    
+
+    <!-- 打赏 -->
+    
+      <div id="appDonate" class="post-donate">
+  <div id="donate_board" class="donate_bar center" ref="donate">
+    <a id="btn_donate" class="btn_donate" href="javascript:;" title="打赏" @click="showDialogDrawer()"></a>
+  </div>
+  <transition name="fade">
+    <div 
+      class="donate-box-mask"
+      v-cloak 
+      v-show="visible"
+      @click="cancelDialogDrawer()"
+    >
+    </div>
+  </transition>
+  <transition name="bounce">
+    <div class="donate-box" v-cloak v-show="visible">
+      <div class="donate-box_close">
+        <i class="fas fa-times" aria-hidden="true" @click="cancelDialogDrawer" pointer></i>
+      </div>
+      <div class="donate-box_title">
+        <h4>
+          你的赏识是我前进的动力
+        </h4>
+      </div>
+      <div class="donate-box_tab">
+        <div class="Alipay" pointer :class="{'active': tabActive === 'Alipay'}" @click="changeTabActive('Alipay')">
+          支付宝
+        </div>
+        <div class="WeChatpay" pointer :class="{'active': tabActive === 'WeChatpay'}" @click="changeTabActive('WeChatpay')">
+          微信
+        </div>
+      </div>
+      <div class="donate-box_img">
+        <div class="AlipayImg" v-show="tabActive === 'Alipay'">
+          <img src="/medias/zfb.jpg" class="lazyload placeholder" data-srcset="/medias/zfb.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="支付宝打赏" />
+        </div> 
+        <div class="WeChatpayImg" v-show="tabActive === 'WeChatpay'">
+          <img src="/medias/wx.jpg" class="lazyload placeholder" data-srcset="/medias/wx.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="微信打赏" />
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDonate',
+    data: {
+      visible: false,
+      tabActive: 'Alipay',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        // function getScroll() {
+        //   return {
+        //     left: window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0,
+        //     top: window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+        //   };
+        // }
+        this.top = $(document).scrollTop() // or getScroll().top
+        // console.log('aa', $('.main-content'));
+        body.style.cssText = 'overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+      changeTabActive(name) {
+        this.tabActive = name;
+      }
+    },
+    created() {}
+  })
+</script>
+    
+
+    <!-- 分享 -->
+    
+      <!-- https://github.com/overtrue/share.js -->
+<!-- 文章详情页的分享 -->
+<div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+
+<script src="/js/shareJs/social-share.min.js"></script>
+</script>
+
+<style>
+  .social-share {
+    margin: 20px 0;
+  }
+</style>
+
+
+    
+    
+    <!-- 评论 -->
+    <!-- 评论 -->
+
+  <div id="myComment">
+    
+      <div id="gitment-container"></div>
+
+    
+  </div>
+
+<!-- comment script in themes\hexo-theme-bamboo\layout\_partial\scripts\index.ejs -->
+
+
+  </div>
+
+  <!-- 目录 -->
+  <!-- 文章详情页右侧目录 -->
+
+
+<script>
+  function closeToc(init) {
+    $(".toc-aside").css({'width': 0, 'padding': 0, 'transition': init ?  'noe' : 'width 0.3s' });
+    $(".toc-content").css({'width': 0});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'none'});
+    $(".main-content").css({'width': '75%', 'margin': '10px auto'});
+  };
+  function openToc() {
+    $(".main-content").css({'width': '65%', 'margin-right': '10px', 'margin-left': 'calc(35% - 350px)'});
+    $(".toc-aside").css({'width': '300px', 'padding': '0 10px', 'transition': 'width 0.3s'});
+    $(".toc-content").css({'width': '300px'});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'inline-block'});
+  }
+  function openBtnClickFn () {
+    let openOrCloseBtn = $('.toc-aside .toc-aside-title .toc-open-close');
+    let open = eval('false' || 'true');
+    openOrCloseBtn.click(function() {
+      if (open) {
+        closeToc();
+        open = false;
+      } else {
+        openToc();
+        open = true;
+      }
+    });
+  };
+  openBtnClickFn();
+  initCloseTocWidth(true);
+
+  function initCloseTocWidth(init) {
+    if (window.innerWidth >= 992) {
+      let isClose = true;
+      isClose && closeToc(init)
+    }
+  }
+
+  document.addEventListener('pjax:complete', function () {
+    $(".toc-aside").css({'transition': 'no'});
+  })
+  document.addEventListener('pjax:complete', function () {
+    openBtnClickFn();
+  })
+  
+</script>
+
+  <!-- 图片放大 Wrap images with fancybox support -->
+  <script src="/js/wrapImage.js"></script>
+</div>
+
+<!-- 文章详情页背景图 -->
+<div id="appBgSwiper" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -2;"
+	:style="{'background-color': bgColor ? bgColor : 'transparent'}">
+	<transition-group tag="ul" :name="names">
+		<li v-for='(image,index) in img' :key='index' v-show="index === mark" class="bg-swiper-box">
+			<img :src="image" class="bg-swiper-img no-lazy">
+		</li>
+	</transition-group>
+</div>
+<script>
+	var vm = new Vue({
+		el: '#appBgSwiper',
+		data: {
+			names: '' || 'fade' || 'fade', // translate-fade fade
+			mark: 0,
+			img: [],
+			bgColor: '',
+			time: null
+		},
+		methods: {   //添加方法
+			change(i, m) {
+				if (i > m) {
+					// this.names = 'fade';
+				} else if (i < m) {
+					// this.names = 'fade';
+				} else {
+					return;
+				}
+				this.mark = i;
+			},
+			prev() {
+				// this.names = 'fade';
+				this.mark--;
+				if (this.mark === -1) {
+					this.mark = 3;
+					return
+				}
+			},
+			next() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			autoPlay() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			play() {
+				let bgImgDelay = '' || '180000'
+				let delay = parseInt(bgImgDelay) || 180000;
+				this.time = setInterval(this.autoPlay, delay);
+			},
+			enter() {
+				clearInterval(this.time);
+			},
+			leave() {
+				this.play();
+			}
+		},
+		created() {
+			this.play()
+		},
+		beforeDestroy() {
+			clearInterval(this.time);
+		},
+		mounted() {
+			let prop = '' || '';
+			let isImg = prop.includes('.bmp') || prop.includes('.jpg') || prop.includes('.png') || prop.includes('.tif') || prop.includes('.gif') || prop.includes('.pcx') || prop.includes('.tga') || prop.includes('.exif') || prop.includes('.fpx') || prop.includes('.psd') || prop.includes('.cdr') || prop.includes('.pcd') || prop.includes('.dxf') || prop.includes('.ufo') || prop.includes('.eps') || prop.includes('.ai') || prop.includes('.raw') || prop.includes('.WMF') || prop.includes('.webp') || prop.includes('.jpeg') || prop.includes('http://') || prop.includes('https://')
+			if (isImg) {
+				let img = prop.split(',');
+				let configRoot = '/'
+				let arrImg = [];
+				img.forEach(el => {
+					var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+					var objExp = new RegExp(Expression);
+
+					if (objExp.test(el)) {
+						// http or https
+						arrImg.push(el);
+					} else {
+						// 非http or https开头
+						// 本地文件
+						let firstStr = el.charAt(0);
+						if (firstStr == '/') {
+							el = el.substr(1); // 删除第一个字符 '/',因为 configRoot最后一个字符为 /
+						}
+						el = configRoot + el;
+						arrImg.push(el);
+					}
+				})
+				this.img = arrImg;
+			} else {
+				this.bgColor = prop;
+			}
+		}
+	})
+</script>
+
+<style>
+	.bg-swiper-box {
+		position: absolute;
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.bg-swiper-img {
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+
+
+
+  <script>
+  function loadMermaid() {
+    if (document.getElementsByClassName('mermaid').length) {
+      if (window.mermaidJsLoad) mermaid.init()
+      else {
+        loadScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+          window.mermaidJsLoad = true
+          mermaid.initialize({
+            theme: 'default',
+          })
+          if ('true') {
+            mermaid.init();
+          }
+        })
+      }
+    }
+  };
+  document.addEventListener("DOMContentLoaded", function () {
+    loadMermaid();
+  })
+
+  document.addEventListener('pjax:complete', function () {
+    loadMermaid();
+  })
+  
+</script>
+
+
+      </main>
+    </div>
+
+    <!-- 页脚 -->
+    
+  
+  <div class="footer bg-color">
+    <div class="footer-main">
+      
+        
+          <div class="link">
+            
+          </div>
+        
+      
+        
+          <div class="footer-copyright">
+            <p>Copyright © 2019 - 2020  </p>
+
+          </div>
+        
+      
+        
+          
+            <!-- 不蒜子统计 -->
+            <!-- 不蒜子统计 -->
+<span id="busuanzi_container_site_pv">
+      <i class="fas fa-eye" aria-hidden="true"></i>本站总访问量：<span id="busuanzi_value_site_pv"></span> 次
+</span>
+<span class="post-meta-divider">|</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+      <i class="fas fa-users" aria-hidden="true"></i>本站访客数：<span id="busuanzi_value_site_uv"></span> 人
+</span>
+
+          
+        
+      
+        
+          <div class="footer-custom">
+            
+          </div>
+        
+      
+    </div>
+  </div>
+
+
+
+    <!-- 渲染暗黑按钮 -->
+    
+      <div class="dark">
+  <div class="dark-content">
+    <i class="fas fa-moon" aria-hidden="true"></i>
+    <!-- <span>关灯</span> -->
+  </div>
+  
+</div>
+
+<script>
+  $(function() {
+    let isDark = JSON.parse(localStorage.getItem('dark'))  || JSON.parse('false');
+    if (isDark) {
+      $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+    }
+    $('.dark').click(function() {
+      if ($(document.body).is('.darkModel')) {
+        $(document.body).removeClass('darkModel');
+        localStorage.setItem('dark', false);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      } else {
+        $(document.body).addClass('darkModel');
+        localStorage.setItem('dark', true);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      }
+    })
+  })
+</script>
+    
+    <!-- 渲染回到顶部按钮 -->
+    
+      <div class="goTop top-btn-color" pointer>
+  <i class="fas fa-arrow-up" aria-hidden="true"></i>
+</div>
+<script src="/js/goTop.js"></script>
+
+    
+    <!-- 渲染左下角音乐播放器 -->
+    
+      <link rel="stylesheet" href="/js/aplayer/APlayer@1.10.1.min.css">
+<style>
+.aplayer .aplayer-lrc p {
+  
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px !important;
+}
+
+.aplayer .aplayer-lrc p.aplayer-lrc-current {
+  
+  font-size: 15px;
+  color: #42b983;
+}
+
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+  left: -66px !important;
+}
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+  left: 0px !important;
+}
+
+
+</style>
+<meting-js  
+  class=""
+  server="tencent"
+  type="playlist"
+  id="8062553743"
+  fixed='true'
+  autoplay='false'
+  theme='#42b983'
+  loop='all'
+  order='random'
+  preload='auto'
+  volume='0.7'
+  list-folded='true'
+>
+</meting-js>
+
+<!-- <style>
+  #aplayer {
+    position: fixed;
+    left: 0;
+    bottom: 300px;
+  }
+</style> -->
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    
+
+    <!-- 图片放大 -->
+    
+      <script src="/js/fancybox/jquery.fancybox.min.js"></script>
+    
+
+    <!-- 百度解析 -->
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <!-- 背景彩带 -->
+    
+      <script type="text/javascript" size="100" alpha='0.4' zIndex="-1" src="/js/ribbon.min.js"></script>
+    
+
+    <script src="/js/utils/index.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <!-- 文章目录所需js -->
+<link href="/js/tocbot/tocbot.css" rel="stylesheet">
+<script src="/js/tocbot/tocbot.min.js"></script>
+
+<script>
+  var headerEl = 'h2, h3, h4',  //headers 
+    content = '.post-detail',//文章容器
+    idArr = {};  //标题数组以确定是否增加索引id
+  //add #id
+  var option = {
+    // Where to render the table of contents.
+    tocSelector: '.toc',
+    // Where to grab the headings to build the table of contents.
+    contentSelector: content,
+    // Which headings to grab inside of the contentSelector element.
+    headingSelector: headerEl,
+    scrollSmooth: true,
+    scrollSmoothOffset: -80,
+    headingsOffset: -($(window).height() * 0.4 - 45),
+    positionFixedSelector: '.toc-main',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    activeLinkClass: 'is-active-link',
+    // onClick: function (e) {},
+  }
+  if ($('.toc').length > 0) {
+
+    $(content).children(headerEl).each(function () {
+      //去除空格以及多余标点
+      var headerId = $(this).text().replace(/[\s|\~|`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\+|\=|\||\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?|\：|\，|\。]/g, '');
+
+      headerId = headerId.toLowerCase();
+      if (idArr[headerId]) {
+        //id已经存在
+        $(this).attr('id', headerId + '-' + idArr[headerId]);
+        idArr[headerId]++;
+      }
+      else {
+        //id未存在
+        idArr[headerId] = 1;
+        $(this).attr('id', headerId);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      tocbot.init(option);
+      mobileTocClick();
+    });
+
+  }
+
+  window.tocScrollFn = function () {
+    return bamboo.throttle(function () {
+      findHeadPosition();
+    }, 100)()
+  }
+  window.addEventListener('scroll', tocScrollFn);
+
+  const findHeadPosition = function (top) {
+    if ($('.toc-list').length <= 0) {
+      return false;
+    }
+    setTimeout(() => {  // or DOMContentLoaded 
+      autoScrollToc();
+    }, 0);
+  }
+
+  const autoScrollToc = function () {
+    const $activeItem = document.querySelector('.is-active-link');
+    const $cardToc = document.querySelector('.toc-content');
+    const activePosition = $activeItem.getBoundingClientRect().top
+    const sidebarScrollTop = $cardToc.scrollTop
+    if (activePosition > (document.documentElement.clientHeight - 100)) {
+      $cardToc.scrollTop = sidebarScrollTop + 150
+    }
+    if (activePosition < 100) {
+      $cardToc.scrollTop = sidebarScrollTop - 150
+    }
+  }
+
+  document.addEventListener('pjax:send', function () {
+    if ($('.toc').length) {
+      tocbot.destroy();
+    }
+  });
+
+  document.addEventListener('pjax:complete', function () {
+    if ($('.toc').length) {
+      tocbot.init(option);
+      mobileTocClick();
+    }
+  });
+  
+  // 手机端toc按钮点击出现目录
+  const mobileTocClick = function () {
+    const $cardTocLayout = document.getElementsByClassName('toc-aside')[0];
+    const $cardToc = $cardTocLayout.getElementsByClassName('toc-content')[0];
+    let right = '45px';
+    if (window.innerWidth >= 551 && window.innerWidth <= 992) {
+      right = '100px'
+    }
+    const mobileToc = {
+      open: () => {
+        $cardTocLayout.style.cssText = 'animation: toc-open .3s; opacity: 1; right: ' + right
+      },
+
+      close: () => {
+        $cardTocLayout.style.animation = 'toc-close .2s'
+        setTimeout(() => {
+          $cardTocLayout.style.cssText = "opacity:''; animation: ''; right: ''"
+        }, 100)
+      }
+    }
+    document.getElementById('toc-mobile-btn').addEventListener('click', () => {
+      if (window.getComputedStyle($cardTocLayout).getPropertyValue('opacity') === '0') mobileToc.open()
+      else mobileToc.close()
+    })
+
+    $cardToc.addEventListener('click', (e) => {
+      if (window.innerWidth < 992) { // 小于992px的时候
+        mobileToc.close()
+      }
+    })
+  }
+</script>
+
+<style>
+  .is-position-fixed {
+    position: sticky !important;
+    top: 74px;
+  }
+
+  .toc-main ul {
+    counter-reset: show-list;
+  }
+
+  .toc-main ul li::before {
+    content: counter(item)".";
+    display: block;
+    position: absolute;
+    left: 12px;
+    top: 0;
+  }
+</style> 
+
+<!-- 设置导航背景 -->
+<script>
+  let setHeaderClass = () => {
+    const headerMenuTransparent = true;
+    if (!headerMenuTransparent) { return; }
+    const nav = $('#navHeader');
+    const navTop = nav.outerHeight();
+    const winTop = $(window).scrollTop();
+    if(winTop > navTop) {
+      nav.addClass('header-bg-color');
+    }
+    else {
+      nav.removeClass('header-bg-color');
+    }
+  };
+
+  let scrollCollect = () => {
+    return bamboo.throttle(function (e) {
+      setHeaderClass();
+    }, 200)()
+  }
+
+  let initHeaderBg = () => {
+    setHeaderClass();
+  }
+
+  setHeaderClass();
+  window.addEventListener('scroll', scrollCollect);
+
+  document.addEventListener('pjax:send', function () {
+    window.removeEventListener('scroll', scrollCollect)
+  })
+  document.addEventListener('pjax:complete', function () {
+    window.addEventListener('scroll', scrollCollect);
+    setHeaderClass();
+  })
+</script> 
+
+<!-- 渲染issues标签里的内容 -->
+<script>
+  function loadIssuesJS() {
+    if ($(".post-detail").find(".issues-api").length == 0) {
+      return;
+    } 
+    loadScript('/js/issues/index.js');
+  };
+  $(function () {
+    loadIssuesJS();
+  });
+  document.addEventListener('pjax:complete', function () {
+    if (typeof IssuesAPI == "undefined") {
+      loadIssuesJS();
+    }
+  })
+</script>
+
+<!-- 输入框打字特效 -->
+<!-- 输入框打字特效 -->
+
+  <script src="/js/activate-power-mode.js"></script>
+  <script>
+    POWERMODE.colorful = true;  // 打开随机颜色特效
+    POWERMODE.shake = false;    // 关闭输入框抖动
+    document.body.addEventListener('input', POWERMODE);//监听打字事件
+  </script>
+
+
+<!-- markdown代码一键复制功能 -->
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.css">
+  <script src="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.umd.min.js"></script>
+  <script src="/js/clipboard/clipboard.min.js"></script>
+  <div id="appCopy">
+  </div>
+  <script data-pjax>
+    var vm = new Vue({
+      el: '#appCopy',
+      data: {
+      },
+      computed: {
+      },
+      mounted() {
+        const that = this;
+        var copy = '复制';
+        /* code */
+        var initCopyCode = function () {
+          var copyHtml = '';
+          copyHtml += '<button class="btn-copy" data-clipboard-snippet="" style="position:absolute;top:0;right:0;z-index:1;">';
+          copyHtml += '<i class="fas fa-copy"></i><span>' + copy + '</span>';
+          copyHtml += '</button>';
+          $(".post-detail pre").not('.gutter pre').wrap("<div class='codeBox' style='position:relative;width:100%;'></div>")
+          $(".post-detail pre").not('.gutter pre').before(copyHtml);
+          new ClipboardJS('.btn-copy', {
+            target: function (trigger) {
+              return trigger.nextElementSibling;
+            }
+          });
+        }
+        initCopyCode();
+        $('.btn-copy').unbind('click').bind('click', function () {
+          doSomething();
+        })
+        $(document).unbind('keypress').bind('keypress', function (e) {
+          if (e.ctrlKey && e.keyCode == 67) {
+            doSomething();
+          }
+        })
+
+        function doSomething() {
+          that.$notify({
+            title: "成功",
+            content: "代码已复制，请遵守相关授权协议。",
+            type: 'success'
+          })
+        }
+      },
+      methods: {
+      },
+      created() { }
+    })
+  </script>
+  
+
+<!-- 图片懒加载 -->
+<script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazyload",
+    threshold: 0
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    lazyLoadInstance.update();
+  });
+  document.addEventListener('pjax:complete', function () {
+    lazyLoadInstance.update();
+  });
+</script>
+
+
+<!-- 卡片滚动动画 -->
+   
+
+<!-- 评论所需js -->
+
+  
+    <script type="text/javascript">
+  var utteranceCommon = {};
+
+  function check_utterance() {
+    let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+    if (isDark) {
+      utteranceCommon.Theme = 'github-dark';
+    } else {
+      utteranceCommon.Theme = 'github-light';
+    }
+
+    return document.getElementById("gitment-container");
+  }
+  comment_el = '#gitment-container';
+  load_utterance = function () {
+    if ($(comment_el).length) {
+      // 匿名函数，防止污染全局变量
+      const HEAD = check_utterance();
+
+      var utterances = document.createElement('script');
+      utterances.type = 'text/javascript';
+      utterances.async = true;
+      utterances.setAttribute('issue-term', 'pathname')
+      utterances.setAttribute('theme', utteranceCommon.Theme)
+      utterances.setAttribute('repo', '')
+      utterances.crossorigin = 'anonymous';
+      utterances.src = 'https://utteranc.es/client.js';
+      // content 是要插入评论的地方
+      document.getElementById('gitment-container').appendChild(utterances);
+
+    }
+  }
+
+  function dark_utterance() {
+    const HEAD = check_utterance();
+    if (!HEAD) return;
+    const message = {
+      type: 'set-theme',
+      theme: utteranceCommon.Theme
+    };
+    const utteranceIframe = document.querySelector('iframe');
+    utteranceIframe.contentWindow.postMessage(message, 'https://utteranc.es');
+  }
+
+  $(document).ready(load_utterance);
+  document.addEventListener('pjax:complete', function () {
+    load_utterance();
+  });
+
+  $('.dark').click(function () {
+    setTimeout(() => {
+      dark_utterance();
+    });
+  })
+
+</script>
+
+<style>
+  .utterances {
+    max-width: inherit !important;
+  }
+</style>
+  
+
+
+<!-- 鼠标点击特效 -->
+<!-- 爱心点击 -->
+
+  
+    <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 999; pointer-events: none;" ></canvas>
+    <script src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+    <script src="/js/cursor/explosion.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-pjax></script>
+
+
+    <!-- pjax -->
+    
+
+<!-- pjax -->
+
+
+  <script src="/js/pjax@0.2.8/index.js"></script>
+  
+    <!-- 样式位于：source/css/_third-party/pjaxanimate.styl -->
+
+<div class="pjax-animate">
+  
+    <div class="loading-circle"><div id="loader-circle"></div></div>
+    <script>
+      window.ShowLoading = function() {
+        $(".loading-circle").css("display", "block");
+      };
+      window.HideLoading = function() {
+        $(".loading-circle").css("display", "none");
+      }
+    </script>
+  
+	<script>
+    document.addEventListener('pjax:complete', function () {
+      window.HideLoading();
+    })
+    document.addEventListener('pjax:send', function () {
+      window.ShowLoading();
+    })
+    document.addEventListener('pjax:error', function () {
+      window.HideLoading();
+    })
+	</script>
+</div>
+
+  
+
+  <script>
+    var pjax = new Pjax({
+      elements: 'a[href]:not([href^="#"]):not([href="javascript:void(0)"]):not([no-pjax])',   // 拦截正常带链接的 a 标签
+      selectors: ["#pjax-container","title"],                                   // 根据实际需要确认重载区域
+      cacheBust: false,   // url 地址追加时间戳，用以避免浏览器缓存
+      timeout: 5000
+    });
+
+    document.addEventListener('pjax:send', function (e) {
+
+      try {
+        var currentUrl = window.location.pathname;
+        var targetUrl = e.triggerElement.href;
+        var banUrl = [""];
+        if (banUrl[0] != "") {
+          banUrl.forEach(item => {
+            if(currentUrl.indexOf(item) != -1 || targetUrl.indexOf(item) != -1) {
+              window.location.href = targetUrl;
+            }
+          });
+        }
+      } catch (error) {}
+
+      $(window).unbind('resize');
+      $(window).unbind('scroll');
+      $(document).unbind('scroll');
+      $(document).unbind('click');
+      $('body').unbind('click');
+
+    })
+    
+    document.addEventListener('pjax:complete', function () {
+      $('script[data-pjax], .pjax-reload script').each(function () {
+        $(this).parent().append($(this).remove());
+      });
+    });
+
+    document.addEventListener('pjax:error', function (e) {
+      window.location.href = e.triggerElement.href;
+    })
+    
+    // 刷新不从顶部开始
+    document.addEventListener("DOMContentLoaded", function () {
+      history.scrollRestoration = 'auto';
+    })
+  </script>
+
+
+
+  </body>
+</html>

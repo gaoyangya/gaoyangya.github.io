@@ -1,0 +1,3095 @@
+<!DOCTYPE html>
+<html>
+  <!-- meta/link... -->
+  
+
+
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+  <title>NGINX | gy的小站</title>
+
+  <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_1911880_c1nvbyezg17.css">
+  <link href="https://cdn.jsdelivr.net/gh/inkss/fontawesome@5.15.3/css/all.min.css" rel="stylesheet">
+  <link href="/js/swiper/swiper@5.4.1.min.css" rel="stylesheet">
+  
+  
+    <script>
+        var themeModelId = '';
+        if (themeModelId) {
+            localStorage.setItem('modelId', themeModelId);
+        }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/gh/yuang01/live2d-widget@latest/autoload.js"></script>
+    <script>
+        var live2dOpen = eval('true') || false;
+        if (!live2dOpen) {
+            localStorage.setItem('waifu-display', 1609323474481);
+        }
+    </script>
+  
+  
+  
+<link rel="stylesheet" href="/css/animate.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/shareJs/share.min.css">
+
+  
+  <style>
+        @media (max-width: 992px) {
+            #waifu {
+                display: none;
+            }
+        }
+    </style>
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+    
+
+    <!-- import link -->
+    
+        
+            
+        
+            
+        
+    
+    <!-- import script -->
+    
+        
+            
+        
+            
+        
+    
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+  
+  <!-- 依赖于jquery和vue -->
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+
+  
+  
+  <body>
+    <!-- 预加载动画 -->
+    <!-- 页面预加载动画 -->
+
+<div id='loader'>
+  <link rel="stylesheet" href="/js/loaded/index.css" >
+  <div class="loading-left-bg"></div>
+  <div class="loading-right-bg"></div>
+  <div class="spinner-box">
+    <div class="configure-border-1">
+      <div class="configure-core"></div>
+    </div>
+    <div class="configure-border-2">
+      <div class="configure-core"></div>
+    </div>
+    <div class="loading-word">加载中...</div>
+  </div>
+</div>
+
+<script>
+  var endLoading = function () {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loader').classList.add("loading");
+  }
+  window.addEventListener('DOMContentLoaded',endLoading);
+  
+</script>
+
+    
+    <!-- 判断是否为暗黑风格 -->
+    <!-- 判断是否为黑夜模式 -->
+<script>
+  let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+
+  if (isDark) {
+    $(document.body).addClass('darkModel');
+  }
+</script>
+
+    <!-- 需要在上面加载的js -->
+    <script>
+  function loadScript(src, cb) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var HEAD = document.getElementsByTagName("head")[0] || document.documentElement;
+        var script = document.createElement("script");
+        script.setAttribute("type", "text/javascript");
+        if (cb) {
+          if (JSON.stringify(cb)) {
+            for (let p in cb) {
+              if (p == "onload") {
+                script[p] = () => {
+                  cb[p]()
+                  resolve()
+                }
+              } else {
+                script[p] = cb[p]
+                script.onload = resolve
+              }
+            }
+          } else {
+            script.onload = () => {
+              cb()
+              resolve()
+            };
+          }
+        } else {
+          script.onload = resolve
+        }
+        script.setAttribute("src", src);
+        HEAD.appendChild(script);
+      });
+    });
+  }
+
+  //https://github.com/filamentgroup/loadCSS
+  var loadCSS = function (href, before, media, attributes) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.href = src;
+        link.onload = resolve;
+        document.getElementsByTagName("head")[0].appendChild(link);
+      });
+    });
+  };
+
+</script> 
+
+<!-- 轮播图所需要的js -->
+<script src="/js/swiper/swiper.min.js"></script>
+<script src="/js/swiper/vue-awesome-swiper.js"></script>
+<script src="/js/swiper/swiper.animate1.0.3.min.js"></script>
+
+<script type="text/javascript">
+  Vue.use(window.VueAwesomeSwiper)
+</script>
+
+
+  <script src="/js/vue-typed-js/index.js"></script>
+
+
+<!-- 首页的公告滚动插件的js需要重新加载 -->
+<script src="/js/vue-seamless-scroll/index.js"></script>
+
+<!-- 打字机效果js -->
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+
+
+    <div id="safearea">
+      <main class="main" id="pjax-container">
+        <!-- 头部导航 -->
+        
+<header class="header   " 
+  id="navHeader"
+  style="position: fixed;
+  left: 0; top: 0; z-index: 10;width: 100%;"
+>
+  <div class="header-content">
+    <div class="bars">
+      <div id="appDrawer" class="sidebar-image">
+  <div class="drawer-box-icon">
+    <i class="fas fa-bars" aria-hidden="true" @click="showDialogDrawer"></i>
+  </div>
+  
+  <transition name="fade">
+    <div class="drawer-box_mask" v-cloak style="display: none;" v-show="visible" @click.self="cancelDialogDrawer">
+    </div>
+  </transition>
+  <div class="drawer-box" :class="{'active': visible}">
+    <div class="drawer-box-head bg-color">
+      <img class="drawer-box-head_logo lazyload placeholder" src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+      <h3 class="drawer-box-head_title">gy的小站</h3>
+      <h5 class="drawer-box-head_desc">滴水穿石不是水的力量,而是坚持的力量</h5>
+    </div>
+    
+    <div class="drawer-box-content">
+      <ul class="drawer-box-content_menu">
+        
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/archives" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/tags" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/categories" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/about" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/friends" class="drawer-menu-item-link">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="javascript:;" class="drawer-menu-item-link has-children" @click="openOrCloseMenu(6)">
+                  <span>
+                    
+                      <i class="fas fa-link"></i>
+                    
+                    <span class="name">更多</span>
+                  </span>
+                  <i class="fas fa-chevron-left arrow " :class="{'icon-rotate': isOpen(6)}" aria-hidden="true"></i>
+                </a>
+                <ul class="drawer-sub-menu" v-if="isOpen(6)">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+        
+          <li class="drawer-box-content_item">
+            <a target="_blank" rel="noopener" href="https://github.com/gaoyangya">
+              <i class="fas fa-github" aria-hidden="true"></i>
+              <span>Github</span>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDrawer',
+    data: {
+      visible: false,
+      top: 0,
+      openArr: [],
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      isOpen(index) {
+        if (this.openArr.includes(index)) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      openOrCloseMenu(curIndex) {
+        const index = this.openArr.indexOf(curIndex);
+        if (index !== -1) {
+          this.openArr.splice(index, 1);
+        } else {
+          this.openArr.push(curIndex);
+        }
+      },
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'width: 100%; height: 100%;overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      }
+    },
+    created() {}
+  })
+</script>
+
+    </div>
+    <div class="blog-title" id="author-avatar">
+      
+        <div class="avatar">
+          <img src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+        </div>
+      
+      <a href="/" class="logo">gy的小站</a>
+    </div>
+    <nav class="navbar">
+      <ul class="menu">
+        
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/" class="menu-item-link" title="首页">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/archives" class="menu-item-link" title="归档">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/tags" class="menu-item-link" title="标签">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/categories" class="menu-item-link" title="分类">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/about" class="menu-item-link" title="关于">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/friends" class="menu-item-link" title="友情链接">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="javascript:;" class="menu-item-link" title="更多">
+                  
+                    <i class="fas fa-link"></i>
+                  
+                  <span class="name">更多</span>
+                  <i class="fas fa-chevron-down arrow" aria-hidden="true"></i>
+                </a>
+                <ul class="sub-menu">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+      </ul>
+      
+      
+        <div id="appSearch">
+  <div class="search"  @click="showDialog()"><i class="fas fa-search" aria-hidden="true"></i></div>
+  <transition name="fade">
+    <div class="message-box_wrapper" style="display: none;" v-cloak v-show="dialogVisible" @click.self="cancelDialogVisible()">
+      <div class="message-box animated bounceInDown">
+        <h2>
+          <span>
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <span class="title">本地搜索</span>
+          </span>
+          <i class="fas fa-times close" pointer style="float:right;" aria-hidden="true" @click.self="cancelDialogVisible()"></i>
+        </h2>
+        <form class="site-search-form">
+          <input type="text"
+            placeholder="请输入关键字"
+            id="local-search-input" 
+            @click="getSearchFile()"
+            class="st-search-input"
+            v-model="searchInput"
+          />
+        </form>
+        <div class="result-wrapper">
+          <div id="local-search-result" class="local-search-result-cls"></div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+<script src="/js/local_search.js"></script>
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appSearch',
+    data: {
+      dialogVisible: false,
+      searchInput: '',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+      window.addEventListener('pjax:complete', () => {
+        this.cancelDialogVisible();
+      })
+    },
+    methods: {
+      showDialog() {
+        this.dialogVisible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'overflow: hidden;';
+      },
+      getSearchFile() {
+        if (!this.searchInput) {
+          getSearchFile("/search.xml");
+        }
+      },
+      cancelDialogVisible() {
+        this.dialogVisible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+    },
+    created() {}
+  })
+</script>
+<!-- 解决刷新页面闪烁问题，可以在元素上添加display: none, 或者用vue.extend方法，详情：https://blog.csdn.net/qq_31393401/article/details/81017912 -->
+<!-- 下面是搜索基本写法 -->
+<!-- <script type="text/javascript" id="local.search.active">
+  var inputArea = document.querySelector("#local-search-input");
+  inputArea.onclick   = function(){ getSearchFile(); this.onclick = null }
+  inputArea.onkeydown = function(){ if(event.keyCode == 13) return false }
+</script> -->
+
+      
+
+    </nav>
+  </div>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/gaoyangya" class="github-corner color-primary" aria-label="View source on GitHub"><svg width="60" height="60" viewBox="0 0 250 250" style="fill:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+  
+  
+    <div id="he-plugin-simple"></div>
+    <script>
+      WIDGET = {
+        CONFIG: {
+          "modules": "012",
+          "background": 5,
+          "tmpColor": "4A4A4A",
+          "tmpSize": 16,
+          "cityColor": "4A4A4A",
+          "citySize": 16,
+          "aqiSize": 16,
+          "weatherIconSize": 24,
+          "alertIconSize": 18,
+          "padding": "10px 10px 10px 10px",
+          "shadow": "1",
+          "language": "auto",
+          "borderRadius": 5,
+          "fixed": "false",
+          "vertical": "middle",
+          "horizontal": "center",
+          "key": "2784dd3fcb1e4f0f9a9b579bf69641f2"
+        }
+      }
+    </script>
+    <script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script> 
+    
+</header>
+        <!-- 内容区域 -->
+        
+ <!-- prismjs 代码高亮 -->
+ 
+    
+    <link href="/js/prism/prism-line-numbers.css" rel="stylesheet">
+    
+        <link href="/js/prism/prism.min.css" rel="stylesheet">
+    
+
+    <style>
+        pre[class*="language-"] {
+            overflow-y: hidden;
+        }
+        .line-numbers .line-numbers-rows {
+            border: none;
+        }
+    </style>
+  
+
+
+<div class="bg-dark-floor" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -1;"></div>
+
+
+  <!-- 文章详情页顶部图片和标题 -->
+
+
+
+
+<div class="post-detail-header" id="thumbnail_canvas" style="background-repeat: no-repeat; background-size: cover; 
+  background-position: center center;position: relative;background-image:url('/medias/14.jpg')">
+  <div class="post-detail-header-mask"></div>
+  <canvas id="header_canvas"style="position:absolute;bottom:0;pointer-events:none;"></canvas>
+  
+  <div class="post-detail-header_info-box">
+    <div class="title-box">
+      <span class="title">
+        NGINX
+      </span>
+    </div>
+    
+    
+      
+        <span class="post-detail-header_date">
+          <i class="fas fa-calendar"></i> 发表于：2021-10-17 |
+        </span>
+      
+
+      
+        <span class="post-detail-header_categories">
+          <i class="iconfont iconbookmark1"></i> 分类：
+          
+            <a href="/categories/NGINX/" class="post-detail-header_category">
+              NGINX
+            </a>
+          
+        </span>
+      
+
+      
+    
+  </div>
+  
+  
+    <script src="/js/bubble/bubble.js"></script>
+  
+</div>
+
+
+
+
+
+<div class="row justify-position" 
+  style="padding-top: 0px;">
+  <div class="main-content">
+    <article class="post post-detail">
+      <div class="post-content">
+        <h1 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h1><blockquote>
+<p>滴水穿石不是水的力量,而是坚持的力量!</p>
+</blockquote>
+<h1 id="一-NGINX简介"><a href="#一-NGINX简介" class="headerlink" title="一.NGINX简介"></a>一.NGINX简介</h1><h2 id="1-1-正向代理和反向代理"><a href="#1-1-正向代理和反向代理" class="headerlink" title="1.1 正向代理和反向代理"></a>1.1 正向代理和反向代理</h2><p><code>Nginx:http服务器(网络静态资源服务器)+反向代理</code></p>
+<blockquote>
+<p>请求</p>
+</blockquote>
+<p>​    动态请求:需要后台程序处理逻辑,比如查询数据库数据;返回的数据可能是不一样的—&gt;后台技术:web技术</p>
+<p>​    静态请求:处理静态资源(html,css,js,..png)</p>
+<hr>
+<p>Tomcat:动态请求+静态请求</p>
+<p>Nginx:静态请求</p>
+<blockquote>
+<p>Nginx服务器很重要一个作用就是在高并发情况下去做反向代理服务器</p>
+<p>Nginx内存少,并发能力强</p>
+</blockquote>
+<p>Tomcat是150并发</p>
+<p>Nginx理论上是5w并发,跑到3w没有问题且<code>占用内存少</code>,跑3w也就150M内存</p>
+<h3 id="①-正向代理"><a href="#①-正向代理" class="headerlink" title="① 正向代理"></a>① 正向代理</h3><p>正向代理:比如要访问youtube,但是不能直接访问，只能先找个翻墙软件，通过翻墙软件才能访问youtube. 这种方式就叫做正向代理。</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531161.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531161.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220407114301343"></p>
+<blockquote>
+<p>正向代理特点</p>
+</blockquote>
+<ol>
+<li>客户端知道目标地址</li>
+<li>代理服务器代理的是客户端</li>
+</ol>
+<h3 id="②反向代理-代理的就是服务端"><a href="#②反向代理-代理的就是服务端" class="headerlink" title="②反向代理:代理的就是服务端"></a>②反向代理:代理的就是服务端</h3><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531607.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531607.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220407122341933"></p>
+<blockquote>
+<p>反向代理特点</p>
+</blockquote>
+<ol>
+<li>代理服务器(Nginx)主要是给后台应用提供服务</li>
+<li>对于用户来说,根本不知道请求的URI是由哪个服务器提供的服务</li>
+</ol>
+<p>服务器部署在哪里,客户端根本不需要知道</p>
+<p>前端服务做集群,基本上用的都是nginx服务器</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531691.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531691.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220407140939048"></p>
+<hr>
+<h2 id="1-2-常见负载均衡策略"><a href="#1-2-常见负载均衡策略" class="headerlink" title="1.2 常见负载均衡策略"></a>1.2 常见负载均衡策略</h2><p>1)使用硬件负载均衡策略,如使用F5,Array等负载均衡器.</p>
+<p>2)使用软件进行负载均衡Nginx, 自己封装的负载均衡服务器</p>
+<p>3)如使用阿里云服务器均衡SLB</p>
+<p>4)使用我们今天所学习的Nginx+Keepalived</p>
+<p>5)其他软件负载均衡如LVS(Linux Virtual Server),haproxy等技术</p>
+<h2 id="1-3-Nginx优点"><a href="#1-3-Nginx优点" class="headerlink" title="1.3 Nginx优点"></a>1.3 Nginx优点</h2><ul>
+<li><p>Nginx 可以在大多数 UnixLinux OS 上编译运行，并有 Windows 移植版。 Nginx 的1.4.0稳定版已经于2013年4月24日发布，一般情况下，对于新建站点，建议使用最新稳定版作为生产版本，已有站点的升级急迫性不高。</p>
+</li>
+<li><p>Nginx 的源代码使用 2-clause BSD-like license。</p>
+</li>
+<li><p>Nginx 是一个很强大的高性能Web和反向代理服务器，它具有很多非常优越的特性：</p>
+</li>
+<li><p>在连接高并发的情况下，Nginx是Apache服务器不错的替代品：Nginx在美国是做虚拟主机生意的老板们经常选择的软件平台之一。能够支持高达 50,000 个并发连接数的响应，感谢Nginx为我们选择了 epoll and kqueue作为开发模型。</p>
+</li>
+</ul>
+<h2 id="1-4-环境搭建"><a href="#1-4-环境搭建" class="headerlink" title="1.4 环境搭建"></a>1.4 环境搭建</h2><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531969.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531969.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409144042909"></p>
+<p>连接xshell的时候报错了,连不上啊</p>
+<p><code>去服务里面找到Vmware DHCP Service,右键启动就ok</code> </p>
+<p>我差不多一周没碰xshell和虚拟机了,然后就连接不上了,估计是上次启动的Vmware DHCP Service关了吧</p>
+<hr>
+<hr>
+<p><code>步骤</code>:</p>
+<h3 id="1-下载所需要的依赖库文件"><a href="#1-下载所需要的依赖库文件" class="headerlink" title="1.下载所需要的依赖库文件:"></a>1.下载所需要的依赖库文件:</h3><p>  yum install pcre -y</p>
+<p>  yum install pcre-devel -y</p>
+<p>  yum install zlib -y</p>
+<p>  yum install zlib-devel -y</p>
+<blockquote>
+<p><code>以上命令是centos的,但是我用的是乌班图,命令是不一样的</code></p>
+</blockquote>
+<hr>
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531785.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531785.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409153040569"></p>
+<p><code>报错了:[E: 无法定位软件包问题]</code></p>
+<blockquote>
+<p>:star:centos中的yum和ubuntu中的apt-get命令下载的**<code>依赖包名称可能不一致</code>**，会报错“E: 无法定位软件包问题”。:star:</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">比如在安装nginx时，centos系统中安装nginx所需的依赖lib指令为：
+yum <span class="token operator">-</span>y install pcre pcre<span class="token operator">-</span>devel
+yum <span class="token operator">-</span>y install zlib zlib<span class="token operator">-</span>devel
+yum <span class="token operator">-</span>y install openssl openssl<span class="token operator">-</span>devel
+
+ubuntu系统中安装nginx所需的依赖lib指令为：
+apt<span class="token operator">-</span><span class="token keyword">get</span> install gcc
+sudo apt<span class="token operator">-</span><span class="token keyword">get</span> install libpcre3 libpcre3<span class="token operator">-</span>dev
+apt<span class="token operator">-</span><span class="token keyword">get</span> install zlib1g zlib1g<span class="token operator">-</span>dev
+# Ubuntu14<span class="token punctuation">.</span><span class="token number">04</span>的仓库中没有发现openssl<span class="token operator">-</span>dev，由下面openssl和libssl<span class="token operator">-</span>dev替代
+#apt<span class="token operator">-</span><span class="token keyword">get</span> install openssl openssl<span class="token operator">-</span>dev
+sudo apt<span class="token operator">-</span><span class="token keyword">get</span> install openssl 
+sudo apt<span class="token operator">-</span><span class="token keyword">get</span> install libssl<span class="token operator">-</span>dev<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>:star::star:  总结:乌班图和centos同一操作**<code>命令和依赖包名称可能不一致</code>**</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531376.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531376.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409155530582"></p>
+<p><code>上面又报错了</code></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">#报错信息
+E<span class="token operator">:</span> 有未能满足的依赖关系。请尝试不指明软件包的名字来运行“apt <span class="token operator">--</span>fix<span class="token operator">-</span>broken install”<span class="token punctuation">(</span>也可以指定一个解决办法<span class="token punctuation">)</span>。
+
+您也许需要运行“apt <span class="token operator">--</span>fix<span class="token operator">-</span>broken install”来修正上面的错误。
+下列软件包有未满足的依赖关系：<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>解决方案:按照他给的命令运行,然后选y</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">sudo apt <span class="token operator">--</span>fix<span class="token operator">-</span>broken install<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531122.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231531122.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409155958394"></p>
+<h3 id="2-进行安装-tar-zxvf-nginx-1-18-0-tar-gz"><a href="#2-进行安装-tar-zxvf-nginx-1-18-0-tar-gz" class="headerlink" title="2.进行安装:tar -zxvf nginx-1.18.0.tar.gz"></a>2.进行安装:tar -zxvf nginx-1.18.0.tar.gz</h3><blockquote>
+<p>进入压缩包所在的文件</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532291.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532291.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409162944890"></p>
+<hr>
+<p>或者一步到位:</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532354.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532354.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409163111424"></p>
+<blockquote>
+<p>解压</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">tar <span class="token operator">-</span>zxvf 压缩包<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532536.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532536.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409163518280"></p>
+<p>OK了</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532277.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532277.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409163546719"></p>
+<h3 id="3-进行configure配置-查看是否报错"><a href="#3-进行configure配置-查看是否报错" class="headerlink" title="3.进行configure配置,查看是否报错"></a>3.进行configure配置,查看是否报错</h3><blockquote>
+<p>进入刚刚解压出来的文件夹[nginx-1.18.0]下</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532475.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532475.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409164200617"></p>
+<hr>
+<blockquote>
+<p>执行下列命令</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"><span class="token punctuation">.</span><span class="token operator">/</span>configure <span class="token operator">--</span>prefix<span class="token operator">=</span><span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>nginx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532268.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532268.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409165452479"></p>
+<p>Configure是一个可执行脚本，它有很多选项</p>
+<p>其中–prefix选项是<code>配置安装的路径</code>，如果不配置该选项，安装后可执行文件默认放在/usr/local/bin，库文件默认放在/usr/local/lib，配置文件默认放在/usr/local/etc，其它的资源文件放在/usr/local/share，比较凌乱。</p>
+<p>如果配置–prefix，如 ./configure –prefix=/usr/local/test 可以把所有资源文件放在/usr/local/test的路径中不会杂乱。</p>
+<hr>
+<p>看看/usr/local里面都有啥</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532357.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532357.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409165111532"></p>
+<hr>
+<hr>
+<p>执行上述命令,但是报错了</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532528.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532528.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409170003167"><br><code>./configure: error: the HTTP rewrite module requires the PCRE library.</code></p>
+<p>解决方案:</p>
+<p><code>执行下面两个命令</code></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">sudo apt<span class="token operator">-</span><span class="token keyword">get</span> update
+
+sudo apt<span class="token operator">-</span><span class="token keyword">get</span> install libpcre3 libpcre3<span class="token operator">-</span>dev<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532912.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532912.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409170114940"></p>
+<hr>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532487.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532487.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409170415816" style="zoom:80%;" />
+
+<hr>
+<hr>
+<p>然后继续  ./configure –prefix=/usr/local/nginx</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532830.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532830.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409170821736"></p>
+<p>又报错了,fuck</p>
+<p>==&gt;刚才是pcre报错,现在是zlib报错,还不明白吗,是第一步下载四个依赖包没做好,没有下载成功</p>
+<p>===&gt;再去下载一遍</p>
+<p><code>ok了</code></p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532784.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532784.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409210942987" style="zoom:80%;" />
+
+<hr>
+<hr>
+<h3 id="4-编译安装-make-amp-amp-make-install"><a href="#4-编译安装-make-amp-amp-make-install" class="headerlink" title="4.编译安装:make &amp;&amp; make install"></a>4.编译安装:make &amp;&amp; make install</h3><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532285.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532285.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409214549190"></p>
+<h3 id="5-在-usr-local-nginx目录下-可以看到如下4个目录"><a href="#5-在-usr-local-nginx目录下-可以看到如下4个目录" class="headerlink" title="5.在 /usr/local/nginx目录下,可以看到如下4个目录"></a>5.在 /usr/local/nginx目录下,可以看到如下4个目录</h3><p>  conf配置文件,html网页文件,logs日志文件,sbin主要二进制程序</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532254.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532254.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409214802638"></p>
+<h3 id="6-启动-关闭-重启"><a href="#6-启动-关闭-重启" class="headerlink" title="6.启动    关闭    重启"></a>6.启动    关闭    重启</h3><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532292.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532292.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410121218125"></p>
+<blockquote>
+<p>启动命令:/usr/local/nginx/sbin/nginx</p>
+</blockquote>
+<blockquote>
+<p>关闭命令:/usr/local/nginx/sbin/nginx -s stop</p>
+</blockquote>
+<blockquote>
+<p>重启命令:/usr/local/nginx/sbin/nginx -s reload</p>
+</blockquote>
+<h3 id="7-可以使用netstat-ano-grep-80-查看端口"><a href="#7-可以使用netstat-ano-grep-80-查看端口" class="headerlink" title="7.可以使用netstat -ano| grep 80 查看端口."></a>7.可以使用netstat -ano| grep 80 查看端口.</h3><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532946.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231532946.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409215638865" style="zoom:80%;" />
+
+<h3 id="8-在浏览器输入192-168-88-3-linux的ip-看到欢迎页面说明没问题"><a href="#8-在浏览器输入192-168-88-3-linux的ip-看到欢迎页面说明没问题" class="headerlink" title="8.在浏览器输入192.168.88.3(linux的ip)(看到欢迎页面说明没问题)"></a>8.在浏览器输入<code>192.168.88.3(linux的ip)</code>(看到欢迎页面说明没问题)</h3><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533193.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533193.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220409220238419"></p>
+<p><code>浏览器的这个html页面就是 /usr/local/nginx下的html文件</code></p>
+<h3 id="9-注-nginx安装要有gcc-是基于c的"><a href="#9-注-nginx安装要有gcc-是基于c的" class="headerlink" title="9.注:nginx安装要有gcc,是基于c的"></a>9.注:nginx安装要有gcc,是基于c的</h3><p>注意:如果出现这个错误:./configure: error: C compiler cc is not found</p>
+<p>执行这个命令:yum -y install gcc gcc-c++ autoconf automake make</p>
+<h1 id="二-NGINX通用语法"><a href="#二-NGINX通用语法" class="headerlink" title="二.NGINX通用语法"></a>二.NGINX通用语法</h1><h2 id="2-1-目录结构分析"><a href="#2-1-目录结构分析" class="headerlink" title="2.1 目录结构分析"></a>2.1 目录结构分析</h2><ul>
+<li><p>conf : 配置文件目录</p>
+</li>
+<li><p>html: 默认的HTML页面目录</p>
+</li>
+<li><p>logs: 日志存放目录</p>
+</li>
+<li><p>sbin: 执行命令目录<br><code>重新打开:cd /usr/local/nginx/sbin/nginx -s reopen</code><br>重新打开是指重新打开打的一个<code>日志文件</code><br><code>比如说做日志备份,把文件拷走,那就需要重新生成一个日志文件</code></p>
+</li>
+</ul>
+<h2 id="2-2-配置文件-nginx-conf"><a href="#2-2-配置文件-nginx-conf" class="headerlink" title="2.2  配置文件:nginx.conf"></a>2.2  配置文件:nginx.conf</h2><h3 id="①进入配置文件"><a href="#①进入配置文件" class="headerlink" title="①进入配置文件"></a>①进入配置文件</h3><blockquote>
+<p>进入nginx-1.18.0的conf目录</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533341.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533341.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410093031789"></p>
+<blockquote>
+<p>使用vim打开nginx.conf</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">vi nginx<span class="token punctuation">.</span>conf<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<hr>
+<h3 id="②配置文件解析"><a href="#②配置文件解析" class="headerlink" title="②配置文件解析"></a>②配置文件解析</h3><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533905.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533905.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413145531663" style="zoom:50%;" />
+
+<p>Nginx的主配置文件是nginx.conf，这个配置文件一共由三部分组成，分别为<strong>全局块、events块和http块</strong>。在http块中，又包含http全局块、多个server块。每个server块中，可以包含server全局块和多个location块。</p>
+<blockquote>
+<p>全局块</p>
+</blockquote>
+<p>全局块是默认配置文件从开始到events块之间的一部分内容，主要设置一些影响Nginx服务器整体运行的配置指令，因此，这些指令的作用域是Nginx服务器全局。</p>
+<p>通常包括配置运行Nginx服务器的用户（组）、允许生成的worker process数、Nginx进程PID存放路径、日志的存放路径和类型以及配置文件引入等。</p>
+<blockquote>
+<p>events块</p>
+</blockquote>
+<p>events块涉及的指令主要影响Nginx服务器与用户的网络连接。常用到的设置包括是否开启对多worker process下的网络连接进行序列化，是否允许同时接收多个网络连接，选取哪种事件驱动模型处理连接请求，每个worker process可以同时支持的最大连接数等。</p>
+<p>这一部分的指令对Nginx服务器的性能影响较大，在实际配置中应该根据实际情况灵活调整。</p>
+<blockquote>
+<p>http块</p>
+</blockquote>
+<p>http块是Nginx服务器配置中的<code>重要部分</code>，代理、缓存和日志定义等绝大多数的功能和第三方模块的配置都可以放在这个模块中。</p>
+<p>前面已经提到，<code>http块中可以包含自己的全局块，也可以包含server块，server块中又可以进一步包含location块</code>，在本书中我们使用“http全局块”来表示http中自己的全局块，即http块中不包含在server块中的部分。</p>
+<p>可以在http全局块中配置的指令包括文件引入、MIME-Type定义、日志自定义、是否使用sendfile传输文件、连接超时时间、单连接请求数上限等。</p>
+<p><code>server块</code></p>
+<p>server块和“虚拟主机”的概念有密切联系。</p>
+<p>虚拟主机，又称虚拟服务器、主机空间或是网页空间，它是一种技术。这种技术，使很多虚拟主机可以共享同一IP址，有效解决了IP地址不足的问题。虚拟主机技术主要应用于HTTP、FTP及EMAIL等多项服务，<code>将一台服务器的某项或者全部服务内容逻辑划分为多个服务单位，对外表现为多个服务器，从而充分利用服务器硬件资源</code>。**<code>从用户角度来看，一台虚拟主机和一台独立的硬件主机是完全一样的</code>**。</p>
+<p>在使用Nginx服务器提供Web服务时，利用虚拟主机的技术就可以避免为每一个要运行的网站提供单独的Nginx服务器，也无需为每个网站对应运行一组Nginx进程。虚拟主机技术使得Nginx服务器可以在同一台服务器上只运行一组Nginx进程，就可以运行多个网站。</p>
+<p>在前面提到过，每一个http块都可以包含多个server块，而**<code>每个server块就相当于一台虚拟主机</code>**，它内部可有多台主机联合提供服务，一起对外提供在逻辑上关系密切的一组服务（或网站）。</p>
+<p>和http块相同，server块也可以包含自己的全局块，同时可以包含多个location块。在server全局块中，最常见的两个配置项是本虚拟主机的监听配置和本虚拟主机的名称或IP配置。</p>
+<p>例:</p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">http
+<span class="token punctuation">&#123;</span>
+	server
+	<span class="token punctuation">&#123;</span>
+		#监听的端口
+		listen <span class="token number">80</span>		 
+		#主机名称
+		server_name aaa<span class="token punctuation">.</span>domain<span class="token punctuation">.</span>com
+		……
+	<span class="token punctuation">&#125;</span>
+	server
+	<span class="token punctuation">&#123;</span>
+		#监听的端口
+		listen <span class="token number">80</span>		 
+		#主机名称
+		server_name bbb<span class="token punctuation">.</span>otherdomain<span class="token punctuation">.</span>com
+		……
+	<span class="token punctuation">&#125;</span>
+	server
+	<span class="token punctuation">&#123;</span>
+		#监听的端口
+		listen <span class="token number">80</span>		 
+		#主机名称
+		server_name www<span class="token punctuation">.</span>domain<span class="token punctuation">.</span>com domain<span class="token punctuation">.</span>com <span class="token operator">*</span><span class="token punctuation">.</span>domain<span class="token punctuation">.</span>com
+		………
+	<span class="token punctuation">&#125;</span>	
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>第一个虚拟主机表示所有对域名aaa.domain.com访问都有它来处理；<br>第二个虚拟主机表示所有对域名bbb.otherdomain.com访问都有它来处理；<br>第三个虚拟主机表示对域名<a target="_blank" rel="noopener" href="http://www.domain.com/">www.domain.com</a> 、domain.com以及除了aaa.domain.com之外的所有x.domain.com的二级域名的访问都由它来处理。</p>
+<blockquote>
+<p>配置文件详解</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">#工作进程数，建议设置为CPU的总核数
+worker_processes  <span class="token number">16</span><span class="token punctuation">;</span>
+ 
+#全局错误日志定义类型，日志等级从低到高依次为：
+#debug | info | notice | warn | error | crit
+error_log  logs<span class="token operator">/</span>error<span class="token punctuation">.</span>log  info<span class="token punctuation">;</span>
+ 
+#记录主进程ID的文件
+pid        <span class="token operator">/</span>nginx<span class="token operator">-</span><span class="token number">1.13</span><span class="token punctuation">.</span><span class="token number">7</span><span class="token operator">/</span>nginx<span class="token punctuation">.</span>pid<span class="token punctuation">;</span>
+ 
+#一个进程能打开的文件描述符最大值，理论上该值因该是最多能打开的文件数除以进程数。
+#但是由于nginx负载并不是完全均衡的，所以这个值最好等于最多能打开的文件数。
+#LINUX系统可以执行 sysctl <span class="token operator">-</span>a | grep fs<span class="token punctuation">.</span>file 可以看到linux文件描述符。
+worker_rlimit_nofile <span class="token number">65535</span><span class="token punctuation">;</span>
+ 
+#连接数上限，单个进程允许的最大连接数
+events <span class="token punctuation">&#123;</span>  
+    worker_connections  <span class="token number">65535</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+ 
+#设定http服务器，利用它的反向代理功能提供负载均衡支持
+http <span class="token punctuation">&#123;</span>
+    #文件扩展名与文件类型映射表
+    include       mime<span class="token punctuation">.</span>types<span class="token punctuation">;</span>
+     
+    #默认文件类型
+    default_type  application<span class="token operator">/</span>octet<span class="token operator">-</span>stream<span class="token punctuation">;</span>
+     
+    #日志格式
+    log_format  main  '$remote_addr <span class="token operator">-</span> $remote_user <span class="token punctuation">[</span>$time_local<span class="token punctuation">]</span> <span class="token string-literal singleline"><span class="token string">"</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$</span><span class="token expression">request</span></span><span class="token string">"</span></span> '
+ 
+                                   '$status $body_bytes_sent <span class="token string-literal singleline"><span class="token string">"</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$</span><span class="token expression">http_referer</span></span><span class="token string">"</span></span> '
+ 
+                                   '<span class="token string-literal singleline"><span class="token string">"</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$</span><span class="token expression">http_user_agent</span></span><span class="token string">"</span></span> <span class="token string-literal singleline"><span class="token string">"</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">$</span><span class="token expression">http_x_forwarded_for</span></span><span class="token string">"</span></span>'<span class="token punctuation">;</span>
+ 
+    #access log 记录了哪些用户，哪些页面以及用户浏览器、ip和其他的访问信息
+    access_log  logs<span class="token operator">/</span>access<span class="token punctuation">.</span>log  main<span class="token punctuation">;</span>
+     
+    #服务器名字的hash表大小
+    server_names_hash_bucket_size <span class="token number">128</span><span class="token punctuation">;</span>
+     
+    #客户端请求头缓冲大小。
+    #nginx默认会用client_header_buffer_size这个buffer来读取header值，
+    #如果header过大，它会使用large_client_header_buffers来读取。
+    #如果设置过小HTTP头<span class="token operator">/</span>Cookie过大 会报<span class="token number">400</span> 错误 nginx <span class="token number">400</span> bad request
+    #如果超过buffer，就会报HTTP <span class="token number">414</span>错误<span class="token punctuation">(</span>URI Too Long<span class="token punctuation">)</span>
+    #nginx接受最长的HTTP头部大小必须比其中一个buffer大
+    #否则就会报<span class="token number">400</span>的HTTP错误<span class="token punctuation">(</span>Bad Request<span class="token punctuation">)</span>
+    client_header_buffer_size 32k<span class="token punctuation">;</span>
+    large_client_header_buffers <span class="token number">4</span> 32k<span class="token punctuation">;</span>
+ 
+    #客户端请求体的大小
+    client_body_buffer_size    8m<span class="token punctuation">;</span>
+ 
+    #隐藏ngnix版本号
+    server_tokens off<span class="token punctuation">;</span>
+ 
+    #忽略不合法的请求头
+    ignore_invalid_headers   on<span class="token punctuation">;</span>
+ 
+    #指定启用除第一条error_page指令以外其他的error_page。
+    recursive_error_pages    on<span class="token punctuation">;</span>
+ 
+    #让 nginx 在处理自己内部重定向时不默认使用  server_name 设置中的第一个域名
+    server_name_in_redirect off<span class="token punctuation">;</span>
+ 
+    #开启文件传输，一般应用都应设置为on；若是有下载的应用，则可以设置成off来平衡网络I<span class="token operator">/</span>O和磁盘的I<span class="token operator">/</span>O来降低系统负载
+    sendfile  on<span class="token punctuation">;</span>
+ 
+    #告诉nginx在一个数据包里发送所有头文件，而不一个接一个的发送。
+    tcp_nopush  on<span class="token punctuation">;</span>
+ 
+    #告诉nginx不要缓存数据，而是一段一段的发送<span class="token operator">--</span>当需要及时发送数据时，就应该给应用设置这个属性，
+    #这样发送一小块数据信息时就不能立即得到返回值。
+    tcp_nodelay    on<span class="token punctuation">;</span>
+ 
+    #长连接超时时间，单位是秒
+    keepalive_timeout  <span class="token number">65</span><span class="token punctuation">;</span>
+ 
+    #gzip模块设置，使用 gzip 压缩可以降低网站带宽消耗，同时提升访问速度。
+    gzip  on<span class="token punctuation">;</span>                     #开启gzip
+     
+    gzip_min_length  1k<span class="token punctuation">;</span>          #最小压缩大小
+     
+    gzip_buffers     <span class="token number">4</span> 16k<span class="token punctuation">;</span>       #压缩缓冲区
+ 
+    gzip_http_version <span class="token number">1.0</span><span class="token punctuation">;</span>        #压缩版本
+ 
+    gzip_comp_level <span class="token number">2</span><span class="token punctuation">;</span>            #压缩等级
+ 
+    gzip_types   text<span class="token operator">/</span>plain text<span class="token operator">/</span>css text<span class="token operator">/</span>xml text<span class="token operator">/</span>javascript application<span class="token operator">/</span>json application<span class="token operator">/</span>x<span class="token operator">-</span>javascript application<span class="token operator">/</span>xml application<span class="token operator">/</span>xml<span class="token operator">+</span>rss<span class="token punctuation">;</span>          #压缩类型
+ 
+    #upstream作负载均衡，在此配置需要轮询的服务器地址和端口号
+    #max_fails为允许请求失败的次数，默认为<span class="token number">1</span><span class="token punctuation">.</span>
+    #weight为轮询权重，根据不同的权重分配可以用来平衡服务器的访问率。
+    #指定要域名对应的WEB项目访问地址
+    upstream nginx<span class="token punctuation">.</span>www<span class="token punctuation">.</span>test<span class="token punctuation">.</span><span class="token function">cn</span> <span class="token punctuation">&#123;</span>
+        server localhost<span class="token operator">:</span><span class="token number">3000</span> max_fails<span class="token operator">=</span><span class="token number">3</span> weight<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+ 
+    #主机配置
+    server <span class="token punctuation">&#123;</span>
+        #监听端口
+        listen       <span class="token number">90</span><span class="token punctuation">;</span>
+ 
+        #自己指定要跳转的域名
+        server_name   <span class="token number">192.168</span><span class="token punctuation">.</span><span class="token number">1.19</span><span class="token punctuation">;</span>
+         
+        #反向代理配置，
+        #将所有请求为http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>nginx<span class="token punctuation">.</span>www<span class="token punctuation">.</span>test<span class="token punctuation">.</span>cn的请求全部转发到upstream中定义的目标服务器中。
+        location <span class="token operator">/</span> <span class="token punctuation">&#123;</span>
+            #定义首页索引文件的名称
+            #index index<span class="token punctuation">.</span>php index<span class="token punctuation">.</span>html index<span class="token punctuation">.</span>htm<span class="token punctuation">;</span>
+ 
+            #此处配置的域名必须与upstream的域名一致，才能转发。
+            proxy_pass     http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>nginx<span class="token punctuation">.</span>www<span class="token punctuation">.</span>test<span class="token punctuation">.</span>cn<span class="token punctuation">;</span>
+             
+            #以下是一些反向代理的配置可删除
+            proxy_redirect             off<span class="token punctuation">;</span>
+             
+            #后端的Web服务器可以通过X<span class="token operator">-</span>Forwarded<span class="token operator">-</span>For获取用户真实IP
+            proxy_set_header           Host $host<span class="token punctuation">;</span>
+            proxy_set_header           X<span class="token operator">-</span>Real<span class="token operator">-</span>IP $remote_addr<span class="token punctuation">;</span>
+            proxy_set_header           X<span class="token operator">-</span>Forwarded<span class="token operator">-</span>For $proxy_add_x_forwarded_for<span class="token punctuation">;</span>
+             
+            #client_max_body_size       10m<span class="token punctuation">;</span>   #允许客户端请求的最大单文件字节数
+            #client_body_buffer_size    128k<span class="token punctuation">;</span>  #缓冲区代理缓冲用户端请求的最大字节数
+            #proxy_connect_timeout      <span class="token number">300</span><span class="token punctuation">;</span>   #nginx跟后端服务器连接超时时间<span class="token punctuation">(</span>代理连接超时<span class="token punctuation">)</span>
+            #proxy_send_timeout         <span class="token number">300</span><span class="token punctuation">;</span>   #后端服务器数据回传时间<span class="token punctuation">(</span>代理发送超时<span class="token punctuation">)</span>
+            #proxy_read_timeout         <span class="token number">300</span><span class="token punctuation">;</span>   #连接成功后，后端服务器响应时间<span class="token punctuation">(</span>代理接收超时<span class="token punctuation">)</span>
+            #proxy_buffer_size          4k<span class="token punctuation">;</span>    #设置代理服务器（nginx）保存用户头信息的缓冲区大小
+            #proxy_buffers              <span class="token number">4</span> 32k<span class="token punctuation">;</span> #proxy_buffers缓冲区，网页平均在32k以下的话，这样设置
+            #proxy_busy_buffers_size    64k<span class="token punctuation">;</span>   #高负荷下缓冲大小（proxy_buffers<span class="token operator">*</span><span class="token number">2</span>）
+            #proxy_temp_file_write_size 64k<span class="token punctuation">;</span>   #设定缓存文件夹大小，大于这个值，将从upstream服务器传
+        <span class="token punctuation">&#125;</span>
+         
+        #单独的access_log文件
+        access_log  logs<span class="token operator">/</span><span class="token number">192.168</span><span class="token punctuation">.</span><span class="token number">1.19</span><span class="token punctuation">.</span>access<span class="token punctuation">.</span>log  main<span class="token punctuation">;</span>
+ 
+        #设定查看Nginx状态的地址
+        location <span class="token operator">/</span>NginxStatus<span class="token punctuation">&#123;</span>
+             stub_status on<span class="token punctuation">;</span>
+             access_log on<span class="token punctuation">;</span>
+             auth_basic <span class="token string-literal singleline"><span class="token string">"NginxStatus"</span></span><span class="token punctuation">;</span>
+             auth_basic_user_file htpasswd<span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+                 
+        #禁止访问 <span class="token punctuation">.</span>htxxx 文件
+        location ~ <span class="token operator">/</span>\<span class="token punctuation">.</span><span class="token function">ht</span> <span class="token punctuation">&#123;</span>
+            deny all<span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+ 
+        #字符集
+        charset utf<span class="token operator">-</span><span class="token number">8</span><span class="token punctuation">;</span>
+         
+        #错误页面
+        error_page   <span class="token number">500</span> <span class="token number">502</span> <span class="token number">503</span> <span class="token number">504</span> <span class="token operator">/</span>50x<span class="token punctuation">.</span>html<span class="token punctuation">;</span> 
+            location <span class="token operator">=</span> <span class="token operator">/</span>50x<span class="token punctuation">.</span><span class="token function">html</span> <span class="token punctuation">&#123;</span>
+            root   <span class="token operator">/</span>root<span class="token punctuation">;</span>
+        <span class="token punctuation">&#125;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="③配置文件语法"><a href="#③配置文件语法" class="headerlink" title="③配置文件语法"></a>③配置文件语法</h3><blockquote>
+<p>配置文件由指令和指令块构成</p>
+<p>指令块以{}大括号将多条指令组织在一起</p>
+</blockquote>
+<p><code>指令块:</code>大括号包围的就是指令块</p>
+<p><code>指令:</code>指令块里任一行就是一个指令</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533635.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533635.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410094547542"></p>
+<blockquote>
+<p>模块:字母+指令块</p>
+</blockquote>
+<p>模块里面也有指令块</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533745.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533745.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410184555039"></p>
+<blockquote>
+<p>每条指令以分号(;)结尾, 指令和参数之间用空格符号进行分隔</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533994.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533994.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410094722068"></p>
+<blockquote>
+<p>include语句允许组合多个配置文件以提升可维护性</p>
+</blockquote>
+<p>举例:</p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533524.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533524.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410095043775" style="zoom:80%;" />
+
+<hr>
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533058.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533058.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410095217877"><br>mime.types就是约定一些响应类型</p>
+<blockquote>
+<p>使用#符号添加注释, 提高可读性</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533756.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533756.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410095408382"></p>
+<blockquote>
+<p>使用$符号引用变量</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533837.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533837.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410095543325"></p>
+<blockquote>
+<p>部分指令的参数支持正则表达式</p>
+</blockquote>
+<h1 id="三-NGINX基础概念"><a href="#三-NGINX基础概念" class="headerlink" title="三.NGINX基础概念"></a>三.NGINX基础概念</h1><h2 id="3-1-多进程模式"><a href="#3-1-多进程模式" class="headerlink" title="3.1 多进程模式"></a>3.1 多进程模式</h2><p>在Nginx中会启动<code>Master和Worker</code>两种进程</p>
+<blockquote>
+<p>其中Master进程主要的工作:</p>
+</blockquote>
+<p>1 接收客户端的请求</p>
+<p>2 向Worker进程发送信号</p>
+<p>3 监控Worker进程的状态</p>
+<p>4 当Worker进程退出以后, 会自动重新启动新的Worker进程</p>
+<blockquote>
+<p>其中Worker进程主要是用来处理客户端的连接</p>
+</blockquote>
+<p>Worker进程应该配多少合适?</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533139.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533139.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410100858610"></p>
+<p>nginx.conf里面写的是1,你也可以配2,4,8</p>
+<p>**<code>具体配多少最好保证和CPU线程数一致</code>**比如四核CPU就配置4个</p>
+<p>因为这个是用来处理任务的,处理任务就要占用cpu</p>
+<h3 id="①查看cpu是几核的"><a href="#①查看cpu是几核的" class="headerlink" title="①查看cpu是几核的"></a>①查看cpu是几核的</h3><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533727.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533727.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410101538418" style="zoom: 33%;" />
+
+<hr>
+<hr>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533176.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533176.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410101655770" style="zoom: 50%;" />
+
+<h3 id="②更改Worker进程并使其生效"><a href="#②更改Worker进程并使其生效" class="headerlink" title="②更改Worker进程并使其生效"></a>②更改Worker进程并使其生效</h3><blockquote>
+<p>更改Worker进程</p>
+</blockquote>
+<ol>
+<li>按字母i由命令模式进入输入模式,改写Worker进程数</li>
+<li>按esc返回命令模式,然后按:进入编辑模式,再按wq退出vim</li>
+</ol>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533245.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231533245.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410104857811"></p>
+<blockquote>
+<p>使其生效(重启)</p>
+</blockquote>
+<p><code>前提是开启了nginx</code></p>
+<p>重启命令:/usr/local/nginx/sbin/nginx -s reload</p>
+<p>报错了</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534308.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534308.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410122527149"></p>
+<p><code>解决方法</code></p>
+<p>解决方法：</p>
+<p><code> /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf</code></p>
+<p>使用nginx -c的参数指定nginx.conf文件的位置</p>
+<hr>
+<hr>
+<p>后来又遇见另外一个错误:</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534281.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534281.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411205626323"></p>
+<p>这个错是<code>没有开启nginx</code></p>
+<hr>
+<hr>
+<p>然后再去执行重启命令</p>
+<blockquote>
+<p>使用命令查看nginx进程是否修改成功</p>
+</blockquote>
+<p><code>ps -ef |grep nginx</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534903.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534903.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410115906090"><br>只有一个没有八个,没有生效</p>
+<hr>
+<hr>
+<p>大概过了两天,我又重新试了一下,解决了,莫名你个其妙</p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534704.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534704.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411210225512" style="zoom:80%;" />
+
+<h2 id="3-2-配置文件结构"><a href="#3-2-配置文件结构" class="headerlink" title="3.2 配置文件结构"></a>3.2 配置文件结构</h2><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534304.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534304.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410184753601" style="zoom:80%;" />
+
+<blockquote>
+<p>nginx.conf由多个块组成，最外面的块是main;</p>
+<p>​        main包含events和http;</p>
+<p>​                http包含多个upstream和多个server;</p>
+<p>​                        server又包含多个location</p>
+</blockquote>
+<p>main（全局设置）、server（虚拟主机设置）、upstream（上游服务设置, 负载均衡服务器设置）和 location（URL匹配特定位置的设置）。</p>
+<ul>
+<li><p><code>main块设置的指令将影响其他所有设置</code>；    </p>
+</li>
+<li><p><code>server块的指令主要用于指定主机和端口</code>；</p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534982.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534982.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410185449178" style="zoom:67%;" /></li>
+<li><p><code>upstream指令主要用于负载均衡，设置一系列的后端服务器</code></p>
+</li>
+<li><p><code>location块用于匹配网页位置。</code></p>
+</li>
+</ul>
+<p>这四者之间的关系式：server继承main，location继承server，upstream既不会继承其他设置也不会被继承。</p>
+<h1 id="四-常用配置"><a href="#四-常用配置" class="headerlink" title="四.常用配置"></a>四.常用配置</h1><h2 id="4-1-虚拟主机配置"><a href="#4-1-虚拟主机配置" class="headerlink" title="4.1 虚拟主机配置"></a>4.1 虚拟主机配置</h2><p>nginx虚拟主机配置::star::star:</p>
+<p>一个server里面可以有多个location</p>
+<pre class="line-numbers language-nginx" data-language="nginx"><code class="language-nginx"><span class="token directive"><span class="token keyword">server</span></span> <span class="token punctuation">&#123;</span>
+
+    <span class="token directive"><span class="token keyword">listen</span>    <span class="token number">80</span></span><span class="token punctuation">;</span>  <span class="token comment">#监听的端口号  发一个请求,端口号对了就能进到server中</span>
+
+    <span class="token directive"><span class="token keyword">server_name</span> localhost</span><span class="token punctuation">;</span> <span class="token comment">#写域名;没有的话可以写localhost/ip,但是一个IP可以对应多个域名;工作中还是写域名</span>
+
+    <span class="token directive"><span class="token keyword">location</span> /</span> <span class="token punctuation">&#123;</span>
+
+      <span class="token directive"><span class="token keyword">root</span>  html</span><span class="token punctuation">;</span>
+
+      <span class="token directive"><span class="token keyword">index</span> index.html index.htm</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">&#125;</span>
+
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>一个请求,比如<a target="_blank" rel="noopener" href="http://192.168.88.3/test.html">http://192.168.88.3/test.html</a></p>
+<ul>
+<li>没有使用域名(例如baidu),而是使用了ip</li>
+<li>端口号不写默认是80<br><a target="_blank" rel="noopener" href="http://192.168.88.3/test.html">http://192.168.88.3/test.html</a>&lt;=&gt;<a target="_blank" rel="noopener" href="http://192.168.88.3/test.html">http://192.168.88.3:80/test.html</a></li>
+</ul>
+<p>通过一个请求的前半部分:<a target="_blank" rel="noopener" href="http://192.168.88.4就能进入到一个server中/">http://192.168.88.4就能进入到一个server中</a></p>
+<p>请求的后半部分:/test.html就会去<code>匹配location</code></p>
+<ul>
+<li>root是目录,<code>root  html就是/usr/local/nginx里面的html文件</code><br><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534560.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534560.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410192605207"></li>
+</ul>
+<p>如果没有这个html,访问的时候就会报404<br>可以自己去增加html</p>
+<h3 id="①增加html文件"><a href="#①增加html文件" class="headerlink" title="①增加html文件"></a>①增加html文件</h3><blockquote>
+<p>1 .进入/usr/local/nginx/html文件夹</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534879.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534879.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410223215784"></p>
+<blockquote>
+<p>2 .进入vim编写需要增加的html文件</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">vi test<span class="token punctuation">.</span>html<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><code>按i进入.....,然后按esc....,然后:wq</code></p>
+<p>报错了<br><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534899.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534899.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410223801586"></p>
+<p><code>原因:</code>这是由于在该目录下当前用户没有写权限导致。</p>
+<p>解决办法:</p>
+<ol>
+<li>输入命令 <strong>:w ! sudo tee %</strong> </li>
+<li>输入命令 <strong>:q!</strong>  强制退出，此时文本已经保存</li>
+</ol>
+<p>注：因为只是练习使用，这里只是简单粗暴的为所有用户赋予了读写和执行的全部权限，若是比较重要的生产环境，具体权限设置请参考linux 下chmod命令用法。</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534980.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534980.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410224200544"><br>ok</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534919.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534919.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410224304973"></p>
+<h3 id="②去浏览器运行"><a href="#②去浏览器运行" class="headerlink" title="②去浏览器运行"></a>②去浏览器运行</h3><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534907.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534907.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410224654005"><br>ok,成功了,只是存在中文乱码</p>
+<h3 id="③去配置文件nginx-conf中去找一下server"><a href="#③去配置文件nginx-conf中去找一下server" class="headerlink" title="③去配置文件nginx.conf中去找一下server"></a>③去配置文件nginx.conf中去找一下server</h3><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534371.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534371.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220410225313587" style="zoom:80%;" />
+
+<h2 id="4-2-日志文件"><a href="#4-2-日志文件" class="headerlink" title="4.2 日志文件"></a>4.2 日志文件</h2><p>nginx访问日志放在log/host.access.log下,并且使用main格式(支持自定义格式)</p>
+<p>对于main格式配置如下:</p>
+<pre class="line-numbers language-nginx" data-language="nginx"><code class="language-nginx"><span class="token comment">#日志文件输出格式这个位置相当于全局设置</span>
+
+<span class="token comment">#log_format main '$remote_addr - $remote_user [$time_local] "$request" '</span>
+
+<span class="token comment">#         '$status $body_bytes_sent "$http_referer" '</span>
+
+<span class="token comment">#         '"$http_user_agent" "$http_x_forwarded_for"';</span>
+
+<span class="token comment">#access_log logs/access.log main;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>虽然上述是注释的,但是<code>nginx内置的日志格式就是这个</code></p>
+<h3 id="①查看日志文件"><a href="#①查看日志文件" class="headerlink" title="①查看日志文件"></a>①查看日志文件</h3><p>查看日志内容命令:tail -n 100 -f access.log</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534862.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534862.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411092259565"></p>
+<p>用这个命令报错了</p>
+<hr>
+<blockquote>
+<p>解决方案如下:</p>
+</blockquote>
+<ol>
+<li>进入/usr/local/nginx/logs文件夹下<br>ls发现有三个文件,我们访问的是access.log</li>
+<li>使用命令<code>sudo tail access.log</code>查看</li>
+</ol>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534001.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534001.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411093138179"></p>
+<blockquote>
+<p>日志内容</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534254.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534254.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411093256077"></p>
+<p>这些日志信息是在哪配置的?</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534797.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231534797.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411094212947"></p>
+<p>$开头的那些是系统变量,这些变量可以去官网里面找,常见的一些变量在4.4location配置的全局变量里写出来了</p>
+<h2 id="4-3-日志文件切分"><a href="#4-3-日志文件切分" class="headerlink" title="4.3 日志文件切分"></a>4.3 日志文件切分</h2><ul>
+<li>nginx就是为了解决高并发==&gt;访问量很大==&gt;日志很多,但要<code>记得详细</code><ul>
+<li>因为:<code>要通过日志去分析系统,比如说分析业务系统的转化率;分析一些用户行为,例如a页面有没有访问b页面;分析用户分布,山东的占多少</code></li>
+<li>单个日志文件不要超过100M</li>
+<li>日志太大了也不方便看,<code>一般是按天生成</code></li>
+</ul>
+</li>
+</ul>
+<p>如果想要按天生成,那就要去写程序实现这个功能====&gt;<code>日志切分</code></p>
+<hr>
+<hr>
+<p>系统运行起来之后,我们需要对nginx日志的分析,得到<code>响应耗时的url,请求时间,以及这段时间的请求量和并发量</code>.通过分析找到优化系统的方案.</p>
+<p>所以需要运维人员对nginx的日志进行切割和分析处理.我们会通过<code>定时器</code>定时将日志按天/小时进行备份.</p>
+<h3 id="①实现手动备份日志"><a href="#①实现手动备份日志" class="headerlink" title="①实现手动备份日志"></a>①实现<code>手动</code>备份日志</h3><blockquote>
+<p>前提准备:编写shell脚本,创建切割文件存放的文件夹</p>
+</blockquote>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">#!&#x2F;bin&#x2F;sh
+
+# nginx 根目录
+BASE_DIR&#x3D;&#x2F;usr&#x2F;local&#x2F;nginx
+
+# 定义要复制日志的文件名 
+BASE_FILE_NAME&#x3D;access.log
+
+# 定义要复制日志文件的目录
+CURRENT_PATH&#x3D;$BASE_DIR&#x2F;logs
+
+# 定义切割文件存放的目录  需要在根目录创建一个文件目录路径
+BAK_PATH&#x3D;$BASE_DIR&#x2F;datalogs
+
+# 定义要复制的文件路径
+CURRENT_FILE&#x3D;$CURRENT_PATH&#x2F;$BASE_FILE_NAME
+
+# 定义回滚时间用来拼接日志名称 
+BAK_TIME&#x3D;&#96;&#x2F;bin&#x2F;date -d yesterday +%Y%m%d%H%M&#96;
+
+# 拼接复制的文件名
+BAK_FILE&#x3D;$BAK_PATH&#x2F;$BAK_TIME-$BASE_FILE_NAME
+
+#移动文件并且重命名,原先的文件就在原文件夹没了
+mv $CURRENT_FILE $BAK_FILE
+
+#把文件拷走,那就需要重新生成一个日志文件
+$BASE_DIR&#x2F;sbin&#x2F;nginx -s reopen<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<hr>
+<p><strong><code>进入/usr/local/nginx下创建文件datalogs</code></strong></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535294.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535294.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412111525780"></p>
+<blockquote>
+<p>第一. 进入/usr/local/nginx/sbin下</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535281.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535281.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411214520548"></p>
+<blockquote>
+<p>第二.vi backuplog.sh,把上面脚本粘贴进去</p>
+</blockquote>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535533.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535533.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411215143572" style="zoom:67%;" />
+
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535061.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535061.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411215224444"></p>
+<blockquote>
+<p>第三步.给刚才编写的backuplog.sh添加可执行权限</p>
+</blockquote>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">chmod +x backuplog.sh<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535402.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535402.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411215554735"></p>
+<blockquote>
+<p>第四步.进入/usr/local/nginx/logs查看日志</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535061.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535061.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412112335014"></p>
+<blockquote>
+<p>第五步.执行刚刚编写的脚本</p>
+</blockquote>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;sbin&#x2F;backuplog.sh<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<blockquote>
+<p>查看logs里原日志文件及大小</p>
+</blockquote>
+<p>查看大小:<code>ll -h</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535780.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535780.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412113736703"></p>
+<hr>
+<p><code>在我们执行了刚刚编写的脚本之后,就把日志文件转移了,原文件自然是0</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535885.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535885.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412114545193"><br>文件名就是日期:2022-04-11-11:46</p>
+<blockquote>
+<p>再去浏览器的nginx页面操作一波,然后logs里面又会生成新的日志文件,想转移的话就再执行脚本</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535519.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535519.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412114354609"></p>
+<h3 id="②实现定时备份日志"><a href="#②实现定时备份日志" class="headerlink" title="②实现定时备份日志"></a>②实现<code>定时</code>备份日志</h3><blockquote>
+<p>进入/usr/local/nginx/datalogs下;输入crontab -e(定时任务对脚本进行调度)</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">crontab <span class="token operator">-</span>e<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535992.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535992.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412120215047"></p>
+<p><code>这是第一次运行该命令，这里是让选择编译器的意思，喜欢用vim可以选择2</code></p>
+<blockquote>
+<p>在vim里面输入下面命令,然后保存退出</p>
+</blockquote>
+<p><code>拓展(自己去了解):linux的crontab定时配置全过程</code></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"><span class="token operator">*</span><span class="token operator">/</span><span class="token number">1</span> <span class="token operator">*</span> <span class="token operator">*</span> <span class="token operator">*</span> <span class="token operator">*</span> sh <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>nginx<span class="token operator">/</span>sbin<span class="token operator">/</span>backuplog<span class="token punctuation">.</span>sh
+#每隔一分钟去执行一下backuplog<span class="token punctuation">.</span>sh<span class="token punctuation">,</span>命令<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535949.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535949.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412120822210" style="zoom:67%;" />
+
+<hr>
+<hr>
+<blockquote>
+<p>ok,可以了,以后就会自动生成</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535328.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535328.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412121215302"></p>
+<hr>
+<hr>
+<p>注意:将脚本从window拷贝到linux,执行脚本的时候可能会出现$’\r’: command not found,需要转换一下格式:</p>
+<p>yum install dos2unix -y</p>
+<p>dos2unix 脚本文件</p>
+<h2 id="4-4-location配置"><a href="#4-4-location配置" class="headerlink" title="4.4 location配置"></a>4.4 location配置</h2><h3 id="①匹配资源语法规则"><a href="#①匹配资源语法规则" class="headerlink" title="①匹配资源语法规则"></a>①匹配资源语法规则</h3><p>语法规则： <strong><code>location [=|~|~*|^~] /uri/ &#123; … &#125;</code></strong></p>
+<ul>
+<li><p><code>= </code>开头表示精确匹配</p>
+</li>
+<li><p><code>^~ </code>开头表示uri以某个常规字符串开头，理解为匹配 url路径即可。<br>nginx不对url做编码，因此请求为/static/20%/aa，可以被规则^~ /static/ /aa匹配到（注意是空格）。</p>
+</li>
+<li><p><code>~</code> 开头表示区分大小写的正则匹配</p>
+</li>
+<li><p><code>~* </code>开头表示不区分大小写的正则匹配</p>
+</li>
+<li><p><code>/ </code>通用匹配，任何请求都会匹配到。</p>
+</li>
+<li><p>多个location配置的情况下匹配顺序为：</p>
+<ul>
+<li>首先匹配 =，其次匹配^~, 其次是按文件中顺序的正则匹配，最后是交给 / 通用匹配。</li>
+<li>当有匹配成功时候，停止匹配，按当前匹配规则处理请求。</li>
+</ul>
+</li>
+</ul>
+<h3 id="②匹配规则"><a href="#②匹配规则" class="headerlink" title="②匹配规则"></a>②匹配规则</h3><p>location = / {</p>
+<p>  #规则A</p>
+<p>}</p>
+<p>location = /login {</p>
+<p>  #规则B</p>
+<p>}</p>
+<p>location ^~ /static/ {</p>
+<p>  #规则C</p>
+<p>}</p>
+<p>location ~ .(gif|jpg|png|js|css)$ {</p>
+<p>  #规则D</p>
+<p>}</p>
+<p>location ~* .png$ {</p>
+<p>  #规则E</p>
+<p>}</p>
+<p>location / {</p>
+<p>  #规则H</p>
+<p>}</p>
+<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535048.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535048.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220411120818738"></p>
+<h4 id="实际应用配置"><a href="#实际应用配置" class="headerlink" title="实际应用配置"></a>实际应用配置</h4><p>#直接匹配网站根，通过域名访问网站首页比较频繁，使用这个会加速处理，官网如是说。</p>
+<p>#这里是直接转发给后端应用服务器了，也可以是一个静态首页</p>
+<hr>
+<p># 第一个必选规则</p>
+<p>location = / {         #第一个,默认的请求</p>
+<p>  proxy_pass <a target="_blank" rel="noopener" href="http://tomcat:8080/index">http://tomcat:8080/index</a>;     #默认的请求找不到就会去首页     proxy_pass会转发请求</p>
+<p>}</p>
+<hr>
+<p># 第二个必选规则是<code>处理静态文件请求</code>，这是nginx作为http服务器的强项</p>
+<p># 有<code>两种配置模式</code>，<code>目录匹配或后缀匹配</code>,任选其一或搭配使用</p>
+<p>location ^~ /static/ {</p>
+<p>  root /webroot/static/;</p>
+<p>}</p>
+<p>location ~* .(gif|jpg|jpeg|png|css|js|ico)$ {</p>
+<p>  root /webroot/res/;</p>
+<p>}</p>
+<hr>
+<p>#第三个规则就是<code>通用规则</code>，用来<code>转发动态请求到后端应用服务器</code></p>
+<p>#<code>非静态文件请求就默认是动态请求</code>，自己根据实际把握</p>
+<p>#毕竟目前的一些框架的流行，带.php,.jsp后缀的情况很少了</p>
+<p>location / {</p>
+<p>  proxy_pass <a target="_blank" rel="noopener" href="http://tomcat:8080/">http://tomcat:8080/</a></p>
+<p>}</p>
+<h3 id="③rewrite语法"><a href="#③rewrite语法" class="headerlink" title="③rewrite语法"></a>③rewrite语法</h3><p>if(条件为: =~~*) return、break、rewrite</p>
+<p>if ($remote_addr = 192.168.122.1) {</p>
+<p>​    return 401;</p>
+<p>}    </p>
+<p>rewrite是实现URL重写的关键指令，根据regex（正则表达式）部分内容，重定向到replacement，结尾是flag标记。</p>
+<p>  rewrite  <regex>  <replacement>  [flag];</p>
+<p>  关键字   正则       替代内容     flag标记</p>
+<p>  关键字：其中关键字rewrite不能改变</p>
+<p>  正则：perl兼容正则表达式语句进行规则匹配</p>
+<p>  替代内容：将正则匹配的内容替换成replacement</p>
+<p>  flag标记：rewrite支持的flag标记</p>
+<p>flag标记说明：</p>
+<p>last #本条规则匹配完成后，继续向下匹配新的location URI规则</p>
+<p>break #本条规则匹配完成即终止，不再匹配后面的任何规则</p>
+<p>redirect #返回302临时重定向，浏览器地址会显示跳转后的URL地址</p>
+<p>permanent #返回301永久重定向，浏览器地址栏会显示跳转后的URL地址</p>
+<p>rewrite 可以配置在server,location,if</p>
+<h3 id="④全局变量"><a href="#④全局变量" class="headerlink" title="④全局变量"></a>④全局变量</h3><p>官方配置:<a target="_blank" rel="noopener" href="http://nginx.org/en/docs">http://nginx.org/en/docs</a></p>
+<p>$args                        #请求中的参数值</p>
+<p>$query_string                #同 $args</p>
+<p>$arg_NAME                #GET请求中NAME的值</p>
+<p>$is_args                        #如果请求中有参数，值为”?”，否则为空字符串</p>
+<p>$uri                            #请求中的当前URI(不带请求参数，参数位于$args)，可以不同于浏览器传递的$request_uri的值，它可以通过内部重定向，或者使用index指令进行修改，$uri不包含主机名，如”/foo/bar.html”。</p>
+<p>$document_uri            #同 $uri</p>
+<p>$document_root            #当前请求的文档根目录或别名</p>
+<p>$host                        #优先级：HTTP请求行的主机名&gt;”HOST”请求头字段&gt;符合请求的服务器名</p>
+<p>$hostname        #主机名</p>
+<p>$https                        #如果开启了SSL安全模式，值为”on”，否则为空字符串。</p>
+<p>$binary_remote_addr    #客户端地址的二进制形式，固定长度为4个字节</p>
+<p>$body_bytes_sent        #传输给客户端的字节数，响应头不计算在内；这个变量和Apache的mod_log_config模块中的”%B”参数保持兼容</p>
+<p>$bytes_sent                #传输给客户端的字节数</p>
+<p>$connection                #TCP连接的序列号</p>
+<p>$connection_requests    #TCP连接当前的请求数量</p>
+<p>$content_length            #”Content-Length” 请求头字段</p>
+<p>$content_type      #”Content-Type” 请求头字段</p>
+<p>$cookie_name            #cookie名称</p>
+<p>$limit_rate                    #用于设置响应的速度限制</p>
+<p>$msec                        #当前的Unix时间戳</p>
+<p>$nginx_version            #nginx版本</p>
+<p>$pid               #工作进程的PID</p>
+<p>$pipe              #如果请求来自管道通信，值为”p”，否则为”.”</p>
+<p>$proxy_protocol_addr#获取代理访问服务器的客户端地址，如果是直接访问，该值为空字符串</p>
+<p>$realpath_root      #当前请求的文档根目录或别名的真实路径，会将所有符号连接转换为真实路径</p>
+<p>$remote_addr            #客户端地址</p>
+<p>$remote_port           #客户端端口</p>
+<p>$remote_user       #用于HTTP基础认证服务的用户名</p>
+<p>$request         #代表客户端的请求地址</p>
+<p>$request_body             #客户端的请求主体：此变量可在location中使用，将请求主体通过proxy_pass，fastcgi_pass，uwsgi_pass和scgi_pass传递给下一级的代理服务器</p>
+<p>$request_body_file      #将客户端请求主体保存在临时文件中。文件处理结束后，此文件需删除。如果需要之一开启此功能，需要设置client_body_in_file_only。如果将次文件传递给后端的代理服务器，需要禁用request body，即设置proxy_pass_request_body off，fastcgi_pass_request_body off，uwsgi_pass_request_body off，or scgi_pass_request_body off</p>
+<p>$request_completion     #如果请求成功，值为”OK”，如果请求未完成或者请求不是一个范围请求的最后一部分，则为空</p>
+<p>$request_filename      #当前连接请求的文件路径，由root或alias指令与URI请求生成</p>
+<p>$request_length   #请求的长度 (包括请求的地址，http请求头和请求主体)</p>
+<p>$request_method      #HTTP请求方法，通常为”GET”或”POST”</p>
+<p>$request_time     #处理客户端请求使用的时间; 从读取客户端的第一个字节开始计时</p>
+<p>$request_uri             #这个变量等于包含一些客户端请求参数的原始URI，它无法修改，请查看$uri更改或重写URI，不包含主机名，例如：”/cnphp/test.php?arg=freemouse”</p>
+<p>$scheme               #请求使用的Web协议，”http” 或 “https”</p>
+<p>$server_addr       #服务器端地址，需要注意的是：为了避免访问linux系统内核，应将ip地址提前设置在配置文件中</p>
+<p>$server_name             #服务器名</p>
+<p>$server_port           #服务器端口</p>
+<p>$server_protocol      #服务器的HTTP版本，通常为 “HTTP/1.0” 或 “HTTP/1.1”</p>
+<p>$status              #HTTP响应代码</p>
+<p>$time_iso8601          #服务器时间的ISO 8610格式</p>
+<p>$time_local            #服务器时间（LOG Format 格式）</p>
+<p>$cookie_NAME       #客户端请求Header头中的cookie变量，前缀”$cookie_”加上cookie名称的变量，该变量的值即为cookie名称的值</p>
+<p>$http_NAME            #匹配任意请求头字段；变量名中的后半部分NAME可以替换成任意请求头字段，如在配置文件中需要获取http请求头：”Accept-Language”，$http_accept_language即可</p>
+<p>$http_cookie                #cookie 信息</p>
+<p>$http_post</p>
+<p>$http_referer                #引用地址</p>
+<p>$http_user_agent        #客户端代理信息</p>
+<p>$http_x_forwarded_for#相当于网络访问路径。<a target="_blank" rel="noopener" href="http://www.cnblogs.com/craig/archive/2008/11/18/1335809.html">http://www.cnblogs.com/craig/archive/2008/11/18/1335809.html</a></p>
+<p>$sent_http_NAME   #可以设置任意http响应头字段；变量名中的后半部分NAME可以替换成任意响应头字段，如需要设置响应头Content-length，$sent_http_content_length即可</p>
+<p>$sent_http_cache_control</p>
+<p>$sent_http_connection</p>
+<p>$sent_http_content_type</p>
+<p>$sent_http_keep_alive</p>
+<p>$sent_http_last_modified</p>
+<p>$sent_http_location</p>
+<p>$sent_http_transfer_encoding</p>
+<h2 id="拓展-linux中新建文件夹-使用XFTP无法上传的问题"><a href="#拓展-linux中新建文件夹-使用XFTP无法上传的问题" class="headerlink" title="拓展:linux中新建文件夹,使用XFTP无法上传的问题"></a>拓展:linux中新建文件夹,使用XFTP无法上传的问题</h2><blockquote>
+<p>在/usr/local下创建文件夹,命名为software</p>
+</blockquote>
+<p><code>mkdir software</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535526.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231535526.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412151506859"></p>
+<p>:star::star::star:<code>记住这个位置,以后下载的所有软件都放在这里!!!!!</code>:star::star:</p>
+<hr>
+<blockquote>
+<p>在software下建一个crm文件夹,然后利用xftp传过去</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536861.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536861.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412153823567"></p>
+<hr>
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536026.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536026.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412154219482"></p>
+<p><code>利用XFTP传输的时候报错了</code></p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536688.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536688.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412155721196" style="zoom:80%;" />
+
+<hr>
+<p><code>解决方案:</code></p>
+<p>选中需要上传的Linux文件夹右键–更改权限–勾选全部</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536282.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536282.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412160040299"></p>
+<p><code>但是这种办法不生效,勾选全部之后点击确定,再次打开还是没有修改</code></p>
+<p>所以:</p>
+<p><strong><code>在xshell里面使用命令修改文件夹的权限    :chmod 777 文件夹名</code></strong>:star::star::star:</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536427.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536427.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412161630545"><br>a文件夹包含b文件夹,想要修改b文件夹权限==&gt;<code>进入a文件夹中</code>,使用命令:<code>chmod 777 b</code></p>
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536288.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536288.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412161803257"></p>
+<h2 id="4-6-linux安装jdk-tomcat"><a href="#4-6-linux安装jdk-tomcat" class="headerlink" title="4.6 linux安装jdk,tomcat"></a>4.6 linux安装jdk,tomcat</h2><h3 id="①下载安装的两种方式"><a href="#①下载安装的两种方式" class="headerlink" title="①下载安装的两种方式"></a>①下载安装的两种方式</h3><ol>
+<li><code>通过apt安装.</code>:star::star:<ul>
+<li>apt 是Advanced Packaging Tool的简称，是<code>Ubuntu下的</code>包安装管理工具，大部分的软件安装/更新/卸载都是利用apt命令来实现的。</li>
+<li><code>apt常用命令</code><ul>
+<li>安装软件： sudo apt install [软件名] ；</li>
+<li>卸载软件： sudo apt remove [软件名] ；</li>
+<li>更新可用软件包： sudo apt update ；</li>
+<li>更新已安装软件包： sudo apt upgrade </li>
+</ul>
+</li>
+<li><code>软件下载及安装后的目录</code><ul>
+<li>下载的软件(deb包)的存放位置：/var/cache/apt/archives</li>
+<li>安装后软件的默认位置：/usr/share</li>
+<li>可执行文件位置：/usr/bin</li>
+<li>配置文件位置：/etc</li>
+<li>lib文件位置：/usr/lib</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>通过官网<code>下载安装包安装.</code>​star::star2::star2:<ol>
+<li>从浏览器下载压缩包</li>
+<li>使用命令解压到指定位置</li>
+</ol>
+</li>
+</ol>
+<hr>
+<hr>
+<p>apt安装:<br>    优点:可以通过 apt-get upgrade 方式方便获得软件的升级</p>
+<p>​    缺点:默认安装啊,我怕找不到啊到时候(能改默认安装位置,但是我觉得有点复杂)<br>​    <img src="C:\Users\郁孤台下清江水\AppData\Roaming\Typora\typora-user-images\image-20220412204058480.png" class="lazyload placeholder" data-srcset="C:\Users\郁孤台下清江水\AppData\Roaming\Typora\typora-user-images\image-20220412204058480.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412204058480" style="zoom:80%;" /></p>
+<h3 id="②安装jdk"><a href="#②安装jdk" class="headerlink" title="②安装jdk"></a>②安装jdk</h3><blockquote>
+<p>为了能够把软件下载到我指定的位置,我决定用压缩包安装</p>
+</blockquote>
+<h4 id="1-查看安装的Ubuntu是32位还是64位系统"><a href="#1-查看安装的Ubuntu是32位还是64位系统" class="headerlink" title="1)查看安装的Ubuntu是32位还是64位系统"></a>1)查看安装的Ubuntu是32位还是64位系统</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">sudo uname <span class="token operator">-</span>m<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536704.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536704.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412212650988"></p>
+<h4 id="2-前往oracle-Java官网下载JDK-下载-tar-gz格式的压缩包"><a href="#2-前往oracle-Java官网下载JDK-下载-tar-gz格式的压缩包" class="headerlink" title="2) 前往oracle Java官网下载JDK,下载.tar.gz格式的压缩包"></a>2) 前往oracle Java官网下载JDK,下载<code>.tar.gz</code>格式的压缩包</h4><p>我下载的是jdk18,但是不知道为啥,没有jre,也没有javah,导致后续出了很多错</p>
+<p>所以我删除掉,从网上找了一个jdk8的压缩包</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536351.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536351.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413101701325"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">rm <span class="token operator">-</span>rf 文件夹名<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><code>要在文件夹的上一级文件夹执行命令</code></p>
+<h4 id="3-通过XFTP传输到-usr-local-software"><a href="#3-通过XFTP传输到-usr-local-software" class="headerlink" title="3)通过XFTP传输到/usr/local/software"></a>3)通过XFTP传输到/usr/local/software</h4><blockquote>
+<p>好吧,其实也可以直接在linux浏览器下载,但是我不知道他给我下载到哪去</p>
+</blockquote>
+<p><code>传输错误===&gt;使用命令修改software文件夹的权限  :chmod 777 文件夹名</code></p>
+<p><code>在software上一级文件夹使用命令</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536101.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536101.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412214738504"></p>
+<hr>
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536161.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536161.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413102529853"></p>
+<hr>
+<h4 id="4-解压-tar-zxvf-压缩包名"><a href="#4-解压-tar-zxvf-压缩包名" class="headerlink" title="4)解压:  tar -zxvf 压缩包名"></a>4)解压:  tar -zxvf 压缩包名</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">tar <span class="token operator">-</span>zxvf jdk<span class="token operator">-</span>8u161<span class="token operator">-</span>linux<span class="token operator">-</span>x64<span class="token punctuation">.</span>tar<span class="token punctuation">.</span>gz<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536218.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536218.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413103133124" style="zoom:200%;" />
+
+<hr>
+<p>这一次就有jre了,javah了</p>
+<h4 id="5-修改环境变量"><a href="#5-修改环境变量" class="headerlink" title="5)修改环境变量"></a>5)修改环境变量</h4><p>.bashrc配置文件(是一个隐藏文件)</p>
+<p>简单来说，就是可以通过 bashrc 配置文件对命令进行自定义，可快速通过用户自定义的命令来执行带参数的命令甚至脚本。</p>
+<blockquote>
+<p>进入.bashrc配置文件(通过vim编辑器进去的)</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">sudo vim ~<span class="token operator">/</span><span class="token punctuation">.</span>bashrc<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>~/是进入当前用户的主目录。比如我用的用户名是aaa</p>
+<p>那么命令 cd ~/   就进入了/home/aaa 目录。</p>
+<p>.bashrc 是进入.bashrc文件夹，就是用户目录下的名字是.bashrc的目录。</p>
+<blockquote>
+<p>文件的末尾追加下面内容</p>
+</blockquote>
+<p>按i==&gt;末尾追加东西==&gt;esc==&gt;:wq</p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">#<span class="token keyword">set</span> oracle jdk environment
+export JAVA_HOME<span class="token operator">=</span><span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>jdk1<span class="token punctuation">.</span><span class="token number">8.0_161</span>  ## 这里要注意目录要换成自己解压的jdk 目录
+export JRE_HOME<span class="token operator">=</span>$<span class="token punctuation">&#123;</span>JAVA_HOME<span class="token punctuation">&#125;</span><span class="token operator">/</span>jre  
+export CLASSPATH<span class="token operator">=</span><span class="token punctuation">.</span><span class="token operator">:</span>$<span class="token punctuation">&#123;</span>JAVA_HOME<span class="token punctuation">&#125;</span><span class="token operator">/</span>lib<span class="token operator">:</span>$<span class="token punctuation">&#123;</span>JRE_HOME<span class="token punctuation">&#125;</span><span class="token operator">/</span>lib  
+export PATH<span class="token operator">=</span>$<span class="token punctuation">&#123;</span>JAVA_HOME<span class="token punctuation">&#125;</span><span class="token operator">/</span>bin<span class="token operator">:</span>$PATH<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>使环境变量马上生效:</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">source ~<span class="token operator">/</span><span class="token punctuation">.</span>bashrc<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h4 id="6-设置系统默认jdk版本"><a href="#6-设置系统默认jdk版本" class="headerlink" title="6) 设置系统默认jdk版本"></a>6) 设置系统默认jdk版本</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">sudo update<span class="token operator">-</span>alternatives <span class="token operator">--</span>install <span class="token operator">/</span>usr<span class="token operator">/</span>bin<span class="token operator">/</span>java java <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>jdk1<span class="token punctuation">.</span><span class="token number">8.0_161</span><span class="token operator">/</span>bin<span class="token operator">/</span>java <span class="token number">300</span>  
+sudo update<span class="token operator">-</span>alternatives <span class="token operator">--</span>install <span class="token operator">/</span>usr<span class="token operator">/</span>bin<span class="token operator">/</span>javac javac <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>jdk1<span class="token punctuation">.</span><span class="token number">8.0_161</span><span class="token operator">/</span>bin<span class="token operator">/</span>javac <span class="token number">300</span>  
+sudo update<span class="token operator">-</span>alternatives <span class="token operator">--</span>install <span class="token operator">/</span>usr<span class="token operator">/</span>bin<span class="token operator">/</span>jar jar <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>jdk1<span class="token punctuation">.</span><span class="token number">8.0_161</span><span class="token operator">/</span>bin<span class="token operator">/</span>jar <span class="token number">300</span>   
+sudo update<span class="token operator">-</span>alternatives <span class="token operator">--</span>install <span class="token operator">/</span>usr<span class="token operator">/</span>bin<span class="token operator">/</span>javah javah <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>jdk1<span class="token punctuation">.</span><span class="token number">8.0_161</span><span class="token operator">/</span>bin<span class="token operator">/</span>javah <span class="token number">300</span>   
+sudo update<span class="token operator">-</span>alternatives <span class="token operator">--</span>install <span class="token operator">/</span>usr<span class="token operator">/</span>bin<span class="token operator">/</span>javap javap <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>jdk1<span class="token punctuation">.</span><span class="token number">8.0_161</span><span class="token operator">/</span>bin<span class="token operator">/</span>javap <span class="token number">300</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面命令,拿出一个举例:</p>
+<p><img src="C:\Users\郁孤台下清江水\AppData\Roaming\Typora\typora-user-images\image-20220412223041933.png" class="lazyload placeholder" data-srcset="C:\Users\郁孤台下清江水\AppData\Roaming\Typora\typora-user-images\image-20220412223041933.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412223041933"><br>后面分为<code>三部分</code>,前两部分不用管是固定的,第三部分里/usr/local/software/jdk1.8.0_161/bin是<code>自己安装的jdk路径的一个文件夹</code>,后面也是固定的</p>
+<hr>
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536474.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536474.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413103507871"></p>
+<p>ok</p>
+<h4 id="7-执行下面命令"><a href="#7-执行下面命令" class="headerlink" title="7)执行下面命令"></a>7)执行下面命令</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">sudo update<span class="token operator">-</span>alternatives <span class="token operator">--</span>config java<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536118.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536118.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413103803210"></p>
+<h4 id="8-测试jdk"><a href="#8-测试jdk" class="headerlink" title="8)测试jdk"></a>8)测试jdk</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">java <span class="token operator">-</span>version<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536547.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536547.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413103825803"></p>
+<h3 id="③安装Tomcat"><a href="#③安装Tomcat" class="headerlink" title="③安装Tomcat"></a>③安装Tomcat</h3><h4 id="1-用xftp传到linux中"><a href="#1-用xftp传到linux中" class="headerlink" title="1)用xftp传到linux中"></a>1)用xftp传到linux中</h4><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536513.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536513.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412225031518"></p>
+<h4 id="2-解压"><a href="#2-解压" class="headerlink" title="2)解压"></a>2)解压</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">tar <span class="token operator">-</span>zxvf apache<span class="token operator">-</span>tomcat<span class="token operator">-</span><span class="token number">8.5</span><span class="token punctuation">.</span><span class="token number">63</span><span class="token punctuation">.</span>tar<span class="token punctuation">.</span>gz<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><code>报错了</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536933.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536933.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412225410274"></p>
+<hr>
+<p><code>解决方案:改为绝对路径</code></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">tar <span class="token operator">-</span>zxvf <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>apache<span class="token operator">-</span>tomcat<span class="token operator">-</span><span class="token number">8.5</span><span class="token punctuation">.</span><span class="token number">63</span><span class="token punctuation">.</span>tar<span class="token punctuation">.</span>gz<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>ok,成功解决</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536357.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231536357.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412230520724"></p>
+<h4 id="3-启动tomcat"><a href="#3-启动tomcat" class="headerlink" title="3)启动tomcat"></a>3)启动tomcat</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"><span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>apache<span class="token operator">-</span>tomcat<span class="token operator">-</span><span class="token number">8.5</span><span class="token punctuation">.</span><span class="token number">63</span><span class="token operator">/</span>bin<span class="token operator">/</span>startup<span class="token punctuation">.</span>sh<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537167.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537167.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220412230851307"></p>
+<h4 id="4-去日志文件中看看启动效果"><a href="#4-去日志文件中看看启动效果" class="headerlink" title="4)去日志文件中看看启动效果"></a>4)去日志文件中看看启动效果</h4><p>进入logs:</p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">cd <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>apache<span class="token operator">-</span>tomcat<span class="token operator">-</span><span class="token number">8.5</span><span class="token punctuation">.</span><span class="token number">63</span><span class="token operator">/</span>logs<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>执行命令:<br><code>tail 命令可用于查看文件的内容，有一个常用的参数 -f 常用于查阅正在改变的日志文件</code></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">tail <span class="token operator">-</span>f catalina<span class="token punctuation">.</span>out<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537969.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537969.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413104133677"></p>
+<h4 id="5-设置linux开放的端口号-star-star"><a href="#5-设置linux开放的端口号-star-star" class="headerlink" title="5) 设置linux开放的端口号:star::star:"></a>5) 设置linux开放的端口号:star::star:</h4><blockquote>
+<p>防火墙与端口的关系</p>
+</blockquote>
+<p><strong><code>防火墙和端口的关系就是墙和洞的关系</code></strong></p>
+<p>在操作系统的防火墙中，网络访问会涉及出、入两个方向:</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>出口</td>
+<td>请求从服务器出去的方向称为出口，这个口<code>一般不做限制</code></td>
+</tr>
+<tr>
+<td>入口</td>
+<td><code>请求从外部访问本服务器，这个口称为入口， 防火墙的端口限制都是限制入口</code></td>
+</tr>
+</tbody></table>
+<hr>
+<hr>
+<h5 id="所以啊-如果开启防火墙-那么就要配置相应的端口-要不然windows的浏览器里面的请求没有办法访问linux系统的tomcat服务器"><a href="#所以啊-如果开启防火墙-那么就要配置相应的端口-要不然windows的浏览器里面的请求没有办法访问linux系统的tomcat服务器" class="headerlink" title="所以啊,如果开启防火墙,那么就要配置相应的端口,要不然windows的浏览器里面的请求没有办法访问linux系统的tomcat服务器"></a><font color=blue>所以啊,如果开启防火墙,那么就要配置相应的端口,要不然windows的浏览器里面的请求没有办法访问linux系统的tomcat服务器</font></h5><p>当ubuntu系统上有某个程序与外界的程序进行通信时，那么就要为这个程序分配一个端口，那么外界程序就可以通过这个端口与其通信了。但是<code>ubuntu系统默认都是没有对外开放端口的</code></p>
+<hr>
+<hr>
+<blockquote>
+<p>开启防火墙</p>
+</blockquote>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">sudo ufw enable<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<blockquote>
+<p>打开端口</p>
+</blockquote>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">sudo ufw allow 端口号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<blockquote>
+<p>重启防火墙</p>
+</blockquote>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">sudo ufw reload<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<hr>
+<p>但是我的电脑我把防火墙给关了,这样就不用增加端口了</p>
+<p><code>补充:</code></p>
+<blockquote>
+<p>查看防火墙状态</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">sudo ufw status<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537912.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537912.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413105526872"></p>
+<hr>
+<blockquote>
+<p>关闭防火墙</p>
+</blockquote>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java">sudo ufw disable<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<hr>
+<hr>
+<h4 id="6-在windows浏览器里访问tomcat服务器"><a href="#6-在windows浏览器里访问tomcat服务器" class="headerlink" title="6)在windows浏览器里访问tomcat服务器"></a>6)在windows浏览器里访问tomcat服务器</h4><blockquote>
+<p>查看/修改Tomcat的ip和端口号</p>
+</blockquote>
+<p><code>进入/usr/local/software/apache-tomcat-8.5.63/conf目录</code></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"><span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>apache<span class="token operator">-</span>tomcat<span class="token operator">-</span><span class="token number">8.5</span><span class="token punctuation">.</span><span class="token number">63</span><span class="token operator">/</span>conf<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537750.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537750.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413140915796"></p>
+<p><code>用vim编辑器打开server.xml,查看端口和ip</code></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">vi server<span class="token punctuation">.</span>xml<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537284.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537284.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413141145821"></p>
+<p><code>ip地址是localhost,也就是本机地址(linux)==&gt;192.168.88.3</code></p>
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537159.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537159.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413141312006"></p>
+<p><code>端口号是8080</code></p>
+<hr>
+<hr>
+<p>==&gt;<a target="_blank" rel="noopener" href="http://192.168.88.3:8080/">http://192.168.88.3:8080/</a>       协议+ip+端口号</p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537866.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537866.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413112919657" style="zoom:67%;" />
+
+<h2 id="4-7-反向代理配置案例一"><a href="#4-7-反向代理配置案例一" class="headerlink" title="4.7 反向代理配置案例一"></a>4.7 反向代理配置案例一</h2><blockquote>
+<p>注意:反向代理修改配置文件的时候修改的是<code>cd /usr/local/nginx/conf</code>下的<code>nginx.conf</code>:star::star::star::star::star:</p>
+<p>主要是有好几个nginx.conf,修改其他位置的无效</p>
+</blockquote>
+<blockquote>
+<p>效果:在windows浏览器访问<a target="_blank" rel="noopener" href="http://www.gaoyang.com,进入到tomcat首页/">www.gaoyang.com,进入到tomcat首页</a></p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537929.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537929.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413120541872"><br>nginx没有ip(或者说用不到,server_name写的是别人的ip)</p>
+<hr>
+<p>真实项目里有多个服务器,分布在各地,<code>不同的服务器ip是不一样的</code>,而用户访问的地址例如<a target="_blank" rel="noopener" href="http://www.baidu.com/">http://www.baidu.com</a> (baidu是域名,一个域名对应一个ip)却是固定的,这个固定的地址会访问多个服务器中的一个;</p>
+<p>也就是说这个ip能够和多个ip对上==&gt;<code>反向代理实现的</code></p>
+<p><strong><code>浏览器请求的地址和nginx绑定,nginx根据一定的规则选择一个服务器,而用户从头到尾啥也不知道,只是得到了结果</code></strong></p>
+<hr>
+<hr>
+<blockquote>
+<p><code>拓展:</code>浏览器输入域名网址访问后的过程详解</p>
+</blockquote>
+<ol>
+<li>浏览器获取输入的<a target="_blank" rel="noopener" href="http://www.fgba.net/">www.fgba.net</a></li>
+<li>浏览器向DNS请求解析<a target="_blank" rel="noopener" href="http://www.fgba.net的ip地址/">www.fgba.net的IP地址</a> </li>
+<li>域名系统DNS解析出百度服务器的IP地址 （详细介绍DNS）-通过网关出去 </li>
+<li>浏览器与该服务器建立TCP连接(默认端口号80) </li>
+<li>浏览器发出HTTP请求，请求百度首页 </li>
+<li>服务器通过HTTP响应把首页文件发送给浏览器 </li>
+<li>TCP连接释放 </li>
+<li>浏览器将首页文件进行解析，并将Web页显示给用户。</li>
+</ol>
+<p><code>在浏览器输入一个域名的时候,首先会去本地的hosts文件中找有没有对应的ip;如果没有的话才去DNS</code></p>
+<hr>
+<h3 id="①在windows的hosts文件中进行域名和ip映射的配置"><a href="#①在windows的hosts文件中进行域名和ip映射的配置" class="headerlink" title="①在windows的hosts文件中进行域名和ip映射的配置"></a>①在windows的hosts文件中进行域名和ip映射的配置</h3><blockquote>
+<p>注意:反向代理修改配置文件的时候修改的是<code>cd /usr/local/nginx/conf</code>下的<code>nginx.conf</code>:star::star::star::star::star:</p>
+</blockquote>
+<p><code>事实上,域名对应一个ip,但是这个域名是要花钱买的;而我们只是演示,所以在host里面进行配置</code></p>
+<p><code>在浏览器输入一个域名的时候,首先会去本地的hosts文件中找有没有对应的ip;如果没有的话才去DNS</code></p>
+<hr>
+<hr>
+<blockquote>
+<p>windows的hosts文件位置:<strong><code>C:\Windows\System32\drivers\etc</code></strong></p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537811.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537811.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413133634467"></p>
+<hr>
+<blockquote>
+<p>然后打开hosts文件,末尾加上ip和域名</p>
+</blockquote>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537327.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537327.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413134503047" style="zoom:67%;" />
+`更改不了`
+
+<hr>
+<p><code>处理方案</code></p>
+<ol>
+<li>按住windows+X<br><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537279.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537279.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413144830837"></li>
+<li>输入notepad<br><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537192.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537192.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413144908935"></li>
+<li>在记事本界面点击文件，然后点<code>打开</code>，在弹出来的窗口里找到路径c:\windows\system32\drivers\etc\，找到后可以看到目录里面是空白。点击右下角的选择文件，切换到所有文件<br><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537041.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537041.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413145020584"></li>
+<li>点击hosts文件,就可以修改了,然后保存就可以</li>
+</ol>
+<h3 id="②在nginx中进行请求转发-反向代理-的配置"><a href="#②在nginx中进行请求转发-反向代理-的配置" class="headerlink" title="②在nginx中进行请求转发(反向代理)的配置"></a>②在nginx中进行请求转发(反向代理)的配置</h3><blockquote>
+<p>注意:反向代理修改配置文件的时候修改的是<code>cd /usr/local/nginx/conf</code>下的<code>nginx.conf</code>:star::star::star::star::star:</p>
+</blockquote>
+<blockquote>
+<p>1)进入nginx的配置文件</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">cd <span class="token operator">/</span>home<span class="token operator">/</span>gy<span class="token operator">/</span>Nginx<span class="token operator">-</span><span class="token number">1.18</span><span class="token punctuation">.</span><span class="token number">0</span><span class="token operator">/</span>nginx<span class="token operator">-</span><span class="token number">1.18</span><span class="token punctuation">.</span><span class="token number">0</span><span class="token operator">/</span>conf  <span class="token operator">&lt;=</span><span class="token operator">===</span> 修改这个位置的nginx<span class="token punctuation">.</span>conf是没有效果的<span class="token punctuation">,</span>这就是下面运行失败的原因<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<blockquote>
+<p>2)使用vim打开nginx.conf</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">vi nginx<span class="token punctuation">.</span>conf<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<blockquote>
+<p>3)修改server里面的listen和server_name</p>
+</blockquote>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537908.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231537908.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413195513372" style="zoom:80%;" />
+
+<blockquote>
+<p>4)在配置文件nginx.conf里面的location添加proxy_pass</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231538856.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231538856.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413202807171"></p>
+<p>127.0.0.1代表本地地址,和localhost</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1:8080/">http://127.0.0.1:8080</a>        是Tomcat的访问请求===&gt;在conf/server.xml里面写好规定的</p>
+</blockquote>
+<p>:star::star:nginx像是一个中转站,server接受符合条件(ip和端口号一样)的请求;location把符合条件的请求转到服务器去(location里面写了服务器的ip和端口号)</p>
+<blockquote>
+<p>5)保存nginx.conf,重启一下nginx</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"><span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>nginx<span class="token operator">/</span>sbin<span class="token operator">/</span>nginx <span class="token operator">-</span>s reload<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<p>没有成功啊:star::star:</p>
+<p><code>因为配置文件修改错了</code></p>
+<blockquote>
+<p>注意:反向代理修改配置文件的时候修改的是<code>cd /usr/local/nginx/conf</code>下的<code>nginx.conf</code>:star::star::star::star::star:</p>
+</blockquote>
+<hr>
+<hr>
+<p>虚拟机碎片有点多:</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231538840.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231538840.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220413211914397"></p>
+<p><code>关闭虚拟机</code>进行下面操作</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231538001.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231538001.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220414104846087"></p>
+<h2 id="4-8-反向代理配置案例二"><a href="#4-8-反向代理配置案例二" class="headerlink" title="4.8 反向代理配置案例二"></a>4.8 反向代理配置案例二</h2><blockquote>
+<p>效果:使用nginx反向代理,根据访问的路径跳转到不同端口的服务器中;nginx监听端口为9001</p>
+</blockquote>
+<p>访问 <a target="_blank" rel="noopener" href="http://192.168.88.3:9001/edu/">http://192.168.88.3:9001/edu/</a> 直接跳转到 127.0.0.1:8080<br>访问 <a target="_blank" rel="noopener" href="http://192.168.88.3:9001/vod/">http://192.168.88.3:9001/vod/</a> 直接跳转到 127.0.0.1:8081 </p>
+<h3 id="①准备工作"><a href="#①准备工作" class="headerlink" title="①准备工作"></a>①准备工作</h3><h2 id="4-9-负载均衡配置"><a href="#4-9-负载均衡配置" class="headerlink" title="4.9 负载均衡配置"></a>4.9 负载均衡配置</h2><h2 id="4-7-动静分离"><a href="#4-7-动静分离" class="headerlink" title="4.7 动静分离"></a>4.7 动静分离</h2><p>在线生成nginx文件(不能直接用,需要拼接)</p>
+<p><a target="_blank" rel="noopener" href="https://ssl-config.mozilla.org/">https://ssl-config.mozilla.org/</a></p>
+<pre class="line-numbers language-conf" data-language="conf"><code class="language-conf"># generated 2022-09-08, Mozilla Guideline v5.6, nginx 1.18.0, OpenSSL 1.1.1f, intermediate configuration
+# https:&#x2F;&#x2F;ssl-config.mozilla.org&#x2F;#server&#x3D;nginx&amp;version&#x3D;1.18.0&amp;config&#x3D;intermediate&amp;openssl&#x3D;1.1.1f&amp;guideline&#x3D;5.6
+server &#123;
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    location &#x2F; &#123;
+        return 301 https:&#x2F;&#x2F;$host$request_uri;
+    &#125;
+&#125;
+
+server &#123;
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    ssl_certificate &#x2F;path&#x2F;to&#x2F;signed_cert_plus_intermediates; #修改为自己的  自己ssl证书的公钥 crt格式
+    ssl_certificate_key &#x2F;path&#x2F;to&#x2F;private_key;    #修改为自己的   自己ssl证书的私钥 key格式
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:MozSSL:10m;  # about 40000 sessions
+    ssl_session_tickets off;
+
+    # curl https:&#x2F;&#x2F;ssl-config.mozilla.org&#x2F;ffdhe2048.txt &gt; &#x2F;path&#x2F;to&#x2F;dhparam
+    ssl_dhparam &#x2F;path&#x2F;to&#x2F;dhparam;   #把上面命令得到的文件的路径放这里
+
+    # intermediate configuration
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds)
+    add_header Strict-Transport-Security &quot;max-age&#x3D;63072000&quot; always;
+
+    # OCSP stapling
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    # ssl_trusted_certificate &#x2F;path&#x2F;to&#x2F;root_CA_cert_plus_intermediates;   注释掉,用系统自带的cacert
+
+    # replace with the IP address of your resolver
+    resolver 1.1.1.1;  #云服务器厂商提供的dns
+    resolver 1.0.0.1;
+    
+    #下面是自己拼接的
+    location &#x2F; &#123;
+             add_header Access-Control-Allow-Origin *;
+             add_header Access-Control-Allow-Methods &#39;GET, POST, OPTIONS&#39;;
+             add_header Access-Control-Allow-Headers &#39;DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization&#39;;
+
+             if ($request_method &#x3D; &#39;OPTIONS&#39;) &#123;
+                 return 204;
+              &#125;
+            proxy_pass http:&#x2F;&#x2F;192.168.88.1:8081;
+
+            root   &#x2F;home&#x2F;gy&#x2F;Nginx-1.18.0&#x2F;nginx-1.18.0&#x2F;dist;
+
+         #   root   html;
+
+            index  index.html index.htm;
+         &#125;
+         
+         error_page   500 502 503 504  &#x2F;50x.html;
+        location &#x3D; &#x2F;50x.html &#123;
+            root   html;
+        &#125;
+
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+
+
+
+
+
+
+
+
+<h1 id="五-NGINX拓展"><a href="#五-NGINX拓展" class="headerlink" title="五.NGINX拓展"></a>五.NGINX拓展</h1><h1 id="六-搭建高可用环境"><a href="#六-搭建高可用环境" class="headerlink" title="六.搭建高可用环境"></a>六.搭建高可用环境</h1>
+      </div>
+      <div class="post-tags-categories">
+        
+        <div class="tags">
+          
+            <a href="/tags/NGINX/" class="">
+              NGINX
+            </a>
+          
+        </div>
+        
+      </div>
+      
+        <div class="copyright">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+    <strong>作者:  </strong>高小天</a>
+    </li>
+    <li class="post-copyright-link">
+    <strong>文章链接:  </strong>
+    <a href="/2021/10/17/Nginx/" target="_blank" title="NGINX">https://gaoyang.world/2021/10/17/Nginx/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明:   </strong>
+      本网站所有文章除特别声明外,均采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+      许可协议。转载请注明出处!
+    </li>
+  </ul>
+<div>
+      
+    </article>
+    <!-- 上一篇文章和下一篇文章 -->
+    
+      <!-- 文章详情页的上一页和下一页 -->
+<div class="post-nav">
+
+
+
+  
+  <div class="post-nav-prev post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="/medias/12.jpg" class="lazyload placeholder" data-srcset="/medias/12.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="">
+    </div>
+    <a href="/2021/11/20/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" class="post-nav-link">
+      <div class="title">
+        <i class="fas fa-angle-left"></i> 上一篇:
+        <div class="title-text">网络编程</div>
+      </div>
+      
+      <!-- <div class="content">
+        网络编程一.目录扫盲(网络编程基础知识)网络通讯要素java基本网络支持socket套接字TCP网络编程UDP网络编程U
+      </div> -->
+    </a>
+  </div>
+
+
+
+  
+  <div class="post-nav-next post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="/medias/6.jpg" class="lazyload placeholder" data-srcset="/medias/6.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" src="" alt="">
+    </div>
+    <a href="/2021/10/16/Netty04-%E4%BC%98%E5%8C%96%E4%B8%8E%E6%BA%90%E7%A0%81/" class="post-nav-link">
+      <div class="title">
+        下一篇: <i class="fas fa-angle-right"></i>
+        <div class="title-text">优化与源码</div>
+      </div>
+      <!-- <div class="content">
+        四. 优化与源码1. 优化1.1 扩展序列化算法序列化，反序列化主要用在消息正文的转换上
+
+序列化时，需要将 Java 
+      </div> -->
+    </a>
+  </div>
+
+</div>
+
+    
+    
+
+    <!-- 打赏 -->
+    
+      <div id="appDonate" class="post-donate">
+  <div id="donate_board" class="donate_bar center" ref="donate">
+    <a id="btn_donate" class="btn_donate" href="javascript:;" title="打赏" @click="showDialogDrawer()"></a>
+  </div>
+  <transition name="fade">
+    <div 
+      class="donate-box-mask"
+      v-cloak 
+      v-show="visible"
+      @click="cancelDialogDrawer()"
+    >
+    </div>
+  </transition>
+  <transition name="bounce">
+    <div class="donate-box" v-cloak v-show="visible">
+      <div class="donate-box_close">
+        <i class="fas fa-times" aria-hidden="true" @click="cancelDialogDrawer" pointer></i>
+      </div>
+      <div class="donate-box_title">
+        <h4>
+          你的赏识是我前进的动力
+        </h4>
+      </div>
+      <div class="donate-box_tab">
+        <div class="Alipay" pointer :class="{'active': tabActive === 'Alipay'}" @click="changeTabActive('Alipay')">
+          支付宝
+        </div>
+        <div class="WeChatpay" pointer :class="{'active': tabActive === 'WeChatpay'}" @click="changeTabActive('WeChatpay')">
+          微信
+        </div>
+      </div>
+      <div class="donate-box_img">
+        <div class="AlipayImg" v-show="tabActive === 'Alipay'">
+          <img src="/medias/zfb.jpg" class="lazyload placeholder" data-srcset="/medias/zfb.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="支付宝打赏" />
+        </div> 
+        <div class="WeChatpayImg" v-show="tabActive === 'WeChatpay'">
+          <img src="/medias/wx.jpg" class="lazyload placeholder" data-srcset="/medias/wx.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="微信打赏" />
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDonate',
+    data: {
+      visible: false,
+      tabActive: 'Alipay',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        // function getScroll() {
+        //   return {
+        //     left: window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0,
+        //     top: window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+        //   };
+        // }
+        this.top = $(document).scrollTop() // or getScroll().top
+        // console.log('aa', $('.main-content'));
+        body.style.cssText = 'overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+      changeTabActive(name) {
+        this.tabActive = name;
+      }
+    },
+    created() {}
+  })
+</script>
+    
+
+    <!-- 分享 -->
+    
+      <!-- https://github.com/overtrue/share.js -->
+<!-- 文章详情页的分享 -->
+<div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+
+<script src="/js/shareJs/social-share.min.js"></script>
+</script>
+
+<style>
+  .social-share {
+    margin: 20px 0;
+  }
+</style>
+
+
+    
+    
+    <!-- 评论 -->
+    <!-- 评论 -->
+
+  <div id="myComment">
+    
+      <div id="gitment-container"></div>
+
+    
+  </div>
+
+<!-- comment script in themes\hexo-theme-bamboo\layout\_partial\scripts\index.ejs -->
+
+
+  </div>
+
+  <!-- 目录 -->
+  <!-- 文章详情页右侧目录 -->
+
+
+<script>
+  function closeToc(init) {
+    $(".toc-aside").css({'width': 0, 'padding': 0, 'transition': init ?  'noe' : 'width 0.3s' });
+    $(".toc-content").css({'width': 0});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'none'});
+    $(".main-content").css({'width': '75%', 'margin': '10px auto'});
+  };
+  function openToc() {
+    $(".main-content").css({'width': '65%', 'margin-right': '10px', 'margin-left': 'calc(35% - 350px)'});
+    $(".toc-aside").css({'width': '300px', 'padding': '0 10px', 'transition': 'width 0.3s'});
+    $(".toc-content").css({'width': '300px'});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'inline-block'});
+  }
+  function openBtnClickFn () {
+    let openOrCloseBtn = $('.toc-aside .toc-aside-title .toc-open-close');
+    let open = eval('false' || 'true');
+    openOrCloseBtn.click(function() {
+      if (open) {
+        closeToc();
+        open = false;
+      } else {
+        openToc();
+        open = true;
+      }
+    });
+  };
+  openBtnClickFn();
+  initCloseTocWidth(true);
+
+  function initCloseTocWidth(init) {
+    if (window.innerWidth >= 992) {
+      let isClose = true;
+      isClose && closeToc(init)
+    }
+  }
+
+  document.addEventListener('pjax:complete', function () {
+    $(".toc-aside").css({'transition': 'no'});
+  })
+  document.addEventListener('pjax:complete', function () {
+    openBtnClickFn();
+  })
+  
+</script>
+
+  <!-- 图片放大 Wrap images with fancybox support -->
+  <script src="/js/wrapImage.js"></script>
+</div>
+
+<!-- 文章详情页背景图 -->
+<div id="appBgSwiper" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -2;"
+	:style="{'background-color': bgColor ? bgColor : 'transparent'}">
+	<transition-group tag="ul" :name="names">
+		<li v-for='(image,index) in img' :key='index' v-show="index === mark" class="bg-swiper-box">
+			<img :src="image" class="bg-swiper-img no-lazy">
+		</li>
+	</transition-group>
+</div>
+<script>
+	var vm = new Vue({
+		el: '#appBgSwiper',
+		data: {
+			names: '' || 'fade' || 'fade', // translate-fade fade
+			mark: 0,
+			img: [],
+			bgColor: '',
+			time: null
+		},
+		methods: {   //添加方法
+			change(i, m) {
+				if (i > m) {
+					// this.names = 'fade';
+				} else if (i < m) {
+					// this.names = 'fade';
+				} else {
+					return;
+				}
+				this.mark = i;
+			},
+			prev() {
+				// this.names = 'fade';
+				this.mark--;
+				if (this.mark === -1) {
+					this.mark = 3;
+					return
+				}
+			},
+			next() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			autoPlay() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			play() {
+				let bgImgDelay = '' || '180000'
+				let delay = parseInt(bgImgDelay) || 180000;
+				this.time = setInterval(this.autoPlay, delay);
+			},
+			enter() {
+				clearInterval(this.time);
+			},
+			leave() {
+				this.play();
+			}
+		},
+		created() {
+			this.play()
+		},
+		beforeDestroy() {
+			clearInterval(this.time);
+		},
+		mounted() {
+			let prop = '' || '';
+			let isImg = prop.includes('.bmp') || prop.includes('.jpg') || prop.includes('.png') || prop.includes('.tif') || prop.includes('.gif') || prop.includes('.pcx') || prop.includes('.tga') || prop.includes('.exif') || prop.includes('.fpx') || prop.includes('.psd') || prop.includes('.cdr') || prop.includes('.pcd') || prop.includes('.dxf') || prop.includes('.ufo') || prop.includes('.eps') || prop.includes('.ai') || prop.includes('.raw') || prop.includes('.WMF') || prop.includes('.webp') || prop.includes('.jpeg') || prop.includes('http://') || prop.includes('https://')
+			if (isImg) {
+				let img = prop.split(',');
+				let configRoot = '/'
+				let arrImg = [];
+				img.forEach(el => {
+					var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+					var objExp = new RegExp(Expression);
+
+					if (objExp.test(el)) {
+						// http or https
+						arrImg.push(el);
+					} else {
+						// 非http or https开头
+						// 本地文件
+						let firstStr = el.charAt(0);
+						if (firstStr == '/') {
+							el = el.substr(1); // 删除第一个字符 '/',因为 configRoot最后一个字符为 /
+						}
+						el = configRoot + el;
+						arrImg.push(el);
+					}
+				})
+				this.img = arrImg;
+			} else {
+				this.bgColor = prop;
+			}
+		}
+	})
+</script>
+
+<style>
+	.bg-swiper-box {
+		position: absolute;
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.bg-swiper-img {
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+
+
+
+  <script>
+  function loadMermaid() {
+    if (document.getElementsByClassName('mermaid').length) {
+      if (window.mermaidJsLoad) mermaid.init()
+      else {
+        loadScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+          window.mermaidJsLoad = true
+          mermaid.initialize({
+            theme: 'default',
+          })
+          if ('true') {
+            mermaid.init();
+          }
+        })
+      }
+    }
+  };
+  document.addEventListener("DOMContentLoaded", function () {
+    loadMermaid();
+  })
+
+  document.addEventListener('pjax:complete', function () {
+    loadMermaid();
+  })
+  
+</script>
+
+
+      </main>
+    </div>
+
+    <!-- 页脚 -->
+    
+  
+  <div class="footer bg-color">
+    <div class="footer-main">
+      
+        
+          <div class="link">
+            
+          </div>
+        
+      
+        
+          <div class="footer-copyright">
+            <p>Copyright © 2019 - 2020  </p>
+
+          </div>
+        
+      
+        
+          
+            <!-- 不蒜子统计 -->
+            <!-- 不蒜子统计 -->
+<span id="busuanzi_container_site_pv">
+      <i class="fas fa-eye" aria-hidden="true"></i>本站总访问量：<span id="busuanzi_value_site_pv"></span> 次
+</span>
+<span class="post-meta-divider">|</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+      <i class="fas fa-users" aria-hidden="true"></i>本站访客数：<span id="busuanzi_value_site_uv"></span> 人
+</span>
+
+          
+        
+      
+        
+          <div class="footer-custom">
+            
+          </div>
+        
+      
+    </div>
+  </div>
+
+
+
+    <!-- 渲染暗黑按钮 -->
+    
+      <div class="dark">
+  <div class="dark-content">
+    <i class="fas fa-moon" aria-hidden="true"></i>
+    <!-- <span>关灯</span> -->
+  </div>
+  
+</div>
+
+<script>
+  $(function() {
+    let isDark = JSON.parse(localStorage.getItem('dark'))  || JSON.parse('false');
+    if (isDark) {
+      $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+    }
+    $('.dark').click(function() {
+      if ($(document.body).is('.darkModel')) {
+        $(document.body).removeClass('darkModel');
+        localStorage.setItem('dark', false);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      } else {
+        $(document.body).addClass('darkModel');
+        localStorage.setItem('dark', true);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      }
+    })
+  })
+</script>
+    
+    <!-- 渲染回到顶部按钮 -->
+    
+      <div class="goTop top-btn-color" pointer>
+  <i class="fas fa-arrow-up" aria-hidden="true"></i>
+</div>
+<script src="/js/goTop.js"></script>
+
+    
+    <!-- 渲染左下角音乐播放器 -->
+    
+      <link rel="stylesheet" href="/js/aplayer/APlayer@1.10.1.min.css">
+<style>
+.aplayer .aplayer-lrc p {
+  
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px !important;
+}
+
+.aplayer .aplayer-lrc p.aplayer-lrc-current {
+  
+  font-size: 15px;
+  color: #42b983;
+}
+
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+  left: -66px !important;
+}
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+  left: 0px !important;
+}
+
+
+</style>
+<meting-js  
+  class=""
+  server="tencent"
+  type="playlist"
+  id="8062553743"
+  fixed='true'
+  autoplay='false'
+  theme='#42b983'
+  loop='all'
+  order='random'
+  preload='auto'
+  volume='0.7'
+  list-folded='true'
+>
+</meting-js>
+
+<!-- <style>
+  #aplayer {
+    position: fixed;
+    left: 0;
+    bottom: 300px;
+  }
+</style> -->
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    
+
+    <!-- 图片放大 -->
+    
+      <script src="/js/fancybox/jquery.fancybox.min.js"></script>
+    
+
+    <!-- 百度解析 -->
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <!-- 背景彩带 -->
+    
+      <script type="text/javascript" size="100" alpha='0.4' zIndex="-1" src="/js/ribbon.min.js"></script>
+    
+
+    <script src="/js/utils/index.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <!-- 文章目录所需js -->
+<link href="/js/tocbot/tocbot.css" rel="stylesheet">
+<script src="/js/tocbot/tocbot.min.js"></script>
+
+<script>
+  var headerEl = 'h2, h3, h4',  //headers 
+    content = '.post-detail',//文章容器
+    idArr = {};  //标题数组以确定是否增加索引id
+  //add #id
+  var option = {
+    // Where to render the table of contents.
+    tocSelector: '.toc',
+    // Where to grab the headings to build the table of contents.
+    contentSelector: content,
+    // Which headings to grab inside of the contentSelector element.
+    headingSelector: headerEl,
+    scrollSmooth: true,
+    scrollSmoothOffset: -80,
+    headingsOffset: -($(window).height() * 0.4 - 45),
+    positionFixedSelector: '.toc-main',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    activeLinkClass: 'is-active-link',
+    // onClick: function (e) {},
+  }
+  if ($('.toc').length > 0) {
+
+    $(content).children(headerEl).each(function () {
+      //去除空格以及多余标点
+      var headerId = $(this).text().replace(/[\s|\~|`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\+|\=|\||\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?|\：|\，|\。]/g, '');
+
+      headerId = headerId.toLowerCase();
+      if (idArr[headerId]) {
+        //id已经存在
+        $(this).attr('id', headerId + '-' + idArr[headerId]);
+        idArr[headerId]++;
+      }
+      else {
+        //id未存在
+        idArr[headerId] = 1;
+        $(this).attr('id', headerId);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      tocbot.init(option);
+      mobileTocClick();
+    });
+
+  }
+
+  window.tocScrollFn = function () {
+    return bamboo.throttle(function () {
+      findHeadPosition();
+    }, 100)()
+  }
+  window.addEventListener('scroll', tocScrollFn);
+
+  const findHeadPosition = function (top) {
+    if ($('.toc-list').length <= 0) {
+      return false;
+    }
+    setTimeout(() => {  // or DOMContentLoaded 
+      autoScrollToc();
+    }, 0);
+  }
+
+  const autoScrollToc = function () {
+    const $activeItem = document.querySelector('.is-active-link');
+    const $cardToc = document.querySelector('.toc-content');
+    const activePosition = $activeItem.getBoundingClientRect().top
+    const sidebarScrollTop = $cardToc.scrollTop
+    if (activePosition > (document.documentElement.clientHeight - 100)) {
+      $cardToc.scrollTop = sidebarScrollTop + 150
+    }
+    if (activePosition < 100) {
+      $cardToc.scrollTop = sidebarScrollTop - 150
+    }
+  }
+
+  document.addEventListener('pjax:send', function () {
+    if ($('.toc').length) {
+      tocbot.destroy();
+    }
+  });
+
+  document.addEventListener('pjax:complete', function () {
+    if ($('.toc').length) {
+      tocbot.init(option);
+      mobileTocClick();
+    }
+  });
+  
+  // 手机端toc按钮点击出现目录
+  const mobileTocClick = function () {
+    const $cardTocLayout = document.getElementsByClassName('toc-aside')[0];
+    const $cardToc = $cardTocLayout.getElementsByClassName('toc-content')[0];
+    let right = '45px';
+    if (window.innerWidth >= 551 && window.innerWidth <= 992) {
+      right = '100px'
+    }
+    const mobileToc = {
+      open: () => {
+        $cardTocLayout.style.cssText = 'animation: toc-open .3s; opacity: 1; right: ' + right
+      },
+
+      close: () => {
+        $cardTocLayout.style.animation = 'toc-close .2s'
+        setTimeout(() => {
+          $cardTocLayout.style.cssText = "opacity:''; animation: ''; right: ''"
+        }, 100)
+      }
+    }
+    document.getElementById('toc-mobile-btn').addEventListener('click', () => {
+      if (window.getComputedStyle($cardTocLayout).getPropertyValue('opacity') === '0') mobileToc.open()
+      else mobileToc.close()
+    })
+
+    $cardToc.addEventListener('click', (e) => {
+      if (window.innerWidth < 992) { // 小于992px的时候
+        mobileToc.close()
+      }
+    })
+  }
+</script>
+
+<style>
+  .is-position-fixed {
+    position: sticky !important;
+    top: 74px;
+  }
+
+  .toc-main ul {
+    counter-reset: show-list;
+  }
+
+  .toc-main ul li::before {
+    content: counter(item)".";
+    display: block;
+    position: absolute;
+    left: 12px;
+    top: 0;
+  }
+</style> 
+
+<!-- 设置导航背景 -->
+<script>
+  let setHeaderClass = () => {
+    const headerMenuTransparent = true;
+    if (!headerMenuTransparent) { return; }
+    const nav = $('#navHeader');
+    const navTop = nav.outerHeight();
+    const winTop = $(window).scrollTop();
+    if(winTop > navTop) {
+      nav.addClass('header-bg-color');
+    }
+    else {
+      nav.removeClass('header-bg-color');
+    }
+  };
+
+  let scrollCollect = () => {
+    return bamboo.throttle(function (e) {
+      setHeaderClass();
+    }, 200)()
+  }
+
+  let initHeaderBg = () => {
+    setHeaderClass();
+  }
+
+  setHeaderClass();
+  window.addEventListener('scroll', scrollCollect);
+
+  document.addEventListener('pjax:send', function () {
+    window.removeEventListener('scroll', scrollCollect)
+  })
+  document.addEventListener('pjax:complete', function () {
+    window.addEventListener('scroll', scrollCollect);
+    setHeaderClass();
+  })
+</script> 
+
+<!-- 渲染issues标签里的内容 -->
+<script>
+  function loadIssuesJS() {
+    if ($(".post-detail").find(".issues-api").length == 0) {
+      return;
+    } 
+    loadScript('/js/issues/index.js');
+  };
+  $(function () {
+    loadIssuesJS();
+  });
+  document.addEventListener('pjax:complete', function () {
+    if (typeof IssuesAPI == "undefined") {
+      loadIssuesJS();
+    }
+  })
+</script>
+
+<!-- 输入框打字特效 -->
+<!-- 输入框打字特效 -->
+
+  <script src="/js/activate-power-mode.js"></script>
+  <script>
+    POWERMODE.colorful = true;  // 打开随机颜色特效
+    POWERMODE.shake = false;    // 关闭输入框抖动
+    document.body.addEventListener('input', POWERMODE);//监听打字事件
+  </script>
+
+
+<!-- markdown代码一键复制功能 -->
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.css">
+  <script src="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.umd.min.js"></script>
+  <script src="/js/clipboard/clipboard.min.js"></script>
+  <div id="appCopy">
+  </div>
+  <script data-pjax>
+    var vm = new Vue({
+      el: '#appCopy',
+      data: {
+      },
+      computed: {
+      },
+      mounted() {
+        const that = this;
+        var copy = '复制';
+        /* code */
+        var initCopyCode = function () {
+          var copyHtml = '';
+          copyHtml += '<button class="btn-copy" data-clipboard-snippet="" style="position:absolute;top:0;right:0;z-index:1;">';
+          copyHtml += '<i class="fas fa-copy"></i><span>' + copy + '</span>';
+          copyHtml += '</button>';
+          $(".post-detail pre").not('.gutter pre').wrap("<div class='codeBox' style='position:relative;width:100%;'></div>")
+          $(".post-detail pre").not('.gutter pre').before(copyHtml);
+          new ClipboardJS('.btn-copy', {
+            target: function (trigger) {
+              return trigger.nextElementSibling;
+            }
+          });
+        }
+        initCopyCode();
+        $('.btn-copy').unbind('click').bind('click', function () {
+          doSomething();
+        })
+        $(document).unbind('keypress').bind('keypress', function (e) {
+          if (e.ctrlKey && e.keyCode == 67) {
+            doSomething();
+          }
+        })
+
+        function doSomething() {
+          that.$notify({
+            title: "成功",
+            content: "代码已复制，请遵守相关授权协议。",
+            type: 'success'
+          })
+        }
+      },
+      methods: {
+      },
+      created() { }
+    })
+  </script>
+  
+
+<!-- 图片懒加载 -->
+<script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazyload",
+    threshold: 0
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    lazyLoadInstance.update();
+  });
+  document.addEventListener('pjax:complete', function () {
+    lazyLoadInstance.update();
+  });
+</script>
+
+
+<!-- 卡片滚动动画 -->
+   
+
+<!-- 评论所需js -->
+
+  
+    <script type="text/javascript">
+  var utteranceCommon = {};
+
+  function check_utterance() {
+    let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+    if (isDark) {
+      utteranceCommon.Theme = 'github-dark';
+    } else {
+      utteranceCommon.Theme = 'github-light';
+    }
+
+    return document.getElementById("gitment-container");
+  }
+  comment_el = '#gitment-container';
+  load_utterance = function () {
+    if ($(comment_el).length) {
+      // 匿名函数，防止污染全局变量
+      const HEAD = check_utterance();
+
+      var utterances = document.createElement('script');
+      utterances.type = 'text/javascript';
+      utterances.async = true;
+      utterances.setAttribute('issue-term', 'pathname')
+      utterances.setAttribute('theme', utteranceCommon.Theme)
+      utterances.setAttribute('repo', '')
+      utterances.crossorigin = 'anonymous';
+      utterances.src = 'https://utteranc.es/client.js';
+      // content 是要插入评论的地方
+      document.getElementById('gitment-container').appendChild(utterances);
+
+    }
+  }
+
+  function dark_utterance() {
+    const HEAD = check_utterance();
+    if (!HEAD) return;
+    const message = {
+      type: 'set-theme',
+      theme: utteranceCommon.Theme
+    };
+    const utteranceIframe = document.querySelector('iframe');
+    utteranceIframe.contentWindow.postMessage(message, 'https://utteranc.es');
+  }
+
+  $(document).ready(load_utterance);
+  document.addEventListener('pjax:complete', function () {
+    load_utterance();
+  });
+
+  $('.dark').click(function () {
+    setTimeout(() => {
+      dark_utterance();
+    });
+  })
+
+</script>
+
+<style>
+  .utterances {
+    max-width: inherit !important;
+  }
+</style>
+  
+
+
+<!-- 鼠标点击特效 -->
+<!-- 爱心点击 -->
+
+  
+    <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 999; pointer-events: none;" ></canvas>
+    <script src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+    <script src="/js/cursor/explosion.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-pjax></script>
+
+
+    <!-- pjax -->
+    
+
+<!-- pjax -->
+
+
+  <script src="/js/pjax@0.2.8/index.js"></script>
+  
+    <!-- 样式位于：source/css/_third-party/pjaxanimate.styl -->
+
+<div class="pjax-animate">
+  
+    <div class="loading-circle"><div id="loader-circle"></div></div>
+    <script>
+      window.ShowLoading = function() {
+        $(".loading-circle").css("display", "block");
+      };
+      window.HideLoading = function() {
+        $(".loading-circle").css("display", "none");
+      }
+    </script>
+  
+	<script>
+    document.addEventListener('pjax:complete', function () {
+      window.HideLoading();
+    })
+    document.addEventListener('pjax:send', function () {
+      window.ShowLoading();
+    })
+    document.addEventListener('pjax:error', function () {
+      window.HideLoading();
+    })
+	</script>
+</div>
+
+  
+
+  <script>
+    var pjax = new Pjax({
+      elements: 'a[href]:not([href^="#"]):not([href="javascript:void(0)"]):not([no-pjax])',   // 拦截正常带链接的 a 标签
+      selectors: ["#pjax-container","title"],                                   // 根据实际需要确认重载区域
+      cacheBust: false,   // url 地址追加时间戳，用以避免浏览器缓存
+      timeout: 5000
+    });
+
+    document.addEventListener('pjax:send', function (e) {
+
+      try {
+        var currentUrl = window.location.pathname;
+        var targetUrl = e.triggerElement.href;
+        var banUrl = [""];
+        if (banUrl[0] != "") {
+          banUrl.forEach(item => {
+            if(currentUrl.indexOf(item) != -1 || targetUrl.indexOf(item) != -1) {
+              window.location.href = targetUrl;
+            }
+          });
+        }
+      } catch (error) {}
+
+      $(window).unbind('resize');
+      $(window).unbind('scroll');
+      $(document).unbind('scroll');
+      $(document).unbind('click');
+      $('body').unbind('click');
+
+    })
+    
+    document.addEventListener('pjax:complete', function () {
+      $('script[data-pjax], .pjax-reload script').each(function () {
+        $(this).parent().append($(this).remove());
+      });
+    });
+
+    document.addEventListener('pjax:error', function (e) {
+      window.location.href = e.triggerElement.href;
+    })
+    
+    // 刷新不从顶部开始
+    document.addEventListener("DOMContentLoaded", function () {
+      history.scrollRestoration = 'auto';
+    })
+  </script>
+
+
+
+  </body>
+</html>

@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html>
+  <!-- meta/link... -->
+  
+
+
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+  <title>34.IoC 之深入分析 Bean 的类型转换体系 | gy的小站</title>
+
+  <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_1911880_c1nvbyezg17.css">
+  <link href="https://cdn.jsdelivr.net/gh/inkss/fontawesome@5.15.3/css/all.min.css" rel="stylesheet">
+  <link href="/js/swiper/swiper@5.4.1.min.css" rel="stylesheet">
+  
+  
+    <script>
+        var themeModelId = '';
+        if (themeModelId) {
+            localStorage.setItem('modelId', themeModelId);
+        }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/gh/yuang01/live2d-widget@latest/autoload.js"></script>
+    <script>
+        var live2dOpen = eval('true') || false;
+        if (!live2dOpen) {
+            localStorage.setItem('waifu-display', 1609323474481);
+        }
+    </script>
+  
+  
+  
+<link rel="stylesheet" href="/css/animate.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/shareJs/share.min.css">
+
+  
+  <style>
+        @media (max-width: 992px) {
+            #waifu {
+                display: none;
+            }
+        }
+    </style>
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+    
+
+    <!-- import link -->
+    
+        
+            
+        
+            
+        
+    
+    <!-- import script -->
+    
+        
+            
+        
+            
+        
+    
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+  
+  <!-- 依赖于jquery和vue -->
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+
+  
+  
+  <body>
+    <!-- 预加载动画 -->
+    <!-- 页面预加载动画 -->
+
+<div id='loader'>
+  <link rel="stylesheet" href="/js/loaded/index.css" >
+  <div class="loading-left-bg"></div>
+  <div class="loading-right-bg"></div>
+  <div class="spinner-box">
+    <div class="configure-border-1">
+      <div class="configure-core"></div>
+    </div>
+    <div class="configure-border-2">
+      <div class="configure-core"></div>
+    </div>
+    <div class="loading-word">加载中...</div>
+  </div>
+</div>
+
+<script>
+  var endLoading = function () {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loader').classList.add("loading");
+  }
+  window.addEventListener('DOMContentLoaded',endLoading);
+  
+</script>
+
+    
+    <!-- 判断是否为暗黑风格 -->
+    <!-- 判断是否为黑夜模式 -->
+<script>
+  let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+
+  if (isDark) {
+    $(document.body).addClass('darkModel');
+  }
+</script>
+
+    <!-- 需要在上面加载的js -->
+    <script>
+  function loadScript(src, cb) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var HEAD = document.getElementsByTagName("head")[0] || document.documentElement;
+        var script = document.createElement("script");
+        script.setAttribute("type", "text/javascript");
+        if (cb) {
+          if (JSON.stringify(cb)) {
+            for (let p in cb) {
+              if (p == "onload") {
+                script[p] = () => {
+                  cb[p]()
+                  resolve()
+                }
+              } else {
+                script[p] = cb[p]
+                script.onload = resolve
+              }
+            }
+          } else {
+            script.onload = () => {
+              cb()
+              resolve()
+            };
+          }
+        } else {
+          script.onload = resolve
+        }
+        script.setAttribute("src", src);
+        HEAD.appendChild(script);
+      });
+    });
+  }
+
+  //https://github.com/filamentgroup/loadCSS
+  var loadCSS = function (href, before, media, attributes) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.href = src;
+        link.onload = resolve;
+        document.getElementsByTagName("head")[0].appendChild(link);
+      });
+    });
+  };
+
+</script> 
+
+<!-- 轮播图所需要的js -->
+<script src="/js/swiper/swiper.min.js"></script>
+<script src="/js/swiper/vue-awesome-swiper.js"></script>
+<script src="/js/swiper/swiper.animate1.0.3.min.js"></script>
+
+<script type="text/javascript">
+  Vue.use(window.VueAwesomeSwiper)
+</script>
+
+
+  <script src="/js/vue-typed-js/index.js"></script>
+
+
+<!-- 首页的公告滚动插件的js需要重新加载 -->
+<script src="/js/vue-seamless-scroll/index.js"></script>
+
+<!-- 打字机效果js -->
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+
+
+    <div id="safearea">
+      <main class="main" id="pjax-container">
+        <!-- 头部导航 -->
+        
+<header class="header   " 
+  id="navHeader"
+  style="position: fixed;
+  left: 0; top: 0; z-index: 10;width: 100%;"
+>
+  <div class="header-content">
+    <div class="bars">
+      <div id="appDrawer" class="sidebar-image">
+  <div class="drawer-box-icon">
+    <i class="fas fa-bars" aria-hidden="true" @click="showDialogDrawer"></i>
+  </div>
+  
+  <transition name="fade">
+    <div class="drawer-box_mask" v-cloak style="display: none;" v-show="visible" @click.self="cancelDialogDrawer">
+    </div>
+  </transition>
+  <div class="drawer-box" :class="{'active': visible}">
+    <div class="drawer-box-head bg-color">
+      <img class="drawer-box-head_logo lazyload placeholder" src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+      <h3 class="drawer-box-head_title">gy的小站</h3>
+      <h5 class="drawer-box-head_desc">滴水穿石不是水的力量,而是坚持的力量</h5>
+    </div>
+    
+    <div class="drawer-box-content">
+      <ul class="drawer-box-content_menu">
+        
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/archives" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/tags" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/categories" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/about" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/friends" class="drawer-menu-item-link">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="javascript:;" class="drawer-menu-item-link has-children" @click="openOrCloseMenu(6)">
+                  <span>
+                    
+                      <i class="fas fa-link"></i>
+                    
+                    <span class="name">更多</span>
+                  </span>
+                  <i class="fas fa-chevron-left arrow " :class="{'icon-rotate': isOpen(6)}" aria-hidden="true"></i>
+                </a>
+                <ul class="drawer-sub-menu" v-if="isOpen(6)">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+        
+          <li class="drawer-box-content_item">
+            <a target="_blank" rel="noopener" href="https://github.com/gaoyangya">
+              <i class="fas fa-github" aria-hidden="true"></i>
+              <span>Github</span>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDrawer',
+    data: {
+      visible: false,
+      top: 0,
+      openArr: [],
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      isOpen(index) {
+        if (this.openArr.includes(index)) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      openOrCloseMenu(curIndex) {
+        const index = this.openArr.indexOf(curIndex);
+        if (index !== -1) {
+          this.openArr.splice(index, 1);
+        } else {
+          this.openArr.push(curIndex);
+        }
+      },
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'width: 100%; height: 100%;overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      }
+    },
+    created() {}
+  })
+</script>
+
+    </div>
+    <div class="blog-title" id="author-avatar">
+      
+        <div class="avatar">
+          <img src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+        </div>
+      
+      <a href="/" class="logo">gy的小站</a>
+    </div>
+    <nav class="navbar">
+      <ul class="menu">
+        
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/" class="menu-item-link" title="首页">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/archives" class="menu-item-link" title="归档">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/tags" class="menu-item-link" title="标签">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/categories" class="menu-item-link" title="分类">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/about" class="menu-item-link" title="关于">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/friends" class="menu-item-link" title="友情链接">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="javascript:;" class="menu-item-link" title="更多">
+                  
+                    <i class="fas fa-link"></i>
+                  
+                  <span class="name">更多</span>
+                  <i class="fas fa-chevron-down arrow" aria-hidden="true"></i>
+                </a>
+                <ul class="sub-menu">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+      </ul>
+      
+      
+        <div id="appSearch">
+  <div class="search"  @click="showDialog()"><i class="fas fa-search" aria-hidden="true"></i></div>
+  <transition name="fade">
+    <div class="message-box_wrapper" style="display: none;" v-cloak v-show="dialogVisible" @click.self="cancelDialogVisible()">
+      <div class="message-box animated bounceInDown">
+        <h2>
+          <span>
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <span class="title">本地搜索</span>
+          </span>
+          <i class="fas fa-times close" pointer style="float:right;" aria-hidden="true" @click.self="cancelDialogVisible()"></i>
+        </h2>
+        <form class="site-search-form">
+          <input type="text"
+            placeholder="请输入关键字"
+            id="local-search-input" 
+            @click="getSearchFile()"
+            class="st-search-input"
+            v-model="searchInput"
+          />
+        </form>
+        <div class="result-wrapper">
+          <div id="local-search-result" class="local-search-result-cls"></div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+<script src="/js/local_search.js"></script>
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appSearch',
+    data: {
+      dialogVisible: false,
+      searchInput: '',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+      window.addEventListener('pjax:complete', () => {
+        this.cancelDialogVisible();
+      })
+    },
+    methods: {
+      showDialog() {
+        this.dialogVisible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'overflow: hidden;';
+      },
+      getSearchFile() {
+        if (!this.searchInput) {
+          getSearchFile("/search.xml");
+        }
+      },
+      cancelDialogVisible() {
+        this.dialogVisible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+    },
+    created() {}
+  })
+</script>
+<!-- 解决刷新页面闪烁问题，可以在元素上添加display: none, 或者用vue.extend方法，详情：https://blog.csdn.net/qq_31393401/article/details/81017912 -->
+<!-- 下面是搜索基本写法 -->
+<!-- <script type="text/javascript" id="local.search.active">
+  var inputArea = document.querySelector("#local-search-input");
+  inputArea.onclick   = function(){ getSearchFile(); this.onclick = null }
+  inputArea.onkeydown = function(){ if(event.keyCode == 13) return false }
+</script> -->
+
+      
+
+    </nav>
+  </div>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/gaoyangya" class="github-corner color-primary" aria-label="View source on GitHub"><svg width="60" height="60" viewBox="0 0 250 250" style="fill:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+  
+  
+    <div id="he-plugin-simple"></div>
+    <script>
+      WIDGET = {
+        CONFIG: {
+          "modules": "012",
+          "background": 5,
+          "tmpColor": "4A4A4A",
+          "tmpSize": 16,
+          "cityColor": "4A4A4A",
+          "citySize": 16,
+          "aqiSize": 16,
+          "weatherIconSize": 24,
+          "alertIconSize": 18,
+          "padding": "10px 10px 10px 10px",
+          "shadow": "1",
+          "language": "auto",
+          "borderRadius": 5,
+          "fixed": "false",
+          "vertical": "middle",
+          "horizontal": "center",
+          "key": "2784dd3fcb1e4f0f9a9b579bf69641f2"
+        }
+      }
+    </script>
+    <script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script> 
+    
+</header>
+        <!-- 内容区域 -->
+        
+ <!-- prismjs 代码高亮 -->
+ 
+    
+    <link href="/js/prism/prism-line-numbers.css" rel="stylesheet">
+    
+        <link href="/js/prism/prism.min.css" rel="stylesheet">
+    
+
+    <style>
+        pre[class*="language-"] {
+            overflow-y: hidden;
+        }
+        .line-numbers .line-numbers-rows {
+            border: none;
+        }
+    </style>
+  
+
+
+<div class="bg-dark-floor" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -1;"></div>
+
+
+  <!-- 文章详情页顶部图片和标题 -->
+
+
+
+
+<div class="post-detail-header" id="thumbnail_canvas" style="background-repeat: no-repeat; background-size: cover; 
+  background-position: center center;position: relative;background-image:url('/medias/13.jpg')">
+  <div class="post-detail-header-mask"></div>
+  <canvas id="header_canvas"style="position:absolute;bottom:0;pointer-events:none;"></canvas>
+  
+  <div class="post-detail-header_info-box">
+    <div class="title-box">
+      <span class="title">
+        34.IoC 之深入分析 Bean 的类型转换体系
+      </span>
+    </div>
+    
+    
+      
+        <span class="post-detail-header_date">
+          <i class="fas fa-calendar"></i> 发表于：2021-04-08 |
+        </span>
+      
+
+      
+        <span class="post-detail-header_categories">
+          <i class="iconfont iconbookmark1"></i> 分类：
+          
+            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-detail-header_category">
+              后端
+            </a>
+          
+            <a href="/categories/%E5%90%8E%E7%AB%AF/Spring%E6%BA%90%E7%A0%81/" class="post-detail-header_category">
+              Spring源码
+            </a>
+          
+        </span>
+      
+
+      
+    
+  </div>
+  
+  
+    <script src="/js/bubble/bubble.js"></script>
+  
+</div>
+
+
+
+
+
+<div class="row justify-position" 
+  style="padding-top: 0px;">
+  <div class="main-content">
+    <article class="post post-detail">
+      <div class="post-content">
+        <p>﻿我们知道不管 Bean 对象里面的属性时什么类型，他们都是通过 XML 、Properties 或者其他方式来配置这些<strong>属性</strong>对象类型的。在 Spring 容器加载过程中，这些属性都是以 String 类型加载进容器的，但是最终都需要将这些 String 类型的属性转换 Bean 对象属性所对应真正的类型，要想完成这种由字符串到具体对象的转换，就需要这种转换规则相关的信息，而这些信息以及转换过程由 <strong>Spring 类型转换体系</strong>来完成。</p>
+<hr>
+<p>我们依然以 xml 为例，在 Spring 容器加载阶段，容器将 xml 文件中定义的 <code>&lt;bean&gt;</code> 解析为 BeanDefinition，BeanDefinition 中存储着我们定义一个 bean 需要的所有信息，包括属性，这些属性是以 String 类型的存储的。当用户触发 Bean 实例化阶段时，Spring 容器会将这些属性转换为这些属性真正对应的类型。我们知道在 Bean 实例化阶段，属性的注入是在实例化 Bean 阶段的属性注入阶段，即 AbstractAutowireCapableBeanFactory 的 <code>#populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw)</code> 方法。</p>
+<p>在 <code>#populateBean(String beanName, RootBeanDefinition mbd, BeanWrapper bw)</code> 方法中，会将 BeanDefinition 中定义的属性值翻译为 PropertyValue ，然后调用 <code>#applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs)</code> 方法，进行属性应用。其中 PropertyValue 用于保存单个 bean 属性的信息和值的对象。</p>
+<hr>
+<p>在 <code>#applyPropertyValues(String beanName, BeanDefinition mbd, BeanWrapper bw, PropertyValues pvs)</code> 方法中，会调用 <code>#convertForProperty(Object value, String propertyName, BeanWrapper bw, TypeConverter converter)</code> 进行属性转换，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; AbstractAutowireCapableBeanFactory。java
+
+@Nullable
+private Object convertForProperty(
+        @Nullable Object value, String propertyName, BeanWrapper bw, TypeConverter converter) &#123;
+    &#x2F;&#x2F; 若 TypeConverter 为 BeanWrapperImpl 类型，则使用 BeanWrapperImpl 来进行类型转换
+    &#x2F;&#x2F; 这里主要是因为 BeanWrapperImpl 实现了 PropertyEditorRegistry 接口
+    if (converter instanceof BeanWrapperImpl) &#123;
+        return ((BeanWrapperImpl) converter).convertForProperty(value, propertyName);
+    &#125; else &#123;
+        &#x2F;&#x2F; 获得属性对应的 PropertyDescriptor 对象
+        PropertyDescriptor pd &#x3D; bw.getPropertyDescriptor(propertyName);
+        &#x2F;&#x2F; 获得属性对应的 setting MethodParameter 对象
+        MethodParameter methodParam &#x3D; BeanUtils.getWriteMethodParameter(pd);
+        &#x2F;&#x2F; 执行转换
+        return converter.convertIfNecessary(value, pd.getPropertyType(), methodParam);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>若 TypeConverter 为 BeanWrapperImpl 类型，则使用 BeanWrapperImpl 来进行类型转换，这里主要是因为 BeanWrapperImpl 实现了 PropertyEditorRegistry 接口。</li>
+<li>否则，调用 TypeConverter 的 <code>#convertIfNecessary(Object value, Class&lt;T&gt; requiredType, MethodParameter methodParam)</code> 方法，进行类型转换。TypeConverter 是定义类型转换方法的接口，通常情况下与 PropertyEditorRegistry 配合使用实现类型转换。</li>
+<li>关于 BeanWrapperImpl 小编后续专门出文分析它。</li>
+</ul>
+<hr>
+<p><code>#convertIfNecessary(Object value, Class&lt;T&gt; requiredType, MethodParameter methodParam)</code> 方法的实现者有两个：DataBinder 和 TypeConverterSupport 类。</p>
+<ul>
+<li>DataBinder 主要用于参数绑定（熟悉 Spring MVC 的都应该知道这个类）</li>
+<li>TypeConverterSupport 则是 TypeConverter 的基本实现，使用的是 <code>typeConverterDelegate</code> 委托者。</li>
+</ul>
+<p>所以这里我们只需要关注 TypeConverterSupport 的 <code>#convertIfNecessary(Object value, Class&lt;T&gt; requiredType, MethodParameter methodParam)</code> 方法，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; TypeConverterSupport.java
+
+@Override
+@Nullable
+public &lt;T&gt; T convertIfNecessary(@Nullable Object value, @Nullable Class&lt;T&gt; requiredType, @Nullable Field field)
+        throws TypeMismatchException &#123;
+    return doConvert(value, requiredType, null, field);
+&#125;
+
+@Nullable
+private &lt;T&gt; T doConvert(@Nullable Object value,@Nullable Class&lt;T&gt; requiredType,
+        @Nullable MethodParameter methodParam, @Nullable Field field) throws TypeMismatchException &#123;
+    Assert.state(this.typeConverterDelegate !&#x3D; null, &quot;No TypeConverterDelegate&quot;);
+    try &#123;
+        if (field !&#x3D; null) &#123; &#x2F;&#x2F; field
+            return this.typeConverterDelegate.convertIfNecessary(value, requiredType, field);
+        &#125; else &#123; &#x2F;&#x2F; methodParam
+            return this.typeConverterDelegate.convertIfNecessary(value, requiredType, methodParam);
+        &#125;
+    &#125; catch (ConverterNotFoundException | IllegalStateException ex) &#123;
+        throw new ConversionNotSupportedException(value, requiredType, ex);
+    &#125; catch (ConversionException | IllegalArgumentException ex) &#123;
+        throw new TypeMismatchException(value, requiredType, ex);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>我们一直往下跟会跟踪到 TypeConverterDelegate 的 <code>#convertIfNecessary(Object newValue, @Nullable Class&lt;T&gt; requiredType, ...)</code> 方法，会发现如下代码段：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; TypeConverterDelegate.java
+
+@Nullable
+public &lt;T&gt; T convertIfNecessary(@Nullable String propertyName, @Nullable Object oldValue, @Nullable Object newValue,
+        @Nullable Class&lt;T&gt; requiredType, @Nullable TypeDescriptor typeDescriptor) throws IllegalArgumentException &#123;
+
+        &#x2F;&#x2F; ... 省略暂时非关键的代码
+
+        &#x2F;&#x2F; No custom editor but custom ConversionService specified?
+        ConversionService conversionService &#x3D; this.propertyEditorRegistry.getConversionService();
+        if (editor &#x3D;&#x3D; null &amp;&amp; conversionService !&#x3D; null &amp;&amp; newValue !&#x3D; null &amp;&amp; typeDescriptor !&#x3D; null) &#123;
+            TypeDescriptor sourceTypeDesc &#x3D; TypeDescriptor.forObject(newValue);
+            if (conversionService.canConvert(sourceTypeDesc, typeDescriptor)) &#123;
+                try &#123;
+                    return (T) conversionService.convert(newValue, sourceTypeDesc, typeDescriptor);
+                &#125; catch (ConversionFailedException ex) &#123;
+                    &#x2F;&#x2F; fallback to default conversion logic below
+                    conversionAttemptEx &#x3D; ex;
+                &#125;
+            &#125;
+        &#125;
+
+        &#x2F;&#x2F; ... 省略暂时非关键的代码
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>如果没有自定义的编辑器则使用 ConversionService 。</li>
+</ul>
+<hr>
+<p>ConversionService 是字 Spring 3 后推出来用来替代 PropertyEditor 转换模式的转换体系，接口定义如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConversionService.java
+
+public interface ConversionService &#123;
+
+    boolean canConvert(@Nullable Class&lt;?&gt; sourceType, Class&lt;?&gt; targetType);
+
+    boolean canConvert(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+
+    @Nullable
+    &lt;T&gt; T convert(@Nullable Object source, Class&lt;T&gt; targetType);
+
+    @Nullable
+    Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType);
+
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>其 UML 类图如下：</p>
+<p><a target="_blank" rel="noopener" href="http://static.iocoder.cn/5dae2df55357fdf3f3e5a3c7470e5c6b"><img src="http://static.iocoder.cn/5dae2df55357fdf3f3e5a3c7470e5c6b" class="lazyload placeholder" data-srcset="http://static.iocoder.cn/5dae2df55357fdf3f3e5a3c7470e5c6b" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="ConversionService 类图"></a>ConversionService 类图</p>
+<ul>
+<li><strong>ConfigurableConversionService</strong>：ConversionService 的配置接口，继承 ConversionService 和 ConverterRegistry 两个接口，用于合并他们两者的操作，以便于通过 add 和 remove 的方式添加和删除转换器。</li>
+<li><strong>GenericConversionService</strong>：ConversionService 接口的基础实现，适用于大部分条件下的转换工作，通过 ConfigurableConversionService 接口间接地将 ConverterRegistry 实现为注册 API 。</li>
+<li><strong>DefaultConversionService</strong>：ConversionService 接口的默认实现，适用于大部分条件下的转换工作。</li>
+</ul>
+<hr>
+<p>回归到 TypeConverterDelegate 的 <code>#convertIfNecessary(String propertyName, Object oldValue, @Nullable Object newValue, Class&lt;T&gt; requiredType, TypeDescriptor typeDescriptor)</code> 方法，在该方法中，如果没有自定义的属性编辑器，则调用 ConversionService 接口的 <code>#convert(...)</code>，方法定义如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConversionService.java
+
+Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><code>source</code> ：要转换的源对象，可以为 <code>null</code> 。</li>
+<li><code>sourceType</code>：<code>source</code> 的类型的上下文，如果 <code>source</code> 为 <code>null</code> ，则可以为 <code>null</code> 。</li>
+<li><code>targetType</code> ：<code>source</code> 要转换的类型的上下文。</li>
+</ul>
+<p><code>#convert(...)</code> 方法，将给定的源对象 <code>source</code> 转换为指定的 <code>targetType</code> 。TypeDescriptors 提供有关发生转换的源位置和目标位置的附加上下文，通常是对象字段或属性位置。该方法由子类 GenericConversionService 实现：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java
+
+@Override
+@Nullable
+public Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+    Assert.notNull(targetType, &quot;Target type to convert to cannot be null&quot;);
+    &#x2F;&#x2F; &lt;1&gt; 如果 sourceType 为空，则直接处理结果
+    if (sourceType &#x3D;&#x3D; null) &#123;
+        Assert.isTrue(source &#x3D;&#x3D; null, &quot;Source must be [null] if source type &#x3D;&#x3D; [null]&quot;);
+        return handleResult(null, targetType, convertNullSource(null, targetType));
+    &#125;
+    &#x2F;&#x2F; &lt;2&gt; 如果类型不对，抛出 IllegalArgumentException 异常
+    if (source !&#x3D; null &amp;&amp; !sourceType.getObjectType().isInstance(source)) &#123;
+        throw new IllegalArgumentException(&quot;Source to convert from must be an instance of [&quot; +
+                sourceType + &quot;]; instead it was a [&quot; + source.getClass().getName() + &quot;]&quot;);
+    &#125;
+    &#x2F;&#x2F; &lt;3&gt; 获得对应的 GenericConverter 对象
+    GenericConverter converter &#x3D; getConverter(sourceType, targetType);
+    &#x2F;&#x2F; &lt;4&gt; 如果 converter 非空，则进行转换，然后再处理结果
+    if (converter !&#x3D; null) &#123;
+        &#x2F;&#x2F; &lt;4.1&gt; 执行转换
+        Object result &#x3D; ConversionUtils.invokeConverter(converter, source, sourceType, targetType);
+        &#x2F;&#x2F; &lt;4.2&gt; 处理器结果
+        return handleResult(sourceType, targetType, result);
+    &#125;
+    &#x2F;&#x2F; &lt;5&gt; 处理 converter 为空的情况
+    return handleConverterNotFound(source, sourceType, targetType);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p><code>&lt;1&gt;</code> 处，如果 <code>sourceType</code> 为空，则直接处理结果。</p>
+</li>
+<li><p><code>&lt;2&gt;</code> 处，如果类型不对，抛出 IllegalArgumentException 异常。</p>
+</li>
+<li><p><code>&lt;3&gt;</code> 处，调用 <code>#getConverter(TypeDescriptor sourceType, TypeDescriptor targetType)</code> 方法，获取 GenericConverter 对象 <code>converter</code> 。</p>
+</li>
+<li><p><code>&lt;4&gt;</code> 处，如果 <code>converter</code> 非空，则进行转换，然后再处理结果。</p>
+<ul>
+<li><p><code>&lt;4.1&gt;</code> 处，调用 <code>ConversionUtils#invokeConverter(GenericConverter converter, Object source, TypeDescriptor sourceType, TypeDescriptor targetType)</code> 方法，执行转换。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConversionUtils.java
+
+@Nullable
+public static Object invokeConverter(GenericConverter converter, @Nullable Object source,
+        TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+    try &#123;
+        &#x2F;&#x2F; 执行转换
+        return converter.convert(source, sourceType, targetType);
+    &#125; catch (ConversionFailedException ex) &#123;
+        throw ex;
+    &#125; catch (Throwable ex) &#123;
+        throw new ConversionFailedException(sourceType, targetType, source, ex);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>【重要】在这里，我们看到执行转换。</li>
+</ul>
+</li>
+<li><p><code>&lt;4.2&gt;</code> 处，调用 <code>#handleResult(TypeDescriptor sourceType, TypeDescriptor targetType, Object result)</code> 方法，处理结果。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java
+
+@Nullable
+private Object handleResult(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType, @Nullable Object result) &#123;
+	if (result &#x3D;&#x3D; null) &#123;
+		assertNotPrimitiveTargetType(sourceType, targetType);
+	&#125;
+	return result;
+&#125;
+
+private void assertNotPrimitiveTargetType(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+	if (targetType.isPrimitive()) &#123;
+		throw new ConversionFailedException(sourceType, targetType, null,
+				new IllegalArgumentException(&quot;A null value cannot be assigned to a primitive type&quot;));
+	&#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>实际上，是<strong>校验</strong>结果。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>&lt;5&gt;</code> 处，调用 <code>#handleConverterNotFound(Object source, TypeDescriptor sourceType, TypeDescriptor targetType)</code> 方法，处理 <code>converter</code> 为空的情况。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java
+
+@Nullable
+private Object handleConverterNotFound(
+        @Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+    &#x2F;&#x2F; 情况一，如果 source 为空，则返回空
+    if (source &#x3D;&#x3D; null) &#123;
+        assertNotPrimitiveTargetType(sourceType, targetType);
+        return null;
+    &#125;
+    &#x2F;&#x2F; 情况二，如果 sourceType 为空，或者 targetType 是 sourceType 的子类，则返回 source
+    if ((sourceType &#x3D;&#x3D; null || sourceType.isAssignableTo(targetType)) &amp;&amp;
+            targetType.getObjectType().isInstance(source)) &#123;
+        return source;
+    &#125;
+    &#x2F;&#x2F; 抛出 ConverterNotFoundException 异常
+    throw new ConverterNotFoundException(sourceType, targetType);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
+</ul>
+<hr>
+<p>😈 逻辑有点点长，我们先从 <code>#getConverter(TypeDescriptor sourceType, TypeDescriptor targetType)</code> 方法，获取 GenericConverter 对象 <code>converter</code> 。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java
+
+@Nullable
+protected GenericConverter getConverter(TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+    &#x2F;&#x2F; 创建 ConverterCacheKey 对象
+    ConverterCacheKey key &#x3D; new ConverterCacheKey(sourceType, targetType);
+    &#x2F;&#x2F; 从 converterCache 缓存中，获得 GenericConverter 对象 converter
+    GenericConverter converter &#x3D; this.converterCache.get(key);
+    &#x2F;&#x2F; 如果获得到，则返回 converter
+    if (converter !&#x3D; null) &#123;
+        return (converter !&#x3D; NO_MATCH ? converter : null);
+    &#125;
+
+    &#x2F;&#x2F; 如果获取不到，则从 converters 中查找
+    converter &#x3D; this.converters.find(sourceType, targetType);
+    &#x2F;&#x2F; 如果查找不到，则获得默认的 Converter 对象
+    if (converter &#x3D;&#x3D; null) &#123;
+        converter &#x3D; getDefaultConverter(sourceType, targetType);
+    &#125;
+
+    &#x2F;&#x2F; 如果找到 converter ，则添加 converter 到 converterCache 中，并返回 converter
+    if (converter !&#x3D; null) &#123;
+        this.converterCache.put(key, converter);
+        return converter;
+    &#125;
+
+    &#x2F;&#x2F; 如果找不到 converter ，则添加 NO_MATCH 占位符到 converterCache 中，并返回 null
+    this.converterCache.put(key, NO_MATCH);
+    return null;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p>这段代码意图非常明确，从 <code>converterCache</code> 缓存中获取，如果存在返回，否则从 <code>converters</code> 中获取，然后加入到 <code>converterCache</code> 缓存中。</p>
+</li>
+<li><p><code>converterCache</code> 和 <code>converters</code> 是 GenericConversionService 维护的两个很重要的对象，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java
+
+&#x2F;**
+ * 所有 Converter 集合的封装对象
+ *&#x2F;
+private final Converters converters &#x3D; new Converters();
+
+&#x2F;**
+ * GenericConverter 缓存
+ *&#x2F;
+private final Map&lt;ConverterCacheKey, GenericConverter&gt; converterCache &#x3D; new ConcurrentReferenceHashMap&lt;&gt;(64);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
+</ul>
+<hr>
+<p>Converters 是 GenericConversionService 内部类，用于管理所有注册的转换器，其内部维护一个 Set 和 Map 的数据结构用于管理转换器，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java#Converters
+
+private final Set&lt;GenericConverter&gt; globalConverters &#x3D; new LinkedHashSet&lt;&gt;();
+
+private final Map&lt;ConvertiblePair, ConvertersForPair&gt; converters &#x3D; new LinkedHashMap&lt;&gt;(36);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>同时提供了相应的方法（如 add、remove）操作这两个集合。</li>
+</ul>
+<p>在 <code>#getConverter(TypeDescriptor sourceType, TypeDescriptor targetType)</code> 方法中，如果缓存 <code>converterCache</code> 中不存在，则调用 Converters 对象的 <code>#find(TypeDescriptor sourceType, TypeDescriptor targetType)</code> 方法，查找相应的 GenericConverter，如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java#Converters
+
+@Nullable
+public GenericConverter find(TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+    &#x2F;&#x2F; Search the full type hierarchy
+    List&lt;Class&lt;?&gt;&gt; sourceCandidates &#x3D; getClassHierarchy(sourceType.getType());
+    List&lt;Class&lt;?&gt;&gt; targetCandidates &#x3D; getClassHierarchy(targetType.getType());
+    &#x2F;&#x2F; 遍历 sourceCandidates 数组
+    for (Class&lt;?&gt; sourceCandidate : sourceCandidates) &#123;
+        &#x2F;&#x2F; 遍历 targetCandidates 数组
+        for (Class&lt;?&gt; targetCandidate : targetCandidates) &#123;
+            &#x2F;&#x2F; 创建 ConvertiblePair 对象
+            ConvertiblePair convertiblePair &#x3D; new ConvertiblePair(sourceCandidate, targetCandidate);
+            &#x2F;&#x2F; 获得 GenericConverter 对象
+            GenericConverter converter &#x3D; getRegisteredConverter(sourceType, targetType, convertiblePair);
+            if (converter !&#x3D; null) &#123;
+                return converter;
+            &#125;
+        &#125;
+    &#125;
+    return null;
+&#125;
+
+@Nullable
+private GenericConverter getRegisteredConverter(TypeDescriptor sourceType,
+        TypeDescriptor targetType, ConvertiblePair convertiblePair) &#123;
+    &#x2F;&#x2F; Check specifically registered converters
+    &#x2F;&#x2F; 从 converters 中，获得 converter
+    ConvertersForPair convertersForPair &#x3D; this.converters.get(convertiblePair);
+    if (convertersForPair !&#x3D; null) &#123;
+        GenericConverter converter &#x3D; convertersForPair.getConverter(sourceType, targetType);
+        if (converter !&#x3D; null) &#123;
+            return converter;
+        &#125;
+    &#125;
+    &#x2F;&#x2F; Check ConditionalConverters for a dynamic match
+    &#x2F;&#x2F; 从 globalConverters 中，获得 globalConverter
+    for (GenericConverter globalConverter : this.globalConverters) &#123;
+        if (((ConditionalConverter) globalConverter).matches(sourceType, targetType)) &#123;
+            return globalConverter;
+        &#125;
+    &#125;
+    return null;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>在 <code>#find(TypeDescriptor sourceType, TypeDescriptor targetT)</code> 方法中，会根据 <code>sourceType</code> 和 <code>targetType</code> 去查询 Converters 中维护的 Map 中是否包括支持的注册类型。如果存在返回 GenericConverter ，如果没有存在返回 <code>null</code> 。</li>
+</ul>
+<hr>
+<p>当得到 GenericConverter 后，则调用其 <code>#convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType)</code> 方法，进行类型转换。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConverter.java
+
+Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>到这里我们就可以得到 Bean 属性定义的真正类型了。</p>
+<p><strong>GenericConverter 接口</strong></p>
+<p>GenericConverter 是一个转换接口，一个用于在两种或更多种类型之间转换的通用型转换器接口。它是 Converter SPI 体系中最灵活的，也是最复杂的接口，灵活性在于 GenericConverter 可以支持在多个源/目标类型对之间进行转换，同时也可以在类型转换过程中访问源/目标字段上下文。由于该接口足够复杂，所有当更简单的 Converter 或 ConverterFactory 接口足够使用时，通常不应使用此接口。其定义如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConverter.java
+
+public interface GenericConverter &#123;
+
+    @Nullable
+    Set&lt;ConvertiblePair&gt; getConvertibleTypes();
+
+    @Nullable
+    Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType);
+
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>GenericConverter 的子类有这么多（看类名就知道是干嘛的了）：</p>
+<p><a target="_blank" rel="noopener" href="http://static.iocoder.cn/ae851c788e7011fd6e325056cab2f797"><img src="http://static.iocoder.cn/ae851c788e7011fd6e325056cab2f797" class="lazyload placeholder" data-srcset="http://static.iocoder.cn/ae851c788e7011fd6e325056cab2f797" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="GenericConverter 子类"></a>GenericConverter 子类</p>
+<p>我们看一个子类的实现 StringToArrayConverter，该子类将逗号分隔的 String 转换为 Array 。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; StringToArrayConverter.java
+
+final class StringToArrayConverter implements ConditionalGenericConverter &#123;
+
+	private final ConversionService conversionService;
+
+	public StringToArrayConverter(ConversionService conversionService) &#123;
+		this.conversionService &#x3D; conversionService;
+	&#125;
+
+	@Override
+	public Set&lt;ConvertiblePair&gt; getConvertibleTypes() &#123;
+		return Collections.singleton(new ConvertiblePair(String.class, Object[].class));
+	&#125;
+
+	@Override
+	public boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+		return ConversionUtils.canConvertElements(sourceType, targetType.getElementTypeDescriptor(),
+				this.conversionService);
+	&#125;
+
+	@Override
+	@Nullable
+	public Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+		if (source &#x3D;&#x3D; null) &#123;
+			return null;
+		&#125;
+		&#x2F;&#x2F; 按照 , 分隔成字符串数组
+		String string &#x3D; (String) source;
+		String[] fields &#x3D; StringUtils.commaDelimitedListToStringArray(string);
+		&#x2F;&#x2F; 获得 TypeDescriptor 对象
+		TypeDescriptor targetElementType &#x3D; targetType.getElementTypeDescriptor();
+		Assert.state(targetElementType !&#x3D; null, &quot;No target element type&quot;);
+		&#x2F;&#x2F; 创建目标数组
+		Object target &#x3D; Array.newInstance(targetElementType.getType(), fields.length);
+		&#x2F;&#x2F; 遍历 fields 数组，逐个转换
+		for (int i &#x3D; 0; i &lt; fields.length; i++) &#123;
+			String sourceElement &#x3D; fields[i];
+			&#x2F;&#x2F; 执行转换
+			Object targetElement &#x3D; this.conversionService.convert(sourceElement.trim(), sourceType, targetElementType);
+			&#x2F;&#x2F; 设置到 target 中
+			Array.set(target, i, targetElement);
+		&#125;
+		return target;
+	&#125;
+
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>在类型转换体系中，Spring 提供了非常多的类型转换器，除了上面的 GenericConverter，还有 Converter、ConditionalConverter、ConverterFactory。</p>
+<hr>
+<p><strong>Converter</strong></p>
+<p>Converter 是一个将 <code>&lt;S&gt;</code> 类型的源对象转换为 <code>&lt;T&gt;</code> 类型的目标对象的转换器。该接口是线程安全的，所以可以共享。代码如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; Converter.java
+
+public interface Converter&lt;S, T&gt; &#123;
+
+    @Nullable
+    T convert(S source);
+
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>子类如下：</p>
+<p><a target="_blank" rel="noopener" href="http://static.iocoder.cn/7846fde6784243ff50c21366a438dab6"><img src="http://static.iocoder.cn/7846fde6784243ff50c21366a438dab6" class="lazyload placeholder" data-srcset="http://static.iocoder.cn/7846fde6784243ff50c21366a438dab6" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="Converter 类图"></a>Converter 类图</p>
+<hr>
+<p><strong>ConditionalConverter</strong></p>
+<p>ConditionalConverter 接口用于表示有条件的类型转换，通过转入的<code>sourceType</code> 与 <code>targetType</code> 判断转换能否匹配，只有可匹配的转换才会调用convert 方法进行转换。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConditionalConverter.java
+
+public interface ConditionalConverter &#123;
+
+    boolean matches(TypeDescriptor sourceType, TypeDescriptor targetType);
+
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>ConditionalConverter 的子类如下：</p>
+<p><a target="_blank" rel="noopener" href="http://static.iocoder.cn/8a7276c5d8bcdd7a724e69147655a710"><img src="http://static.iocoder.cn/8a7276c5d8bcdd7a724e69147655a710" class="lazyload placeholder" data-srcset="http://static.iocoder.cn/8a7276c5d8bcdd7a724e69147655a710" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="ConditionalConverter 类图"></a>ConditionalConverter 类图</p>
+<hr>
+<p><strong>ConverterFactory</strong></p>
+<p>一个用于“远程”转换的转换工厂，可以将对象从 <code>&lt;S&gt;</code> 转换为 <code>&lt;R&gt;</code> 的子类型。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; ConverterFactory.java
+
+public interface ConverterFactory&lt;S, R&gt; &#123;
+
+    &lt;T extends R&gt; Converter&lt;S, T&gt; getConverter(Class&lt;T&gt; targetType);
+
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>子类如下：</p>
+<p><a target="_blank" rel="noopener" href="http://static.iocoder.cn/63de40b54f1bc3a032275065d43916a1"><img src="http://static.iocoder.cn/63de40b54f1bc3a032275065d43916a1" class="lazyload placeholder" data-srcset="http://static.iocoder.cn/63de40b54f1bc3a032275065d43916a1" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="ConverterFactory 类图"></a>ConverterFactory 类图</p>
+<hr>
+<p>四种不同的转换器承载着不同的转换过程：</p>
+<ul>
+<li>Converter：用于 <code>1:1</code> 的 <code>source -&gt; target</code> 类型转换。</li>
+<li>ConverterFactory：用于 <code>1:N</code> 的 <code>source -&gt; target</code> 类型转换。</li>
+<li>GenericConverter用于 <code>N:N</code> 的 <code>source -&gt; target</code> 类型转换。</li>
+<li>ConditionalConverter：有条件的 <code>source -&gt; target</code> 类型转换。</li>
+</ul>
+<hr>
+<p><strong>GenericConversionService</strong></p>
+<p>转换器介绍完了，我们再次回归到 ConversionService 接口中去，该接口定义了两类方法：</p>
+<ul>
+<li><code>canConvert(sourceType, targetType)</code> 方法，用于判 <code>sourceType</code> 能否转成 <code>targetType</code> 。</li>
+<li><code>convert(source, targetType)</code> 方法，用于将 <code>source</code> 转成转入的 TargetType 类型实例。</li>
+</ul>
+<p>这两类方法都是在 GenericConversionService 中实现。<br>类 GenericConversionService 实现 ConfigurableConversionService 接口，而 ConfigurableConversionService 接口继承 ConversionService 和 ConverterRegistry。<br>ConverterRegistry 提供了类型转换器的管理功能，他提供了四个 add 和一个 remove 方法，支持注册/删除相应的类型转换器。</p>
+<p>GenericConversionService 作为一个基础实现类，它即支持了不同类型之间的转换，也对各类型转换器进行管理，主要是通过一个 Map 类型的 <code>converterCache</code> 和一个内部类 Converters 。在上面已经分析了 GenericConversionService 执行类型转换的过程 <code>#cover(...)</code> 方法。下面我们就一个 <code>addConverter(Converter&lt;?, ?&gt; converter)</code> 方法，来看看它是如何完成转换器的注入的工作的。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java
+
+@Override
+public void addConverter(Converter&lt;?, ?&gt; converter) &#123;
+    &#x2F;&#x2F; &lt;1&gt; 获取 ResolvableType 对象，基于 converter.getClass() 类
+    ResolvableType[] typeInfo &#x3D; getRequiredTypeInfo(converter.getClass(), Converter.class);
+    &#x2F;&#x2F; &lt;1&gt; 如果获取不到，并且 converter 是 DecoratingProxy 类型，则基于 ((DecoratingProxy) converter).getDecoratedClass() 类
+    if (typeInfo &#x3D;&#x3D; null &amp;&amp; converter instanceof DecoratingProxy) &#123;
+        typeInfo &#x3D; getRequiredTypeInfo(((DecoratingProxy) converter).getDecoratedClass(), Converter.class);
+    &#125;
+    &#x2F;&#x2F; 如果获取不到，抛出 IllegalArgumentException 异常
+    if (typeInfo &#x3D;&#x3D; null) &#123;
+        throw new IllegalArgumentException(&quot;Unable to determine source type &lt;S&gt; and target type &lt;T&gt; for your &quot; +
+                &quot;Converter [&quot; + converter.getClass().getName() + &quot;]; does the class parameterize those types?&quot;);
+    &#125;
+    &#x2F;&#x2F; &lt;2&gt; 封装成 ConverterAdapter 对象，添加到 converters 中
+    addConverter(new ConverterAdapter(converter, typeInfo[0], typeInfo[1]));
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><code>&lt;1&gt;</code> 首先，根据 <code>converter</code> 获取 ResolvableType 数组。</li>
+<li><code>&lt;2&gt;</code> 然后，将其与 <code>converter</code> 封装成一个 ConverterAdapter 实例。</li>
+<li><code>&lt;2&gt;</code> 最后，调用 <code>#addConverter(GenericConverter converter)</code> 方法，添加到 <code>converters</code> 中。</li>
+<li>ResolvableType 用于封装 Java 的 <a target="_blank" rel="noopener" href="https://juejin.im/post/5adefaba518825670e5cb44d">Type</a> 类型。</li>
+<li>ConverterAdapter 则是 Converter 的一个适配器， 它实现了 GenericConverter 和 ConditionalConverter 两个类型转换器。</li>
+</ul>
+<p>其中，<code>#addConverter(GenericConverter converter)</code> 方法，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java
+
+@Override
+public void addConverter(GenericConverter converter) &#123;
+    &#x2F;&#x2F; 添加到 converters 中
+    this.converters.add(converter);
+    &#x2F;&#x2F; 过期缓存
+    invalidateCache();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>直接调用内部类 Converters 的 <code>#add(GenericConverter converter)</code> 方法，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java
+
+public void add(GenericConverter converter) &#123;
+    &#x2F;&#x2F; 获得 ConvertiblePair 集合
+    Set&lt;ConvertiblePair&gt; convertibleTypes &#x3D; converter.getConvertibleTypes();
+    &#x2F;&#x2F; 如果为空，并且 converter 是 ConditionalConverter 类型，则添加到 【globalConverters】 中
+    if (convertibleTypes &#x3D;&#x3D; null) &#123;
+        Assert.state(converter instanceof ConditionalConverter,
+                &quot;Only conditional converters may return null convertible types&quot;);
+        this.globalConverters.add(converter);
+    &#125; else &#123;
+        &#x2F;&#x2F; 通过迭代的方式依次添加【converters】中
+        for (ConvertiblePair convertiblePair : convertibleTypes) &#123;
+            &#x2F;&#x2F; 从 converters 中，获得 ConvertersForPair 对象
+            ConvertersForPair convertersForPair &#x3D; getMatchableConverters(convertiblePair);
+            &#x2F;&#x2F; 添加 converter 到 ConvertersForPair 中
+            convertersForPair.add(converter);
+        &#125;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li><p>首先调用 GenericConverter 的 <code>#getConvertibleTypes()</code> 方法，获取 ConvertiblePair 集合。如果为空，则加入到 <code>globalConverters</code> 集合中，否则通过迭代的方式依次添加 <code>converters</code> 中。</p>
+</li>
+<li><p>ConvertiblePair 为 source-to-target 的持有者，它持有 <code>source</code> 和 <code>target</code> 的 class 类型，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConverter.java#ConvertiblePair
+
+final class ConvertiblePair &#123;
+
+    private final Class&lt;?&gt; sourceType;
+    private final Class&lt;?&gt; targetType;
+
+    &#x2F;&#x2F; 省略其他代码
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
+</ul>
+<p>在迭代过程中会根据 ConvertiblePair 获取相应的 ConvertersForPair 对象，然后添加 <code>converter</code> 转换器加入其中。ConvertiblePair 用于管理使用特定GenericConverter.ConvertiblePair 注册的转换器。代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; GenericConversionService.java#ConvertersForPair
+
+private static class ConvertersForPair &#123;
+
+   private final LinkedList&lt;GenericConverter&gt; converters &#x3D; new LinkedList&lt;&gt;();
+
+    public void add(GenericConverter converter) &#123;
+        this.converters.addFirst(converter);
+    &#125;
+
+    @Nullable
+    public GenericConverter getConverter(TypeDescriptor sourceType, TypeDescriptor targetType) &#123;
+        for (GenericConverter converter : this.converters) &#123;
+            if (!(converter instanceof ConditionalGenericConverter) ||
+                    ((ConditionalGenericConverter) converter).matches(sourceType, targetType)) &#123;
+                return converter;
+            &#125;
+        &#125;
+        return null;
+    &#125;
+
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>其实内部就是维护一个 LinkedList 集合。他内部有两个方法：<code>#add(GenericConverter converter)</code> 和 <code>getConverter(TypeDescriptor sourceType, TypeDescriptor targetType)</code>，实现较为简单，这里就不多介绍了。</li>
+</ul>
+<hr>
+<p><strong>DefaultConversionService</strong></p>
+<p>DefaultConversionService 是 ConversionService 的默认实现，它继承 GenericConversionService，GenericConversionService 主要用于转换器的注册和调用，DefaultConversionService 则是为 ConversionService 体系提供一些默认的转换器。</p>
+<p>在 DefaultConversionService 构造方法中就会添加默认的 Converter ，代码如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; DefaultConversionService.java
+
+public DefaultConversionService() &#123;
+    addDefaultConverters(this);
+&#125;
+
+public static void addDefaultConverters(ConverterRegistry converterRegistry) &#123;
+    addScalarConverters(converterRegistry);
+    addCollectionConverters(converterRegistry);
+
+    converterRegistry.addConverter(new ByteBufferConverter((ConversionService) converterRegistry));
+    converterRegistry.addConverter(new StringToTimeZoneConverter());
+    converterRegistry.addConverter(new ZoneIdToTimeZoneConverter());
+    converterRegistry.addConverter(new ZonedDateTimeToCalendarConverter());
+
+    converterRegistry.addConverter(new ObjectToObjectConverter());
+    converterRegistry.addConverter(new IdToEntityConverter((ConversionService) converterRegistry));
+    converterRegistry.addConverter(new FallbackObjectToStringConverter());
+    converterRegistry.addConverter(new ObjectToOptionalConverter((ConversionService) converterRegistry));
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>当然它还提供了一些其他的方法如 <code>#addCollectionConverters(ConverterRegistry converterRegistry)</code>、<code>addScalarConverters(ConverterRegistry converterRegistry)</code> 方法，用于注册其他类型的转换器。</p>
+<hr>
+<p>至此，从 Bean 属性的转换，到 Spring ConversionService 体系的转换器 Converter 以及转换器的管理都介绍完毕了，下篇我们将分析如何利用 ConversionService 实现<strong>自定义类型</strong>转换器。</p>
+<blockquote>
+<p>艿艿：因为本文是基于调用的过程，进行解析。所以胖友可以自己在总结整理下。</p>
+<p>实际上，大体的调用流是如下：</p>
+<p>TypeConverterSupport =&gt; ConversionService =&gt; Converter</p>
+</blockquote>
+
+      </div>
+      <div class="post-tags-categories">
+        
+        <div class="tags">
+          
+            <a href="/tags/%E6%AD%BB%E7%A3%95Spring/" class="">
+              死磕Spring
+            </a>
+          
+        </div>
+        
+      </div>
+      
+        <div class="copyright">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+    <strong>作者:  </strong>高小天</a>
+    </li>
+    <li class="post-copyright-link">
+    <strong>文章链接:  </strong>
+    <a href="/2021/04/08/IoC 之深入分析 Bean 的类型转换体系/" target="_blank" title="34.IoC 之深入分析 Bean 的类型转换体系">https://gaoyang.world/2021/04/08/IoC 之深入分析 Bean 的类型转换体系/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明:   </strong>
+      本网站所有文章除特别声明外,均采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+      许可协议。转载请注明出处!
+    </li>
+  </ul>
+<div>
+      
+    </article>
+    <!-- 上一篇文章和下一篇文章 -->
+    
+      <!-- 文章详情页的上一页和下一页 -->
+<div class="post-nav">
+
+
+
+  
+  <div class="post-nav-prev post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="/medias/1.jpg" class="lazyload placeholder" data-srcset="/medias/1.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="">
+    </div>
+    <a href="/2021/04/09/IoC%20%E4%B9%8B%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E5%99%A8/" class="post-nav-link">
+      <div class="title">
+        <i class="fas fa-angle-left"></i> 上一篇:
+        <div class="title-text">35.IoC 之自定义类型转换器</div>
+      </div>
+      
+      <!-- <div class="content">
+        在上篇文章中小编分析了 Spring ConversionService 类型转换体系，相信各位都对其有了一个清晰的认识
+      </div> -->
+    </a>
+  </div>
+
+
+
+  
+  <div class="post-nav-next post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="/medias/5.jpg" class="lazyload placeholder" data-srcset="/medias/5.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" src="" alt="">
+    </div>
+    <a href="/2021/04/06/IoC%20%E4%B9%8B%E6%B7%B1%E5%85%A5%E5%88%86%E6%9E%90%20PropertyOverrideConfigurer/" class="post-nav-link">
+      <div class="title">
+        下一篇: <i class="fas fa-angle-right"></i>
+        <div class="title-text">33.IoC 之深入分析 PropertyOverrideConfigurer</div>
+      </div>
+      <!-- <div class="content">
+        ﻿在文章 《【死磕 Spring】—— IoC 之深入分析 BeanFactoryPostProcessor》中提到，B
+      </div> -->
+    </a>
+  </div>
+
+</div>
+
+    
+    
+
+    <!-- 打赏 -->
+    
+      <div id="appDonate" class="post-donate">
+  <div id="donate_board" class="donate_bar center" ref="donate">
+    <a id="btn_donate" class="btn_donate" href="javascript:;" title="打赏" @click="showDialogDrawer()"></a>
+  </div>
+  <transition name="fade">
+    <div 
+      class="donate-box-mask"
+      v-cloak 
+      v-show="visible"
+      @click="cancelDialogDrawer()"
+    >
+    </div>
+  </transition>
+  <transition name="bounce">
+    <div class="donate-box" v-cloak v-show="visible">
+      <div class="donate-box_close">
+        <i class="fas fa-times" aria-hidden="true" @click="cancelDialogDrawer" pointer></i>
+      </div>
+      <div class="donate-box_title">
+        <h4>
+          你的赏识是我前进的动力
+        </h4>
+      </div>
+      <div class="donate-box_tab">
+        <div class="Alipay" pointer :class="{'active': tabActive === 'Alipay'}" @click="changeTabActive('Alipay')">
+          支付宝
+        </div>
+        <div class="WeChatpay" pointer :class="{'active': tabActive === 'WeChatpay'}" @click="changeTabActive('WeChatpay')">
+          微信
+        </div>
+      </div>
+      <div class="donate-box_img">
+        <div class="AlipayImg" v-show="tabActive === 'Alipay'">
+          <img src="/medias/zfb.jpg" class="lazyload placeholder" data-srcset="/medias/zfb.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="支付宝打赏" />
+        </div> 
+        <div class="WeChatpayImg" v-show="tabActive === 'WeChatpay'">
+          <img src="/medias/wx.jpg" class="lazyload placeholder" data-srcset="/medias/wx.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="微信打赏" />
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDonate',
+    data: {
+      visible: false,
+      tabActive: 'Alipay',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        // function getScroll() {
+        //   return {
+        //     left: window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0,
+        //     top: window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+        //   };
+        // }
+        this.top = $(document).scrollTop() // or getScroll().top
+        // console.log('aa', $('.main-content'));
+        body.style.cssText = 'overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+      changeTabActive(name) {
+        this.tabActive = name;
+      }
+    },
+    created() {}
+  })
+</script>
+    
+
+    <!-- 分享 -->
+    
+      <!-- https://github.com/overtrue/share.js -->
+<!-- 文章详情页的分享 -->
+<div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+
+<script src="/js/shareJs/social-share.min.js"></script>
+</script>
+
+<style>
+  .social-share {
+    margin: 20px 0;
+  }
+</style>
+
+
+    
+    
+    <!-- 评论 -->
+    <!-- 评论 -->
+
+  <div id="myComment">
+    
+      <div id="gitment-container"></div>
+
+    
+  </div>
+
+<!-- comment script in themes\hexo-theme-bamboo\layout\_partial\scripts\index.ejs -->
+
+
+  </div>
+
+  <!-- 目录 -->
+  <!-- 文章详情页右侧目录 -->
+
+
+<script>
+  function closeToc(init) {
+    $(".toc-aside").css({'width': 0, 'padding': 0, 'transition': init ?  'noe' : 'width 0.3s' });
+    $(".toc-content").css({'width': 0});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'none'});
+    $(".main-content").css({'width': '75%', 'margin': '10px auto'});
+  };
+  function openToc() {
+    $(".main-content").css({'width': '65%', 'margin-right': '10px', 'margin-left': 'calc(35% - 350px)'});
+    $(".toc-aside").css({'width': '300px', 'padding': '0 10px', 'transition': 'width 0.3s'});
+    $(".toc-content").css({'width': '300px'});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'inline-block'});
+  }
+  function openBtnClickFn () {
+    let openOrCloseBtn = $('.toc-aside .toc-aside-title .toc-open-close');
+    let open = eval('false' || 'true');
+    openOrCloseBtn.click(function() {
+      if (open) {
+        closeToc();
+        open = false;
+      } else {
+        openToc();
+        open = true;
+      }
+    });
+  };
+  openBtnClickFn();
+  initCloseTocWidth(true);
+
+  function initCloseTocWidth(init) {
+    if (window.innerWidth >= 992) {
+      let isClose = true;
+      isClose && closeToc(init)
+    }
+  }
+
+  document.addEventListener('pjax:complete', function () {
+    $(".toc-aside").css({'transition': 'no'});
+  })
+  document.addEventListener('pjax:complete', function () {
+    openBtnClickFn();
+  })
+  
+</script>
+
+  <!-- 图片放大 Wrap images with fancybox support -->
+  <script src="/js/wrapImage.js"></script>
+</div>
+
+<!-- 文章详情页背景图 -->
+<div id="appBgSwiper" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -2;"
+	:style="{'background-color': bgColor ? bgColor : 'transparent'}">
+	<transition-group tag="ul" :name="names">
+		<li v-for='(image,index) in img' :key='index' v-show="index === mark" class="bg-swiper-box">
+			<img :src="image" class="bg-swiper-img no-lazy">
+		</li>
+	</transition-group>
+</div>
+<script>
+	var vm = new Vue({
+		el: '#appBgSwiper',
+		data: {
+			names: '' || 'fade' || 'fade', // translate-fade fade
+			mark: 0,
+			img: [],
+			bgColor: '',
+			time: null
+		},
+		methods: {   //添加方法
+			change(i, m) {
+				if (i > m) {
+					// this.names = 'fade';
+				} else if (i < m) {
+					// this.names = 'fade';
+				} else {
+					return;
+				}
+				this.mark = i;
+			},
+			prev() {
+				// this.names = 'fade';
+				this.mark--;
+				if (this.mark === -1) {
+					this.mark = 3;
+					return
+				}
+			},
+			next() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			autoPlay() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			play() {
+				let bgImgDelay = '' || '180000'
+				let delay = parseInt(bgImgDelay) || 180000;
+				this.time = setInterval(this.autoPlay, delay);
+			},
+			enter() {
+				clearInterval(this.time);
+			},
+			leave() {
+				this.play();
+			}
+		},
+		created() {
+			this.play()
+		},
+		beforeDestroy() {
+			clearInterval(this.time);
+		},
+		mounted() {
+			let prop = '' || '';
+			let isImg = prop.includes('.bmp') || prop.includes('.jpg') || prop.includes('.png') || prop.includes('.tif') || prop.includes('.gif') || prop.includes('.pcx') || prop.includes('.tga') || prop.includes('.exif') || prop.includes('.fpx') || prop.includes('.psd') || prop.includes('.cdr') || prop.includes('.pcd') || prop.includes('.dxf') || prop.includes('.ufo') || prop.includes('.eps') || prop.includes('.ai') || prop.includes('.raw') || prop.includes('.WMF') || prop.includes('.webp') || prop.includes('.jpeg') || prop.includes('http://') || prop.includes('https://')
+			if (isImg) {
+				let img = prop.split(',');
+				let configRoot = '/'
+				let arrImg = [];
+				img.forEach(el => {
+					var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+					var objExp = new RegExp(Expression);
+
+					if (objExp.test(el)) {
+						// http or https
+						arrImg.push(el);
+					} else {
+						// 非http or https开头
+						// 本地文件
+						let firstStr = el.charAt(0);
+						if (firstStr == '/') {
+							el = el.substr(1); // 删除第一个字符 '/',因为 configRoot最后一个字符为 /
+						}
+						el = configRoot + el;
+						arrImg.push(el);
+					}
+				})
+				this.img = arrImg;
+			} else {
+				this.bgColor = prop;
+			}
+		}
+	})
+</script>
+
+<style>
+	.bg-swiper-box {
+		position: absolute;
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.bg-swiper-img {
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+
+
+
+  <script>
+  function loadMermaid() {
+    if (document.getElementsByClassName('mermaid').length) {
+      if (window.mermaidJsLoad) mermaid.init()
+      else {
+        loadScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+          window.mermaidJsLoad = true
+          mermaid.initialize({
+            theme: 'default',
+          })
+          if ('true') {
+            mermaid.init();
+          }
+        })
+      }
+    }
+  };
+  document.addEventListener("DOMContentLoaded", function () {
+    loadMermaid();
+  })
+
+  document.addEventListener('pjax:complete', function () {
+    loadMermaid();
+  })
+  
+</script>
+
+
+      </main>
+    </div>
+
+    <!-- 页脚 -->
+    
+  
+  <div class="footer bg-color">
+    <div class="footer-main">
+      
+        
+          <div class="link">
+            
+          </div>
+        
+      
+        
+          <div class="footer-copyright">
+            <p>Copyright © 2019 - 2020  </p>
+
+          </div>
+        
+      
+        
+          
+            <!-- 不蒜子统计 -->
+            <!-- 不蒜子统计 -->
+<span id="busuanzi_container_site_pv">
+      <i class="fas fa-eye" aria-hidden="true"></i>本站总访问量：<span id="busuanzi_value_site_pv"></span> 次
+</span>
+<span class="post-meta-divider">|</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+      <i class="fas fa-users" aria-hidden="true"></i>本站访客数：<span id="busuanzi_value_site_uv"></span> 人
+</span>
+
+          
+        
+      
+        
+          <div class="footer-custom">
+            
+          </div>
+        
+      
+    </div>
+  </div>
+
+
+
+    <!-- 渲染暗黑按钮 -->
+    
+      <div class="dark">
+  <div class="dark-content">
+    <i class="fas fa-moon" aria-hidden="true"></i>
+    <!-- <span>关灯</span> -->
+  </div>
+  
+</div>
+
+<script>
+  $(function() {
+    let isDark = JSON.parse(localStorage.getItem('dark'))  || JSON.parse('false');
+    if (isDark) {
+      $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+    }
+    $('.dark').click(function() {
+      if ($(document.body).is('.darkModel')) {
+        $(document.body).removeClass('darkModel');
+        localStorage.setItem('dark', false);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      } else {
+        $(document.body).addClass('darkModel');
+        localStorage.setItem('dark', true);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      }
+    })
+  })
+</script>
+    
+    <!-- 渲染回到顶部按钮 -->
+    
+      <div class="goTop top-btn-color" pointer>
+  <i class="fas fa-arrow-up" aria-hidden="true"></i>
+</div>
+<script src="/js/goTop.js"></script>
+
+    
+    <!-- 渲染左下角音乐播放器 -->
+    
+      <link rel="stylesheet" href="/js/aplayer/APlayer@1.10.1.min.css">
+<style>
+.aplayer .aplayer-lrc p {
+  
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px !important;
+}
+
+.aplayer .aplayer-lrc p.aplayer-lrc-current {
+  
+  font-size: 15px;
+  color: #42b983;
+}
+
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+  left: -66px !important;
+}
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+  left: 0px !important;
+}
+
+
+</style>
+<meting-js  
+  class=""
+  server="tencent"
+  type="playlist"
+  id="8062553743"
+  fixed='true'
+  autoplay='false'
+  theme='#42b983'
+  loop='all'
+  order='random'
+  preload='auto'
+  volume='0.7'
+  list-folded='true'
+>
+</meting-js>
+
+<!-- <style>
+  #aplayer {
+    position: fixed;
+    left: 0;
+    bottom: 300px;
+  }
+</style> -->
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    
+
+    <!-- 图片放大 -->
+    
+      <script src="/js/fancybox/jquery.fancybox.min.js"></script>
+    
+
+    <!-- 百度解析 -->
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <!-- 背景彩带 -->
+    
+      <script type="text/javascript" size="100" alpha='0.4' zIndex="-1" src="/js/ribbon.min.js"></script>
+    
+
+    <script src="/js/utils/index.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <!-- 文章目录所需js -->
+<link href="/js/tocbot/tocbot.css" rel="stylesheet">
+<script src="/js/tocbot/tocbot.min.js"></script>
+
+<script>
+  var headerEl = 'h2, h3, h4',  //headers 
+    content = '.post-detail',//文章容器
+    idArr = {};  //标题数组以确定是否增加索引id
+  //add #id
+  var option = {
+    // Where to render the table of contents.
+    tocSelector: '.toc',
+    // Where to grab the headings to build the table of contents.
+    contentSelector: content,
+    // Which headings to grab inside of the contentSelector element.
+    headingSelector: headerEl,
+    scrollSmooth: true,
+    scrollSmoothOffset: -80,
+    headingsOffset: -($(window).height() * 0.4 - 45),
+    positionFixedSelector: '.toc-main',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    activeLinkClass: 'is-active-link',
+    // onClick: function (e) {},
+  }
+  if ($('.toc').length > 0) {
+
+    $(content).children(headerEl).each(function () {
+      //去除空格以及多余标点
+      var headerId = $(this).text().replace(/[\s|\~|`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\+|\=|\||\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?|\：|\，|\。]/g, '');
+
+      headerId = headerId.toLowerCase();
+      if (idArr[headerId]) {
+        //id已经存在
+        $(this).attr('id', headerId + '-' + idArr[headerId]);
+        idArr[headerId]++;
+      }
+      else {
+        //id未存在
+        idArr[headerId] = 1;
+        $(this).attr('id', headerId);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      tocbot.init(option);
+      mobileTocClick();
+    });
+
+  }
+
+  window.tocScrollFn = function () {
+    return bamboo.throttle(function () {
+      findHeadPosition();
+    }, 100)()
+  }
+  window.addEventListener('scroll', tocScrollFn);
+
+  const findHeadPosition = function (top) {
+    if ($('.toc-list').length <= 0) {
+      return false;
+    }
+    setTimeout(() => {  // or DOMContentLoaded 
+      autoScrollToc();
+    }, 0);
+  }
+
+  const autoScrollToc = function () {
+    const $activeItem = document.querySelector('.is-active-link');
+    const $cardToc = document.querySelector('.toc-content');
+    const activePosition = $activeItem.getBoundingClientRect().top
+    const sidebarScrollTop = $cardToc.scrollTop
+    if (activePosition > (document.documentElement.clientHeight - 100)) {
+      $cardToc.scrollTop = sidebarScrollTop + 150
+    }
+    if (activePosition < 100) {
+      $cardToc.scrollTop = sidebarScrollTop - 150
+    }
+  }
+
+  document.addEventListener('pjax:send', function () {
+    if ($('.toc').length) {
+      tocbot.destroy();
+    }
+  });
+
+  document.addEventListener('pjax:complete', function () {
+    if ($('.toc').length) {
+      tocbot.init(option);
+      mobileTocClick();
+    }
+  });
+  
+  // 手机端toc按钮点击出现目录
+  const mobileTocClick = function () {
+    const $cardTocLayout = document.getElementsByClassName('toc-aside')[0];
+    const $cardToc = $cardTocLayout.getElementsByClassName('toc-content')[0];
+    let right = '45px';
+    if (window.innerWidth >= 551 && window.innerWidth <= 992) {
+      right = '100px'
+    }
+    const mobileToc = {
+      open: () => {
+        $cardTocLayout.style.cssText = 'animation: toc-open .3s; opacity: 1; right: ' + right
+      },
+
+      close: () => {
+        $cardTocLayout.style.animation = 'toc-close .2s'
+        setTimeout(() => {
+          $cardTocLayout.style.cssText = "opacity:''; animation: ''; right: ''"
+        }, 100)
+      }
+    }
+    document.getElementById('toc-mobile-btn').addEventListener('click', () => {
+      if (window.getComputedStyle($cardTocLayout).getPropertyValue('opacity') === '0') mobileToc.open()
+      else mobileToc.close()
+    })
+
+    $cardToc.addEventListener('click', (e) => {
+      if (window.innerWidth < 992) { // 小于992px的时候
+        mobileToc.close()
+      }
+    })
+  }
+</script>
+
+<style>
+  .is-position-fixed {
+    position: sticky !important;
+    top: 74px;
+  }
+
+  .toc-main ul {
+    counter-reset: show-list;
+  }
+
+  .toc-main ul li::before {
+    content: counter(item)".";
+    display: block;
+    position: absolute;
+    left: 12px;
+    top: 0;
+  }
+</style> 
+
+<!-- 设置导航背景 -->
+<script>
+  let setHeaderClass = () => {
+    const headerMenuTransparent = true;
+    if (!headerMenuTransparent) { return; }
+    const nav = $('#navHeader');
+    const navTop = nav.outerHeight();
+    const winTop = $(window).scrollTop();
+    if(winTop > navTop) {
+      nav.addClass('header-bg-color');
+    }
+    else {
+      nav.removeClass('header-bg-color');
+    }
+  };
+
+  let scrollCollect = () => {
+    return bamboo.throttle(function (e) {
+      setHeaderClass();
+    }, 200)()
+  }
+
+  let initHeaderBg = () => {
+    setHeaderClass();
+  }
+
+  setHeaderClass();
+  window.addEventListener('scroll', scrollCollect);
+
+  document.addEventListener('pjax:send', function () {
+    window.removeEventListener('scroll', scrollCollect)
+  })
+  document.addEventListener('pjax:complete', function () {
+    window.addEventListener('scroll', scrollCollect);
+    setHeaderClass();
+  })
+</script> 
+
+<!-- 渲染issues标签里的内容 -->
+<script>
+  function loadIssuesJS() {
+    if ($(".post-detail").find(".issues-api").length == 0) {
+      return;
+    } 
+    loadScript('/js/issues/index.js');
+  };
+  $(function () {
+    loadIssuesJS();
+  });
+  document.addEventListener('pjax:complete', function () {
+    if (typeof IssuesAPI == "undefined") {
+      loadIssuesJS();
+    }
+  })
+</script>
+
+<!-- 输入框打字特效 -->
+<!-- 输入框打字特效 -->
+
+  <script src="/js/activate-power-mode.js"></script>
+  <script>
+    POWERMODE.colorful = true;  // 打开随机颜色特效
+    POWERMODE.shake = false;    // 关闭输入框抖动
+    document.body.addEventListener('input', POWERMODE);//监听打字事件
+  </script>
+
+
+<!-- markdown代码一键复制功能 -->
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.css">
+  <script src="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.umd.min.js"></script>
+  <script src="/js/clipboard/clipboard.min.js"></script>
+  <div id="appCopy">
+  </div>
+  <script data-pjax>
+    var vm = new Vue({
+      el: '#appCopy',
+      data: {
+      },
+      computed: {
+      },
+      mounted() {
+        const that = this;
+        var copy = '复制';
+        /* code */
+        var initCopyCode = function () {
+          var copyHtml = '';
+          copyHtml += '<button class="btn-copy" data-clipboard-snippet="" style="position:absolute;top:0;right:0;z-index:1;">';
+          copyHtml += '<i class="fas fa-copy"></i><span>' + copy + '</span>';
+          copyHtml += '</button>';
+          $(".post-detail pre").not('.gutter pre').wrap("<div class='codeBox' style='position:relative;width:100%;'></div>")
+          $(".post-detail pre").not('.gutter pre').before(copyHtml);
+          new ClipboardJS('.btn-copy', {
+            target: function (trigger) {
+              return trigger.nextElementSibling;
+            }
+          });
+        }
+        initCopyCode();
+        $('.btn-copy').unbind('click').bind('click', function () {
+          doSomething();
+        })
+        $(document).unbind('keypress').bind('keypress', function (e) {
+          if (e.ctrlKey && e.keyCode == 67) {
+            doSomething();
+          }
+        })
+
+        function doSomething() {
+          that.$notify({
+            title: "成功",
+            content: "代码已复制，请遵守相关授权协议。",
+            type: 'success'
+          })
+        }
+      },
+      methods: {
+      },
+      created() { }
+    })
+  </script>
+  
+
+<!-- 图片懒加载 -->
+<script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazyload",
+    threshold: 0
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    lazyLoadInstance.update();
+  });
+  document.addEventListener('pjax:complete', function () {
+    lazyLoadInstance.update();
+  });
+</script>
+
+
+<!-- 卡片滚动动画 -->
+   
+
+<!-- 评论所需js -->
+
+  
+    <script type="text/javascript">
+  var utteranceCommon = {};
+
+  function check_utterance() {
+    let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+    if (isDark) {
+      utteranceCommon.Theme = 'github-dark';
+    } else {
+      utteranceCommon.Theme = 'github-light';
+    }
+
+    return document.getElementById("gitment-container");
+  }
+  comment_el = '#gitment-container';
+  load_utterance = function () {
+    if ($(comment_el).length) {
+      // 匿名函数，防止污染全局变量
+      const HEAD = check_utterance();
+
+      var utterances = document.createElement('script');
+      utterances.type = 'text/javascript';
+      utterances.async = true;
+      utterances.setAttribute('issue-term', 'pathname')
+      utterances.setAttribute('theme', utteranceCommon.Theme)
+      utterances.setAttribute('repo', '')
+      utterances.crossorigin = 'anonymous';
+      utterances.src = 'https://utteranc.es/client.js';
+      // content 是要插入评论的地方
+      document.getElementById('gitment-container').appendChild(utterances);
+
+    }
+  }
+
+  function dark_utterance() {
+    const HEAD = check_utterance();
+    if (!HEAD) return;
+    const message = {
+      type: 'set-theme',
+      theme: utteranceCommon.Theme
+    };
+    const utteranceIframe = document.querySelector('iframe');
+    utteranceIframe.contentWindow.postMessage(message, 'https://utteranc.es');
+  }
+
+  $(document).ready(load_utterance);
+  document.addEventListener('pjax:complete', function () {
+    load_utterance();
+  });
+
+  $('.dark').click(function () {
+    setTimeout(() => {
+      dark_utterance();
+    });
+  })
+
+</script>
+
+<style>
+  .utterances {
+    max-width: inherit !important;
+  }
+</style>
+  
+
+
+<!-- 鼠标点击特效 -->
+<!-- 爱心点击 -->
+
+  
+    <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 999; pointer-events: none;" ></canvas>
+    <script src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+    <script src="/js/cursor/explosion.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-pjax></script>
+
+
+    <!-- pjax -->
+    
+
+<!-- pjax -->
+
+
+  <script src="/js/pjax@0.2.8/index.js"></script>
+  
+    <!-- 样式位于：source/css/_third-party/pjaxanimate.styl -->
+
+<div class="pjax-animate">
+  
+    <div class="loading-circle"><div id="loader-circle"></div></div>
+    <script>
+      window.ShowLoading = function() {
+        $(".loading-circle").css("display", "block");
+      };
+      window.HideLoading = function() {
+        $(".loading-circle").css("display", "none");
+      }
+    </script>
+  
+	<script>
+    document.addEventListener('pjax:complete', function () {
+      window.HideLoading();
+    })
+    document.addEventListener('pjax:send', function () {
+      window.ShowLoading();
+    })
+    document.addEventListener('pjax:error', function () {
+      window.HideLoading();
+    })
+	</script>
+</div>
+
+  
+
+  <script>
+    var pjax = new Pjax({
+      elements: 'a[href]:not([href^="#"]):not([href="javascript:void(0)"]):not([no-pjax])',   // 拦截正常带链接的 a 标签
+      selectors: ["#pjax-container","title"],                                   // 根据实际需要确认重载区域
+      cacheBust: false,   // url 地址追加时间戳，用以避免浏览器缓存
+      timeout: 5000
+    });
+
+    document.addEventListener('pjax:send', function (e) {
+
+      try {
+        var currentUrl = window.location.pathname;
+        var targetUrl = e.triggerElement.href;
+        var banUrl = [""];
+        if (banUrl[0] != "") {
+          banUrl.forEach(item => {
+            if(currentUrl.indexOf(item) != -1 || targetUrl.indexOf(item) != -1) {
+              window.location.href = targetUrl;
+            }
+          });
+        }
+      } catch (error) {}
+
+      $(window).unbind('resize');
+      $(window).unbind('scroll');
+      $(document).unbind('scroll');
+      $(document).unbind('click');
+      $('body').unbind('click');
+
+    })
+    
+    document.addEventListener('pjax:complete', function () {
+      $('script[data-pjax], .pjax-reload script').each(function () {
+        $(this).parent().append($(this).remove());
+      });
+    });
+
+    document.addEventListener('pjax:error', function (e) {
+      window.location.href = e.triggerElement.href;
+    })
+    
+    // 刷新不从顶部开始
+    document.addEventListener("DOMContentLoaded", function () {
+      history.scrollRestoration = 'auto';
+    })
+  </script>
+
+
+
+  </body>
+</html>

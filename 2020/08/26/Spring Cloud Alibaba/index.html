@@ -1,0 +1,2535 @@
+<!DOCTYPE html>
+<html>
+  <!-- meta/link... -->
+  
+
+
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+  <title>Spring Cloud Alibaba | gy的小站</title>
+
+  <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_1911880_c1nvbyezg17.css">
+  <link href="https://cdn.jsdelivr.net/gh/inkss/fontawesome@5.15.3/css/all.min.css" rel="stylesheet">
+  <link href="/js/swiper/swiper@5.4.1.min.css" rel="stylesheet">
+  
+  
+    <script>
+        var themeModelId = '';
+        if (themeModelId) {
+            localStorage.setItem('modelId', themeModelId);
+        }
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/gh/yuang01/live2d-widget@latest/autoload.js"></script>
+    <script>
+        var live2dOpen = eval('true') || false;
+        if (!live2dOpen) {
+            localStorage.setItem('waifu-display', 1609323474481);
+        }
+    </script>
+  
+  
+  
+<link rel="stylesheet" href="/css/animate.min.css">
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/fancybox/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="/js/shareJs/share.min.css">
+
+  
+  <style>
+        @media (max-width: 992px) {
+            #waifu {
+                display: none;
+            }
+        }
+    </style>
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+    
+
+    <!-- import link -->
+    
+        
+            
+        
+            
+        
+    
+    <!-- import script -->
+    
+        
+            
+        
+            
+        
+    
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+  
+  <!-- 依赖于jquery和vue -->
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+
+  
+
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script>
+
+  
+  
+  <body>
+    <!-- 预加载动画 -->
+    <!-- 页面预加载动画 -->
+
+<div id='loader'>
+  <link rel="stylesheet" href="/js/loaded/index.css" >
+  <div class="loading-left-bg"></div>
+  <div class="loading-right-bg"></div>
+  <div class="spinner-box">
+    <div class="configure-border-1">
+      <div class="configure-core"></div>
+    </div>
+    <div class="configure-border-2">
+      <div class="configure-core"></div>
+    </div>
+    <div class="loading-word">加载中...</div>
+  </div>
+</div>
+
+<script>
+  var endLoading = function () {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loader').classList.add("loading");
+  }
+  window.addEventListener('DOMContentLoaded',endLoading);
+  
+</script>
+
+    
+    <!-- 判断是否为暗黑风格 -->
+    <!-- 判断是否为黑夜模式 -->
+<script>
+  let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+
+  if (isDark) {
+    $(document.body).addClass('darkModel');
+  }
+</script>
+
+    <!-- 需要在上面加载的js -->
+    <script>
+  function loadScript(src, cb) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var HEAD = document.getElementsByTagName("head")[0] || document.documentElement;
+        var script = document.createElement("script");
+        script.setAttribute("type", "text/javascript");
+        if (cb) {
+          if (JSON.stringify(cb)) {
+            for (let p in cb) {
+              if (p == "onload") {
+                script[p] = () => {
+                  cb[p]()
+                  resolve()
+                }
+              } else {
+                script[p] = cb[p]
+                script.onload = resolve
+              }
+            }
+          } else {
+            script.onload = () => {
+              cb()
+              resolve()
+            };
+          }
+        } else {
+          script.onload = resolve
+        }
+        script.setAttribute("src", src);
+        HEAD.appendChild(script);
+      });
+    });
+  }
+
+  //https://github.com/filamentgroup/loadCSS
+  var loadCSS = function (href, before, media, attributes) {
+    return new Promise(resolve => {
+      setTimeout(function () {
+        var link = document.createElement('link');
+        link.rel = "stylesheet";
+        link.href = src;
+        link.onload = resolve;
+        document.getElementsByTagName("head")[0].appendChild(link);
+      });
+    });
+  };
+
+</script> 
+
+<!-- 轮播图所需要的js -->
+<script src="/js/swiper/swiper.min.js"></script>
+<script src="/js/swiper/vue-awesome-swiper.js"></script>
+<script src="/js/swiper/swiper.animate1.0.3.min.js"></script>
+
+<script type="text/javascript">
+  Vue.use(window.VueAwesomeSwiper)
+</script>
+
+
+  <script src="/js/vue-typed-js/index.js"></script>
+
+
+<!-- 首页的公告滚动插件的js需要重新加载 -->
+<script src="/js/vue-seamless-scroll/index.js"></script>
+
+<!-- 打字机效果js -->
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11"></script>
+
+
+    <div id="safearea">
+      <main class="main" id="pjax-container">
+        <!-- 头部导航 -->
+        
+<header class="header   " 
+  id="navHeader"
+  style="position: fixed;
+  left: 0; top: 0; z-index: 10;width: 100%;"
+>
+  <div class="header-content">
+    <div class="bars">
+      <div id="appDrawer" class="sidebar-image">
+  <div class="drawer-box-icon">
+    <i class="fas fa-bars" aria-hidden="true" @click="showDialogDrawer"></i>
+  </div>
+  
+  <transition name="fade">
+    <div class="drawer-box_mask" v-cloak style="display: none;" v-show="visible" @click.self="cancelDialogDrawer">
+    </div>
+  </transition>
+  <div class="drawer-box" :class="{'active': visible}">
+    <div class="drawer-box-head bg-color">
+      <img class="drawer-box-head_logo lazyload placeholder" src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+      <h3 class="drawer-box-head_title">gy的小站</h3>
+      <h5 class="drawer-box-head_desc">滴水穿石不是水的力量,而是坚持的力量</h5>
+    </div>
+    
+    <div class="drawer-box-content">
+      <ul class="drawer-box-content_menu">
+        
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/archives" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/tags" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/categories" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/about" class="drawer-menu-item-link">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="/friends" class="drawer-menu-item-link">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="drawer-box-content_item" style="position: relative;">
+              
+                <a href="javascript:;" class="drawer-menu-item-link has-children" @click="openOrCloseMenu(6)">
+                  <span>
+                    
+                      <i class="fas fa-link"></i>
+                    
+                    <span class="name">更多</span>
+                  </span>
+                  <i class="fas fa-chevron-left arrow " :class="{'icon-rotate': isOpen(6)}" aria-hidden="true"></i>
+                </a>
+                <ul class="drawer-sub-menu" v-if="isOpen(6)">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+        
+          <li class="drawer-box-content_item">
+            <a target="_blank" rel="noopener" href="https://github.com/gaoyangya">
+              <i class="fas fa-github" aria-hidden="true"></i>
+              <span>Github</span>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDrawer',
+    data: {
+      visible: false,
+      top: 0,
+      openArr: [],
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      isOpen(index) {
+        if (this.openArr.includes(index)) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      openOrCloseMenu(curIndex) {
+        const index = this.openArr.indexOf(curIndex);
+        if (index !== -1) {
+          this.openArr.splice(index, 1);
+        } else {
+          this.openArr.push(curIndex);
+        }
+      },
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'width: 100%; height: 100%;overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      }
+    },
+    created() {}
+  })
+</script>
+
+    </div>
+    <div class="blog-title" id="author-avatar">
+      
+        <div class="avatar">
+          <img src="/medias/logo.png" class="lazyload placeholder" data-srcset="/medias/logo.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="logo">
+        </div>
+      
+      <a href="/" class="logo">gy的小站</a>
+    </div>
+    <nav class="navbar">
+      <ul class="menu">
+        
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/" class="menu-item-link" title="首页">
+                  
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                  
+                  <span class="name">首页</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/archives" class="menu-item-link" title="归档">
+                  
+                    <i class="fas fa-archive" aria-hidden="true"></i>
+                  
+                  <span class="name">归档</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/tags" class="menu-item-link" title="标签">
+                  
+                    <i class="fas fa-tags" aria-hidden="true"></i>
+                  
+                  <span class="name">标签</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/categories" class="menu-item-link" title="分类">
+                  
+                    <i class="fas fa-bookmark" aria-hidden="true"></i>
+                  
+                  <span class="name">分类</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/about" class="menu-item-link" title="关于">
+                  
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                  
+                  <span class="name">关于</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="/friends" class="menu-item-link" title="友情链接">
+                  
+                  <span class="name">友情链接</span>
+                </a>
+              
+            </li>
+          
+            <li class="menu-item" style="position: relative;">
+              
+                <a href="javascript:;" class="menu-item-link" title="更多">
+                  
+                    <i class="fas fa-link"></i>
+                  
+                  <span class="name">更多</span>
+                  <i class="fas fa-chevron-down arrow" aria-hidden="true"></i>
+                </a>
+                <ul class="sub-menu">
+                  
+                  <li>
+                    <a href="/gallery">
+                      
+                      <i class="fas fa-music" style="margin-top: -20px;"></i>
+                      
+                      <span>工大风光</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/huoban">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>资源推荐</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a href="/me">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>考研与就业</span>
+                    </a>
+                  </li>
+                  
+                  <li>
+                    <a target="_blank" rel="noopener" href="http://baidu.com">
+                      
+                      <i class="fas fa-film" style="margin-top: -20px;"></i>
+                      
+                      <span>百度</span>
+                    </a>
+                  </li>
+                  
+                </ul>
+              
+            </li>
+          
+        
+      </ul>
+      
+      
+        <div id="appSearch">
+  <div class="search"  @click="showDialog()"><i class="fas fa-search" aria-hidden="true"></i></div>
+  <transition name="fade">
+    <div class="message-box_wrapper" style="display: none;" v-cloak v-show="dialogVisible" @click.self="cancelDialogVisible()">
+      <div class="message-box animated bounceInDown">
+        <h2>
+          <span>
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <span class="title">本地搜索</span>
+          </span>
+          <i class="fas fa-times close" pointer style="float:right;" aria-hidden="true" @click.self="cancelDialogVisible()"></i>
+        </h2>
+        <form class="site-search-form">
+          <input type="text"
+            placeholder="请输入关键字"
+            id="local-search-input" 
+            @click="getSearchFile()"
+            class="st-search-input"
+            v-model="searchInput"
+          />
+        </form>
+        <div class="result-wrapper">
+          <div id="local-search-result" class="local-search-result-cls"></div>
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+<script src="/js/local_search.js"></script>
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appSearch',
+    data: {
+      dialogVisible: false,
+      searchInput: '',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+      window.addEventListener('pjax:complete', () => {
+        this.cancelDialogVisible();
+      })
+    },
+    methods: {
+      showDialog() {
+        this.dialogVisible = true;
+        // 防止页面滚动，只能让弹框滚动
+        this.top = $(document).scrollTop()
+        body.style.cssText = 'overflow: hidden;';
+      },
+      getSearchFile() {
+        if (!this.searchInput) {
+          getSearchFile("/search.xml");
+        }
+      },
+      cancelDialogVisible() {
+        this.dialogVisible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+    },
+    created() {}
+  })
+</script>
+<!-- 解决刷新页面闪烁问题，可以在元素上添加display: none, 或者用vue.extend方法，详情：https://blog.csdn.net/qq_31393401/article/details/81017912 -->
+<!-- 下面是搜索基本写法 -->
+<!-- <script type="text/javascript" id="local.search.active">
+  var inputArea = document.querySelector("#local-search-input");
+  inputArea.onclick   = function(){ getSearchFile(); this.onclick = null }
+  inputArea.onkeydown = function(){ if(event.keyCode == 13) return false }
+</script> -->
+
+      
+
+    </nav>
+  </div>
+  
+    <a target="_blank" rel="noopener" href="https://github.com/gaoyangya" class="github-corner color-primary" aria-label="View source on GitHub"><svg width="60" height="60" viewBox="0 0 250 250" style="fill:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+  
+  
+    <div id="he-plugin-simple"></div>
+    <script>
+      WIDGET = {
+        CONFIG: {
+          "modules": "012",
+          "background": 5,
+          "tmpColor": "4A4A4A",
+          "tmpSize": 16,
+          "cityColor": "4A4A4A",
+          "citySize": 16,
+          "aqiSize": 16,
+          "weatherIconSize": 24,
+          "alertIconSize": 18,
+          "padding": "10px 10px 10px 10px",
+          "shadow": "1",
+          "language": "auto",
+          "borderRadius": 5,
+          "fixed": "false",
+          "vertical": "middle",
+          "horizontal": "center",
+          "key": "2784dd3fcb1e4f0f9a9b579bf69641f2"
+        }
+      }
+    </script>
+    <script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script> 
+    
+</header>
+        <!-- 内容区域 -->
+        
+ <!-- prismjs 代码高亮 -->
+ 
+    
+    <link href="/js/prism/prism-line-numbers.css" rel="stylesheet">
+    
+        <link href="/js/prism/prism.min.css" rel="stylesheet">
+    
+
+    <style>
+        pre[class*="language-"] {
+            overflow-y: hidden;
+        }
+        .line-numbers .line-numbers-rows {
+            border: none;
+        }
+    </style>
+  
+
+
+<div class="bg-dark-floor" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -1;"></div>
+
+
+  <!-- 文章详情页顶部图片和标题 -->
+
+
+
+
+<div class="post-detail-header" id="thumbnail_canvas" style="background-repeat: no-repeat; background-size: cover; 
+  background-position: center center;position: relative;background-image:url('/medias/9.jpg')">
+  <div class="post-detail-header-mask"></div>
+  <canvas id="header_canvas"style="position:absolute;bottom:0;pointer-events:none;"></canvas>
+  
+  <div class="post-detail-header_info-box">
+    <div class="title-box">
+      <span class="title">
+        Spring Cloud Alibaba
+      </span>
+    </div>
+    
+    
+      
+        <span class="post-detail-header_date">
+          <i class="fas fa-calendar"></i> 发表于：2020-08-26 |
+        </span>
+      
+
+      
+        <span class="post-detail-header_categories">
+          <i class="iconfont iconbookmark1"></i> 分类：
+          
+            <a href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="post-detail-header_category">
+              微服务
+            </a>
+          
+        </span>
+      
+
+      
+    
+  </div>
+  
+  
+    <script src="/js/bubble/bubble.js"></script>
+  
+</div>
+
+
+
+
+
+<div class="row justify-position" 
+  style="padding-top: 0px;">
+  <div class="main-content">
+    <article class="post post-detail">
+      <div class="post-content">
+        <h2 id="Spring-Cloud-Alibaba-微服务工具集"><a href="#Spring-Cloud-Alibaba-微服务工具集" class="headerlink" title="Spring Cloud Alibaba 微服务工具集"></a>Spring Cloud Alibaba 微服务工具集</h2><p><strong>阿里巴巴版本: 2.2.1</strong></p>
+<p><strong>Boot版本: 2.2.5</strong></p>
+<h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h2><p>Spring Cloud Alibaba provides a one-stop solution for distributed application development. It contains all the components required to develop distributed applications, making it easy for you to develop your applications using Spring Cloud.</p>
+<ul>
+<li>spring cloud 用来解决微服务系统中(分布式系统)解决方案</li>
+<li>spring cloud alibaba 用来解决微服务系统中解决方案</li>
+</ul>
+<p>With Spring Cloud Alibaba, you only need to add some annotations and a small amount of configurations to connect Spring Cloud applications to the distributed solutions of Alibaba, and build a distributed application system with Alibaba middleware.</p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">0</span><span class="token punctuation">.</span>原文翻译
+<span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>spring<span class="token punctuation">.</span>io<span class="token operator">/</span>projects<span class="token operator">/</span>spring<span class="token operator">-</span>cloud<span class="token operator">-</span>alibaba
+<span class="token operator">-</span> 阿里云为分布式应用开发提供了一站式解决方案。它包含了开发分布式应用程序所需的所有组件，使您可以轻松地使用springcloud开发应用程序。
+<span class="token operator">-</span> 有了阿里云，你只需要添加一些注解和少量的配置，就可以将Spring云应用连接到阿里的分布式解决方案上，用阿里中间件搭建一个分布式应用系统。
+
+# <span class="token number">1</span><span class="token punctuation">.</span> spring cloud alibaba 特点
+<span class="token operator">-</span> a<span class="token punctuation">.</span>服务降级和流量控制            sentinel        替换  hystrix
+<span class="token operator">-</span> b<span class="token punctuation">.</span>服务注册与发现				  nacos           替换  eureka  consul
+<span class="token operator">-</span> c<span class="token punctuation">.</span>分布式配置&amp; 事件驱动消息总线   nacos     替换 config &amp; bus
+<span class="token operator">-</span> d<span class="token punctuation">.</span>分布式事务&amp;dubbo            seta
+
+# <span class="token number">3</span><span class="token punctuation">.</span>springcloud 组件
+<span class="token operator">-</span> 服务注册与发现组件   eureka  consul                     nacos
+<span class="token operator">-</span> 服务间通信组件      restTemplate<span class="token operator">+</span>ribbon<span class="token punctuation">,</span>Openfeign      restTemplate<span class="token operator">+</span>ribbon<span class="token punctuation">,</span>Openfeign
+<span class="token operator">-</span> 服务降级和熔断      hystrix hystrix dashboard          sentinel
+<span class="token operator">-</span> 服务网关组件        gateway                            gateway
+<span class="token operator">-</span> 统一配置中心组件 消息总线组件   config  bus               nacos<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="2-环境搭建"><a href="#2-环境搭建" class="headerlink" title="2.环境搭建"></a>2.环境搭建</h2><pre class="line-numbers language-none"><code class="language-none"># 0.构建项目并引入依赖<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token comment">&lt;!--定义springcloud版本--></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>properties</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>spring.cloud.alibaba.version</span><span class="token punctuation">></span></span>2.2.1.RELEASE<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>spring.cloud.alibaba.version</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>properties</span><span class="token punctuation">></span></span>
+
+<span class="token comment">&lt;!--全局引入springcloudalibaba下载依赖地址,并不会引入依赖--></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencyManagement</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencies</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>com.alibaba.cloud<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-cloud-alibaba-dependencies<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>$&#123;spring.cloud.alibaba.version&#125;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>type</span><span class="token punctuation">></span></span>pom<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>type</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>scope</span><span class="token punctuation">></span></span>import<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>scope</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencies</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencyManagement</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559786.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559786.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200727201703247"></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559140.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559140.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200727201715844"></p>
+<hr>
+<h2 id="3-Nacos"><a href="#3-Nacos" class="headerlink" title="3.Nacos"></a>3.Nacos</h2><h3 id="什么是Nacos-Name-Service-服务注册与发现-amp-Configurations-Services-统一配置中心"><a href="#什么是Nacos-Name-Service-服务注册与发现-amp-Configurations-Services-统一配置中心" class="headerlink" title="什么是Nacos  Name Service(服务注册与发现) &amp; Configurations Services(统一配置中心)"></a>什么是Nacos  Name Service(服务注册与发现) &amp; Configurations Services(统一配置中心)</h3><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559191.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559191.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200727202422243"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"><span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>nacos<span class="token punctuation">.</span>io<span class="token operator">/</span>zh<span class="token operator">-</span>cn<span class="token operator">/</span>index<span class="token punctuation">.</span>html
+<span class="token operator">-</span> Nacos 致力于帮助您发现、配置和管理微服务。Nacos 提供了一组简单易用的特性集，帮助您快速实现动态服务发现、服务配置、服务元数据及流量管理。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<ul>
+<li>总结:<strong>Nacos就是微服务架构中服务注册中心以及统一配置中心,用来替换原来的(eureka,consul)以及config组件</strong></li>
+</ul>
+<h3 id="安装jdk"><a href="#安装jdk" class="headerlink" title="安装jdk"></a>安装jdk</h3><blockquote>
+<p>Nacos是使用java写的,所以安装Nacos之前必须要安装jdk</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559693.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559693.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902200221244"><br>我们已经装过jdk了</p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559266.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559266.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902200421681" style="zoom:67%;" />
+
+<p>且java已经配好环境变量了,这个不是我配的,应该是自动给配了一个临时的环境变量,所以我们重新配一下</p>
+<blockquote>
+<p>使用<code>find / -name java</code>查询安装包位置</p>
+</blockquote>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559774.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231559774.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902200856179" style="zoom:67%;" />
+
+<p>去康康:</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600857.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600857.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902201305726"></p>
+<p>==&gt;默认安装位置:<code>/usr/local/software/jdk1.8.0_161/bin</code></p>
+<p>并且环境变量已经配置好了<code>在nginx.md文件中</code></p>
+<h3 id="安装Nacos"><a href="#安装Nacos" class="headerlink" title="安装Nacos"></a>安装Nacos</h3><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">0</span><span class="token punctuation">.</span>准备环境
+<span class="token operator">-</span> <span class="token number">1.64</span> bit OS，支持 Linux<span class="token operator">/</span>Unix<span class="token operator">/</span>Mac<span class="token operator">/</span>Windows，推荐选用 Linux<span class="token operator">/</span>Unix<span class="token operator">/</span>Mac。必须满足
+<span class="token operator">-</span> <span class="token number">2.64</span> bit JDK <span class="token number">1.8</span><span class="token operator">+</span>；下载 &amp; 配置。 必须满足
+<span class="token operator">-</span> <span class="token number">3</span><span class="token punctuation">.</span>Maven <span class="token number">3.2</span><span class="token punctuation">.</span>x<span class="token operator">+</span>；下载 &amp; 配置。
+
+# <span class="token number">1</span><span class="token punctuation">.</span>下载nacos <span class="token punctuation">[</span>本次课程版本<span class="token operator">:</span><span class="token punctuation">]</span><span class="token punctuation">[</span><span class="token number">1.3</span><span class="token punctuation">.</span><span class="token number">0</span>版本<span class="token punctuation">]</span>
+<span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>alibaba<span class="token operator">/</span>nacos<span class="token operator">/</span>releases <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600424.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600424.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200727202936158"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>解压缩安装包到指定位置
+<span class="token operator">-</span> <span class="token punctuation">[</span><span class="token label symbol">root@</span>localhost ~<span class="token punctuation">]</span># tar <span class="token operator">-</span>zxvf nacos<span class="token operator">-</span>server<span class="token operator">-</span><span class="token number">1.3</span><span class="token punctuation">.</span><span class="token number">1</span><span class="token punctuation">.</span>tar<span class="token punctuation">.</span>gz 
+<span class="token operator">-</span> bin  			启动nacos服务的脚本目录
+<span class="token operator">-</span> conf 			nacos的配置文件目录
+<span class="token operator">-</span> target 		nacos的启动依赖存放目录
+<span class="token operator">-</span> <span class="token keyword">data</span>		  nacos启动成功后保存数据的目录<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>第二步咱不这么干,怎么这样:</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600467.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600467.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902203606622"></p>
+<p><code>nacos放到 /usr/local/software</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600895.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600895.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902203836932"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">3</span><span class="token punctuation">.</span>启动安装服务
+<span class="token operator">-</span> linux<span class="token operator">/</span>unix<span class="token operator">/</span>mac启动
+	打开终端进入nacos的bin目录执行如下命令 
+	<span class="token punctuation">.</span><span class="token operator">/</span>startup<span class="token punctuation">.</span>sh <span class="token operator">-</span>m standalone
+
+<span class="token operator">-</span> windows启动
+	在 cmd中 
+	执行 startup<span class="token punctuation">.</span>cmd <span class="token operator">-</span>m standalone 或者双击startup<span class="token punctuation">.</span>cmd运行文件。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600684.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600684.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902204245014"></p>
+<p>===============</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600840.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600840.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902205300075"></p>
+<hr>
+<p>出现问题了:<code>权限不够</code></p>
+<p>解决方案:</p>
+<p><code>在bin目录下执行：chmod u+x *.sh</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600739.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600739.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902205829670"></p>
+<p>ok,解决了</p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600281.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600281.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902210029641" style="zoom:200%;" />
+
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">4</span><span class="token punctuation">.</span>访问nacos的web服务管理界面
+<span class="token operator">-</span> http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span><span class="token number">192.168</span><span class="token punctuation">.</span><span class="token number">88.3</span><span class="token operator">:</span><span class="token number">8848</span><span class="token operator">/</span>nacos<span class="token operator">/</span>
+<span class="token operator">-</span> 用户名 和 密码都是nacos<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600922.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600922.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902211044598" style="zoom:67%;" />
+
+<p>==================</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600694.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600694.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220902211150443"></p>
+<h3 id="开发服务注册到nacos"><a href="#开发服务注册到nacos" class="headerlink" title="开发服务注册到nacos"></a>开发服务注册到nacos</h3><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">0</span><span class="token punctuation">.</span>创建项目并引入依赖<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token comment">&lt;!--引入nacos client的依赖--></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>com.alibaba.cloud<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-cloud-starter-alibaba-nacos-discovery<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600407.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600407.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200727212459690"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>配置注册地址<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-properties" data-language="properties"><code class="language-properties"><span class="token attr-name">server.port</span><span class="token punctuation">=</span><span class="token attr-value">8789 	#指定当前服务端口</span>
+<span class="token attr-name">spring.application.name</span><span class="token punctuation">=</span><span class="token attr-value">nacosclient 	#指定服务名称</span>
+<span class="token attr-name">spring.cloud.nacos.server-addr</span><span class="token punctuation">=</span><span class="token attr-value">localhost:8848	 #指定nacos服务地址</span>
+<span class="token attr-name">spring.cloud.nacos.discovery.server-addr</span><span class="token punctuation">=</span><span class="token attr-value">$&#123;spring.cloud.nacos.server-addr&#125; 		#指定注册中心地址</span>
+<span class="token attr-name">management.endpoints.web.exposure.include</span><span class="token punctuation">=</span><span class="token attr-value">*	   #暴露所有web端点</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>加入启动服务注册注解 <span class="token punctuation">[</span>注意<span class="token operator">:</span><span class="token punctuation">]</span><span class="token punctuation">[</span>新版本之后这步可以省略不写<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600070.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600070.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200727213320726"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">3</span><span class="token punctuation">.</span>查看nacos的服务列表<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600525.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600525.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200727213221604"></p>
+<h3 id="使用nacos作为配置中心"><a href="#使用nacos作为配置中心" class="headerlink" title="使用nacos作为配置中心"></a>使用nacos作为配置中心</h3><h4 id="1-从nacos获取配置"><a href="#1-从nacos获取配置" class="headerlink" title="1.从nacos获取配置"></a>1.从nacos获取配置</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>创建项目并引入nacons配置中心依赖<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token comment">&lt;!--引入nacos client 依赖--></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>com.alibaba.cloud<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-cloud-starter-alibaba-nacos-discovery<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+
+<span class="token comment">&lt;!--引入配置中心依赖--></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>com.alibaba.cloud<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-cloud-starter-alibaba-nacos-config<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600226.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600226.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728203807174"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>配置配置中心地址
+文件名叫bootstrap<span class="token punctuation">.</span>propertiees<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-properties" data-language="properties"><code class="language-properties"><span class="token attr-name">spring.cloud.nacos.server-addr</span><span class="token punctuation">=</span><span class="token attr-value">localhost:8848								# 远程配置中心的地址</span>
+<span class="token attr-name">spring.cloud.nacos.config.server-addr</span><span class="token punctuation">=</span><span class="token attr-value">$&#123;spring.cloud.nacos.server-addr&#125;     # 去指定nacos地址读取配置</span>
+<span class="token attr-name">spring.cloud.nacos.config.group</span><span class="token punctuation">=</span><span class="token attr-value">DEFAULT_GROUP								# 读取配置的分组</span>
+<span class="token attr-name">spring.cloud.nacos.config.file-extension</span><span class="token punctuation">=</span><span class="token attr-value">properties					        # 指定读取文件后缀</span>
+<span class="token attr-name">spring.application.name</span><span class="token punctuation">=</span><span class="token attr-value">config												# 指定读取文件的前缀</span>
+<span class="token attr-name">spring.profiles.active</span><span class="token punctuation">=</span><span class="token attr-value">prod													# 指定读取文件的具体环境</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600510.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231600510.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728211501591"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">3</span><span class="token punctuation">.</span>在nacos中创建配置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601796.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601796.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728211633327"></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601559.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601559.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728211924796"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">4</span><span class="token punctuation">.</span>编写控制器测试配置读取情况<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RestController</span>
+<span class="token annotation punctuation">@Slf4j</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">HelloController</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">//注入配置</span>
+    <span class="token annotation punctuation">@Value</span><span class="token punctuation">(</span><span class="token string">"$&#123;user.name&#125;"</span><span class="token punctuation">)</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> username<span class="token punctuation">;</span>
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/hello/config"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">config</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        log<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"用户名: [&#123;&#125;]"</span><span class="token punctuation">,</span>username<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> username<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601516.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601516.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728212037358"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">5</span><span class="token punctuation">.</span>启动项目方式测试配置读取<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601347.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601347.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728212221271"></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601338.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601338.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728212249215"></p>
+<hr>
+<hr>
+<p><code>总结</code></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601927.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601927.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903144646993"></p>
+<hr>
+<hr>
+<h4 id="2-DataId"><a href="#2-DataId" class="headerlink" title="2. DataId"></a>2. DataId</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>DataId
+<span class="token operator">-</span> 用来读取远程配置中心的中具体配置文件其完整格式如下<span class="token operator">:</span>
+<span class="token operator">-</span> $<span class="token punctuation">&#123;</span>prefix<span class="token punctuation">&#125;</span><span class="token operator">-</span>$<span class="token punctuation">&#123;</span>spring<span class="token punctuation">.</span>profile<span class="token punctuation">.</span>active<span class="token punctuation">&#125;</span><span class="token punctuation">.</span>$<span class="token punctuation">&#123;</span>file<span class="token operator">-</span>extension<span class="token punctuation">&#125;</span>
+	a<span class="token punctuation">.</span> prefix 默认为 spring<span class="token punctuation">.</span>application<span class="token punctuation">.</span>name 的值，也可以通过配置项 spring<span class="token punctuation">.</span>cloud<span class="token punctuation">.</span>nacos<span class="token punctuation">.</span>config<span class="token punctuation">.</span>prefix来配置。
+	
+	b<span class="token punctuation">.</span> spring<span class="token punctuation">.</span>profile<span class="token punctuation">.</span>active 即为当前环境对应的 profile，详情可以参考 Spring Boot文档。 注意：当 spring<span class="token punctuation">.</span>profile<span class="token punctuation">.</span>active 为空时，对应的连接符 <span class="token operator">-</span> 也将不存在，dataId 的拼接格式变成 $<span class="token punctuation">&#123;</span>prefix<span class="token punctuation">&#125;</span><span class="token punctuation">.</span>$<span class="token punctuation">&#123;</span>file<span class="token operator">-</span>extension<span class="token punctuation">&#125;</span>
+	
+	c<span class="token punctuation">.</span> file<span class="token operator">-</span>exetension 为配置内容的数据格式，可以通过配置项 spring<span class="token punctuation">.</span>cloud<span class="token punctuation">.</span>nacos<span class="token punctuation">.</span>config<span class="token punctuation">.</span>file<span class="token operator">-</span>extension 来配置。目前只支持 properties 和 yaml 类型。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601128.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601128.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903144921898"></p>
+<hr>
+<hr>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601332.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601332.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903145211677"></p>
+<h4 id="3-实现自动配置刷新"><a href="#3-实现自动配置刷新" class="headerlink" title="3.实现自动配置刷新"></a>3.实现自动配置刷新</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>自动刷新
+<span class="token operator">-</span> 默认情况下nacos已经实现了自动配置刷新功能<span class="token punctuation">,</span>如果需要刷新配置直接在控制器中加入<span class="token annotation builtin">@RefreshScope</span>注解即可<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RestController</span>
+<span class="token annotation punctuation">@Slf4j</span>
+<span class="token annotation punctuation">@RefreshScope</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">HelloController</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">//注入配置 </span>
+    <span class="token annotation punctuation">@Value</span><span class="token punctuation">(</span><span class="token string">"$&#123;user.name&#125;"</span><span class="token punctuation">)</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> username<span class="token punctuation">;</span>
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/hello/config"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">config</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        log<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"用户名: [&#123;&#125;]"</span><span class="token punctuation">,</span>username<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> username<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601607.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601607.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728215747497"></p>
+<h4 id="4-命名空间"><a href="#4-命名空间" class="headerlink" title="4.命名空间"></a>4.命名空间</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>命名空间<span class="token punctuation">(</span>namespace<span class="token punctuation">)</span>
+<span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>alibaba<span class="token operator">/</span>spring<span class="token operator">-</span>cloud<span class="token operator">-</span>alibaba<span class="token operator">/</span>wiki<span class="token operator">/</span>Nacos<span class="token operator">-</span>config
+<span class="token operator">-</span> namespace命名空间是nacos针对于企业级开发设计用来针对于不同环境的区分<span class="token punctuation">,</span>比如正在企业开发时有测试环境<span class="token punctuation">,</span>生产环境<span class="token punctuation">,</span>等其他环境<span class="token punctuation">,</span>因此为了保证不同环境配置实现隔离<span class="token punctuation">,</span>提出了namespace的概念<span class="token punctuation">,</span>默认在nacos中存在一个<span class="token keyword">public</span>命名空间所有配置在没有指定命名空间时都在这个命名空间中获取配置<span class="token punctuation">,</span>在实际开发时可以针对于不能环境创建不同的namespace空间。默认空间不能删除<span class="token operator">!</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601326.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601326.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728220906225"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>创建其他命名空间
+<span class="token operator">-</span> 每个命名空间都有一个唯一id<span class="token punctuation">,</span>这个id是读取配置时指定空间的唯一标识<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601494.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601494.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728221059584"></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601180.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601180.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728221139206"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">3</span><span class="token punctuation">.</span>在配置列表查看空间<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601845.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601845.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728221221582"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">4</span><span class="token punctuation">.</span>在指定空间下载创建配置文件<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601329.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601329.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728222410336"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">5</span><span class="token punctuation">.</span>项目中使用命名空间指定配置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601890.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601890.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728223100749"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">6</span><span class="token punctuation">.</span>测试配置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601678.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231601678.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728223125420"></p>
+<h4 id="5-配置分组"><a href="#5-配置分组" class="headerlink" title="5.配置分组"></a>5.配置分组</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>配置分组<span class="token punctuation">(</span>group<span class="token punctuation">)</span>
+<span class="token operator">-</span> 配置分组是对配置集进行分组，通过一个有意义的字符串（如 Buy 或 Trade ）来表示，不同的配置分组下可以有相同的配置集（Data ID）。当您在 Nacos 上创建一个配置时，如果未填写配置分组的名称，则配置分组的名称默认采用 DEFAULT_GROUP 。配置分组的常见场景：可用于区分不同的项目或应用，例如：学生管理系统的配置集可以定义一个group为：STUDENT_GROUP。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602521.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602521.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728223745192"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>创建分组<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602266.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602266.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728223921240"></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602682.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602682.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728224034473"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">3</span><span class="token punctuation">.</span>读取不同分组的配置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602929.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602929.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200728224128019"></p>
+<h3 id="nacos持久化"><a href="#nacos持久化" class="headerlink" title="nacos持久化"></a>nacos持久化</h3><h4 id="1-登陆mysql并创建一个数据库-名字任意-编码一定是UTF-8"><a href="#1-登陆mysql并创建一个数据库-名字任意-编码一定是UTF-8" class="headerlink" title="1.登陆mysql并创建一个数据库,名字任意,编码一定是UTF-8"></a>1.登陆mysql并创建一个数据库,名字任意,编码一定是UTF-8</h4><blockquote>
+<p>mysql和nacos应该在同一台电脑上,也就是192.168.88.3</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602783.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602783.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903201022465"></p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602461.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602461.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903201515972" style="zoom:80%;" />
+
+<h4 id="2-在新创建的数据库中执行nacos-mysql-sql"><a href="#2-在新创建的数据库中执行nacos-mysql-sql" class="headerlink" title="2.在新创建的数据库中执行nacos-mysql.sql"></a>2.在新创建的数据库中执行<code>nacos-mysql.sql</code></h4><p>nacos-mysql.sql文件位置在<code>/usr/local/software/nacos/conf</code>下:star:</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602369.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602369.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903200418613"></p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602088.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602088.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903201421564" style="zoom:80%;" />
+
+<p>然后就可以看到存储配置文件所用到的表信息,不去去做额外处理,就在那放着就可以</p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602046.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602046.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903201804038" style="zoom:67%;" />
+
+<h4 id="3-修改nacos中的conf-application-properties文件"><a href="#3-修改nacos中的conf-application-properties文件" class="headerlink" title="3.修改nacos中的conf/application.properties文件"></a>3.修改nacos中的conf/application.properties文件</h4><blockquote>
+<p>增加支持mysql数据源配置（目前只支持mysql），添加mysql数据源的url、用户名和密码。</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602613.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602613.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903202140399"></p>
+<p>①在配置文件中把使用的数据库改为mysql(放开注解)</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602296.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602296.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903202628938"></p>
+<p>②把db的编号打开</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602877.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602877.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903202827970"> </p>
+<p>③把数据库的驱动,用户名和密码放开,并修改成自己的</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602448.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231602448.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220903203308377"></p>
+<blockquote>
+<p>恭喜我,配置完成</p>
+<p>以后nacos里面的微服务的配置就都放到mysql数据库nacos中了!</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>说明
+<span class="token operator">-</span> 在<span class="token number">0.7</span>版本之前，在单机模式时nacos使用嵌入式数据库<span class="token punctuation">(</span>derby<span class="token punctuation">)</span>实现数据的存储，不方便观察数据存储的基本情况。
+	<span class="token number">0.7</span>版本增加了支持mysql数据源能力，具体的操作步骤：
+	<span class="token number">1</span><span class="token punctuation">.</span>安装数据库，版本要求：<span class="token number">5.6</span><span class="token punctuation">.</span><span class="token number">5</span><span class="token operator">+</span>
+	<span class="token number">2</span><span class="token punctuation">.</span>初始化mysql数据库，数据库初始化文件：nacos<span class="token operator">-</span>mysql<span class="token punctuation">.</span>sql
+	<span class="token number">3</span><span class="token punctuation">.</span>修改conf<span class="token operator">/</span>application<span class="token punctuation">.</span>properties文件，增加支持mysql数据源配置（目前只支持mysql），添加mysql数据源的url、用户名和密码。
+
+# <span class="token number">2</span><span class="token punctuation">.</span>安装mysql数据库<span class="token number">5.6</span><span class="token punctuation">.</span><span class="token number">5</span><span class="token operator">+</span>以上版本<span class="token punctuation">(</span>略<span class="token punctuation">)</span>
+<span class="token operator">-</span> 添加官方的yum源创建并编辑mysql<span class="token operator">-</span>community<span class="token punctuation">.</span>repo文件
+	vi <span class="token operator">/</span>etc<span class="token operator">/</span>yum<span class="token punctuation">.</span>repos<span class="token punctuation">.</span>d<span class="token operator">/</span>mysql<span class="token operator">-</span>community<span class="token punctuation">.</span>repo
+<span class="token operator">-</span> 粘贴以下内容到源文件中
+    <span class="token punctuation">[</span>mysql57<span class="token operator">-</span>community<span class="token punctuation">]</span>
+    name<span class="token operator">=</span>MySQL <span class="token number">5.7</span> Community Server
+    baseurl<span class="token operator">=</span>http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>repo<span class="token punctuation">.</span>mysql<span class="token punctuation">.</span>com<span class="token operator">/</span>yum<span class="token operator">/</span>mysql<span class="token operator">-</span><span class="token number">5.7</span><span class="token operator">-</span>community<span class="token operator">/</span>el<span class="token operator">/</span><span class="token number">7</span><span class="token operator">/</span>$basearch<span class="token operator">/</span>
+    enabled<span class="token operator">=</span><span class="token number">1</span>
+    gpgcheck<span class="token operator">=</span><span class="token number">0</span>
+    gpgkey<span class="token operator">=</span>file<span class="token operator">:</span><span class="token operator">/</span><span class="token comment">//etc/pki/rpm-gpg/RPM-GPG-KEY-mysql</span>
+
+<span class="token operator">-</span> 安装mysql
+	yum install mysql<span class="token operator">-</span>community<span class="token operator">-</span>server <span class="token operator">-</span>y
+
+<span class="token operator">-</span> 启动mysql数据库
+    systemctl start mysqld
+
+<span class="token operator">-</span> 修改mysql数据库密码
+	grep 'temporary password' <span class="token operator">/</span><span class="token keyword">var</span><span class="token operator">/</span>log<span class="token operator">/</span>mysqld<span class="token punctuation">.</span>log
+	mysqladmin <span class="token operator">-</span>u root <span class="token operator">-</span>p password 回车 输入原始密码 在输入新的密码
+<span class="token operator">-</span> 登录mysql
+    mysql <span class="token operator">-</span>uroot <span class="token operator">-</span>p'Root<span class="token operator">!</span>Q2w'
+<span class="token operator">-</span> 修改远程连接
+	grant all privileges on <span class="token operator">*</span><span class="token punctuation">.</span><span class="token operator">*</span> <span class="token keyword">to</span> 'root<span class="token char">'@'</span><span class="token operator">%</span>' identified <span class="token keyword">by</span> 'Root<span class="token operator">!</span>Q2w' with grant option<span class="token punctuation">;</span>
+    flush privileges<span class="token punctuation">;</span>
+
+# <span class="token number">3</span><span class="token punctuation">.</span>修改配置文件
+	spring<span class="token punctuation">.</span>datasource<span class="token punctuation">.</span>platform<span class="token operator">=</span>mysql
+    db<span class="token punctuation">.</span>num<span class="token operator">=</span><span class="token number">1</span>
+    db<span class="token punctuation">.</span>url<span class="token punctuation">.</span><span class="token number">0</span><span class="token operator">=</span>jdbc<span class="token operator">:</span>mysql<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span><span class="token number">127.0</span><span class="token punctuation">.</span><span class="token number">0.1</span><span class="token operator">:</span><span class="token number">3306</span><span class="token operator">/</span>nacos_config<span class="token operator">?</span>		
+    	characterEncoding<span class="token operator">=</span>utf8&amp;connectTimeout<span class="token operator">=</span><span class="token number">1000</span>&amp;socketTimeout<span class="token operator">=</span><span class="token number">3000</span>&amp;autoReconnect<span class="token operator">=</span><span class="token boolean">true</span>
+			&amp;useUnicode<span class="token operator">=</span><span class="token boolean">true</span>&amp;useSSL<span class="token operator">=</span><span class="token boolean">false</span>&amp;serverTimezone<span class="token operator">=</span>UTC
+	db<span class="token punctuation">.</span>user<span class="token operator">=</span>root
+	db<span class="token punctuation">.</span>password<span class="token operator">=</span>Root<span class="token operator">!</span>Q2w<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="nacos集群搭建"><a href="#nacos集群搭建" class="headerlink" title="nacos集群搭建"></a>nacos集群搭建</h3><blockquote>
+<p>nacos既充当了服务注册中心,又充当了统一配置中心</p>
+<p>所以在实际生产中,nacos非常重要,我们肯定不能以单节点的方式启动,所以建议以集群的方式部署</p>
+</blockquote>
+<h4 id="1-集群规划"><a href="#1-集群规划" class="headerlink" title="1.集群规划"></a>1.集群规划</h4><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603976.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603976.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904095849490"><br><code>在这里,重点是nacos集群,实际上mysql也要搭建一个集群,极限情况下,甚至要使用mycat</code></p>
+<blockquote>
+<p>sbl服务负载均衡用的是nginx</p>
+</blockquote>
+<hr>
+<p><code>现在虚拟机里面已经有两台Ubuntu了,再克隆出来一台就好了</code></p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603817.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603817.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904101114752" style="zoom: 50%;" />
+
+<p><code>克隆的具体步骤如果忘记了,可以去数据库中间件mycat.md里面找</code></p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603444.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603444.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904101544544" style="zoom: 50%;" />
+
+<p>克隆的是原先那个Ubuntu系统,也就是<code>Ubuntu_64位</code>,报了上面那个错<br>然后没有解决,我选择使用Ubuntu_64位_2去克隆,然后就成功了,如下</p>
+<img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603032.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603032.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904105309124" style="zoom: 50%;" />
+
+<p>ok</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603984.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603984.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220908152603844"></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603957.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603957.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220908152537665"></p>
+<blockquote>
+<p>吐槽:克隆一个ubuntn占了40g内存,我电脑有三个,差点给我干废了hhhhh</p>
+</blockquote>
+<p>nacos1: 192.168.88.3:8848</p>
+<p>nacos2:  192.168.88.4:8848</p>
+<p>nacos3: 192.168.88.6:8848</p>
+<p>nginx :192.168.88.3:899</p>
+<blockquote>
+<p>集群的话,nacos节点最好为奇数个,因为有一个投票机制</p>
+</blockquote>
+<h4 id="2-注意事项"><a href="#2-注意事项" class="headerlink" title="2.注意事项"></a>2.注意事项</h4><p>a.3个或3个以上Nacos节点才能构成集群。<br>b.要求虚拟机内存分配必须大于2G以上</p>
+<p>c.数据持久化必须配置为mysql持久化</p>
+<h4 id="3-搭建nacos集群"><a href="#3-搭建nacos集群" class="headerlink" title="3.搭建nacos集群"></a>3.搭建nacos集群</h4><h5 id="①-nacos启动时不能有原始数据-star-gt-删掉data数据"><a href="#①-nacos启动时不能有原始数据-star-gt-删掉data数据" class="headerlink" title="① nacos启动时不能有原始数据:star:===&gt;删掉data数据"></a>① nacos启动时不能有原始数据:star:===&gt;删掉data数据</h5><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603102.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603102.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904153035885"></p>
+<p>===&gt;删掉data数据(<code>在/usr/local/software/nacos的data</code>)</p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">cd <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>nacos
+rm <span class="token operator">-</span>rf <span class="token keyword">data</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603686.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603686.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904154121307"></p>
+<h5 id="②开启nacos-mysql持久化-注意-数据库中不能存在原始数据"><a href="#②开启nacos-mysql持久化-注意-数据库中不能存在原始数据" class="headerlink" title="②开启nacos mysql持久化.  注意:数据库中不能存在原始数据"></a>②开启nacos mysql持久化.  注意:数据库中不能存在原始数据</h5><h5 id="③-Nacos集群-修改cluster-conf文件"><a href="#③-Nacos集群-修改cluster-conf文件" class="headerlink" title="③ Nacos集群,修改cluster.conf文件"></a>③ Nacos集群,修改cluster.conf文件</h5><blockquote>
+<p>在三个nacos目录下的conf目录下有cluster.conf.example文件,移动出来一份把扩展名example都去掉使用</p>
+</blockquote>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">cd <span class="token operator">/</span>usr<span class="token operator">/</span>local<span class="token operator">/</span>software<span class="token operator">/</span>nacos<span class="token operator">/</span>conf
+mv cluster<span class="token punctuation">.</span>conf<span class="token punctuation">.</span>example cluster<span class="token punctuation">.</span>conf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603244.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603244.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904160020715"></p>
+<blockquote>
+<p>在三台Ubuntu里面分别修改复制出来的cluster.conf文件，把三个nacos服务端地址都添加到里面(文件中原先的全部删除)</p>
+</blockquote>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603191.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603191.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904160848285"></p>
+<p>=========</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603441.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603441.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904161256010"></p>
+<blockquote>
+<p>分别启动三台机器     ./startup.sh</p>
+</blockquote>
+<p>然后就ok了</p>
+<h3 id="nginx实现nacos高可用-负载均衡"><a href="#nginx实现nacos高可用-负载均衡" class="headerlink" title="nginx实现nacos高可用(负载均衡)"></a>nginx实现nacos高可用(负载均衡)</h3><blockquote>
+<p>配置nginx conf配置文件</p>
+</blockquote>
+<p>①加入如下配置:</p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">upstream  nacos<span class="token operator">-</span>servers <span class="token punctuation">&#123;</span>
+     server <span class="token number">192.168</span><span class="token punctuation">.</span><span class="token number">88.3</span><span class="token operator">:</span><span class="token number">8848</span>
+     server <span class="token number">192.168</span><span class="token punctuation">.</span><span class="token number">88.4</span><span class="token operator">:</span><span class="token number">8848</span>
+     server <span class="token number">192.168</span><span class="token punctuation">.</span><span class="token number">88.5</span><span class="token operator">:</span><span class="token number">8848</span>
+	<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>②修改    </p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin">location <span class="token operator">/</span> <span class="token punctuation">&#123;</span>
+      proxy_pass http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>nacos<span class="token operator">-</span>servers<span class="token operator">/</span><span class="token punctuation">;</span>
+  	<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<blockquote>
+<p>java项目中修改application.properties中nacos server的地址</p>
+</blockquote>
+<pre class="line-numbers language-properties" data-language="properties"><code class="language-properties"><span class="token attr-name">spring.cloud.nacos.server-addr</span><span class="token punctuation">=</span><span class="token attr-value">nginx的ip地址:端口号</span>
+
+<span class="token attr-name">spring.cloud.nacos.server-addr</span><span class="token punctuation">=</span><span class="token attr-value">192.168.88.3:80</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603834.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603834.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20220904165241399"></p>
+<hr>
+<hr>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># 集群 cluster <span class="token operator">:</span> 统一种软件服务的多个节点对一个系统提供服务称之为这个软件服务集群  tomcat集群  mysql集群  redis集群 es集群<span class="token operator">..</span><span class="token punctuation">.</span>
+	集群解决问题<span class="token operator">:</span>
+						<span class="token number">1</span><span class="token punctuation">.</span>并发访问压力
+						<span class="token number">2</span><span class="token punctuation">.</span>单节点故障问题
+# <span class="token number">1</span><span class="token punctuation">.</span>nacos集群架构图
+<span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>nacos<span class="token punctuation">.</span>io<span class="token operator">/</span>zh<span class="token operator">-</span>cn<span class="token operator">/</span>docs<span class="token operator">/</span>cluster<span class="token operator">-</span>mode<span class="token operator">-</span>quick<span class="token operator">-</span>start<span class="token punctuation">.</span>html<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603517.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603517.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20210120202902152"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>集群搭建注意事项
+<span class="token operator">-</span> 注意<span class="token operator">:</span> 
+	a<span class="token punctuation">.</span><span class="token number">3</span>个或<span class="token number">3</span>个以上Nacos节点才能构成集群。
+	b<span class="token punctuation">.</span>要求虚拟机内存分配必须大于2G以上
+
+# <span class="token number">3</span><span class="token punctuation">.</span>集群规划
+<span class="token operator">-</span>	node cluster<span class="token operator">:</span>
+	<span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span> <span class="token number">8845</span> nacos01
+	<span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span> <span class="token number">8846</span> nacos02
+	<span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span> <span class="token number">8847</span> nacos03
+	<span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span> <span class="token number">9090</span> nginx
+	<span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span> <span class="token number">3306</span> mysql
+
+# <span class="token number">4</span><span class="token punctuation">.</span>搭建nacos集群
+	<span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">.</span>将nacos安装包从新解压缩
+	<span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">.</span>开启nacos mysql持久化
+		 注意<span class="token operator">:</span>数据库中不能存在原始数据
+	<span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">.</span>修改nacos conf目录中cluster<span class="token punctuation">.</span>conf文件添加所有集群节点
+		<span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span><span class="token operator">:</span><span class="token number">8845</span>
+		<span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span><span class="token operator">:</span><span class="token number">8846</span>
+		<span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span><span class="token operator">:</span><span class="token number">8847</span>			
+	<span class="token number">4</span><span class="token punctuation">)</span><span class="token punctuation">.</span>将修改后nacos复制三份 
+		注意<span class="token operator">:</span>修改为不同端口信息
+	 
+	<span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">.</span>分别启动三台机器
+		<span class="token punctuation">.</span><span class="token operator">/</span>startup<span class="token punctuation">.</span>sh
+
+# <span class="token number">5</span><span class="token punctuation">.</span>安装Nginx
+<span class="token operator">-</span> <span class="token number">0</span><span class="token punctuation">.</span>安装必要依赖
+	yum install <span class="token operator">-</span>y gcc pcre<span class="token operator">-</span>devel zlib<span class="token operator">-</span>devel
+<span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">.</span>下载Nginx
+	http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>nginx<span class="token punctuation">.</span>org<span class="token operator">/</span>en<span class="token operator">/</span>download<span class="token punctuation">.</span>html
+
+<span class="token operator">-</span> <span class="token number">2</span><span class="token punctuation">.</span>将Nginx上传到linux中<span class="token punctuation">,</span>并解压缩
+	 tar <span class="token operator">-</span>zxvf nginx<span class="token operator">-</span><span class="token number">1.11</span><span class="token punctuation">.</span><span class="token number">1</span><span class="token punctuation">.</span>tar<span class="token punctuation">.</span>gz
+
+<span class="token operator">-</span> <span class="token number">3</span><span class="token punctuation">.</span>查看Nginx安装目录
+	<span class="token punctuation">[</span><span class="token label symbol">root@</span>localhost nginx<span class="token operator">-</span><span class="token number">1.11</span><span class="token punctuation">.</span><span class="token number">1</span><span class="token punctuation">]</span># ls
+	auto  CHANGES  CHANGES<span class="token punctuation">.</span>ru  conf  configure  contrib  html  LICENSE  man  README  src
+
+<span class="token operator">-</span> <span class="token number">4</span><span class="token punctuation">.</span>在Nginx安装目录中执行如下命令<span class="token operator">:</span><span class="token punctuation">(</span>指定安装位置<span class="token punctuation">)</span>
+	<span class="token punctuation">.</span><span class="token operator">/</span>configure <span class="token operator">--</span>prefix<span class="token operator">=</span><span class="token operator">/</span>usr<span class="token operator">/</span>nginx
+
+<span class="token operator">-</span> <span class="token number">5</span><span class="token punctuation">.</span>执行上述命令后<span class="token punctuation">,</span>执行如下命令<span class="token operator">:</span>
+	make <span class="token operator">&amp;&amp;</span> make install
+
+# <span class="token number">6</span><span class="token punctuation">.</span>配置nginx conf配置文件
+	a<span class="token punctuation">.</span>加入如下配置<span class="token operator">:</span>
+	upstream  nacos<span class="token operator">-</span>servers <span class="token punctuation">&#123;</span>
+    	server <span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span><span class="token operator">:</span><span class="token number">8845</span><span class="token punctuation">;</span>
+		server <span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span><span class="token operator">:</span><span class="token number">8846</span><span class="token punctuation">;</span>
+		server <span class="token number">10.15</span><span class="token punctuation">.</span><span class="token number">0.3</span><span class="token operator">:</span><span class="token number">8847</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+	b<span class="token punctuation">.</span>修改
+	location <span class="token operator">/</span> <span class="token punctuation">&#123;</span>
+      proxy_pass http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>nacos<span class="token operator">-</span>servers<span class="token operator">/</span><span class="token punctuation">;</span>
+  	<span class="token punctuation">&#125;</span>
+
+# <span class="token number">7</span><span class="token punctuation">.</span>启动nginx进行测试即可<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<h2 id="4-sentinel-流量卫兵"><a href="#4-sentinel-流量卫兵" class="headerlink" title="4.sentinel 流量卫兵"></a>4.sentinel 流量卫兵</h2><h3 id="什么是sentinel"><a href="#什么是sentinel" class="headerlink" title="什么是sentinel"></a>什么是sentinel</h3><p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603365.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231603365.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730205725897"></p>
+<p>As microservices become popular, the stability of service calls is becoming increasingly important. <a target="_blank" rel="noopener" href="https://github.com/alibaba/Sentinel">Sentinel</a> takes “flow” as the breakthrough point, and works on multiple fields including flow control, circuit breaking and load protection to protect service reliability.                —[摘自官网]</p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">0</span><span class="token punctuation">.</span>说明
+<span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>spring<span class="token operator">-</span>cloud<span class="token operator">-</span>alibaba<span class="token operator">-</span>group<span class="token punctuation">.</span>github<span class="token punctuation">.</span>io<span class="token operator">/</span>github<span class="token operator">-</span>pages<span class="token operator">/</span>hoxton<span class="token operator">/</span>en<span class="token operator">-</span>us<span class="token operator">/</span>index<span class="token punctuation">.</span>html#_how_to_use_sentinel
+<span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>alibaba<span class="token operator">/</span>Sentinel<span class="token operator">/</span>wiki
+<span class="token operator">-</span> 翻译<span class="token operator">:</span>随着微服务的普及，服务调用的稳定性变得越来越重要。Sentinel以“流量”为突破口，在流量控制、断路、负载保护等多个领域进行工作，保障服务可靠性。
+<span class="token operator">-</span> 通俗<span class="token operator">:</span>用来在微服务系统中保护微服务对的作用 如何 服务雪崩 服务熔断  服务降级 就是用来替换hystrix
+
+# <span class="token number">1</span><span class="token punctuation">.</span>特性
+<span class="token operator">-</span> 丰富的应用场景：Sentinel 承接了阿里巴巴近 <span class="token number">10</span> 年的双十一大促流量的核心场景，例如秒杀（即突发流量控制在系统容量可以承受的范围）、消息削峰填谷、集群流量控制、实时熔断下游不可用应用等。
+
+<span class="token operator">-</span> 完备的实时监控：Sentinel 同时提供实时的监控功能。您可以在控制台中看到接入应用的单台机器秒级数据，甚至 <span class="token number">500</span> 台以下规模的集群的汇总运行情况。
+
+<span class="token operator">-</span> 广泛的开源生态：Sentinel 提供开箱即用的与其它开源框架<span class="token operator">/</span>库的整合模块，例如与 Spring Cloud、Dubbo、gRPC 的整合。您只需要引入相应的依赖并进行简单的配置即可快速地接入 Sentinel。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604317.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604317.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730210108995"></p>
+<h3 id="sentinel使用"><a href="#sentinel使用" class="headerlink" title="sentinel使用"></a>sentinel使用</h3><pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token list punctuation">-</span> sentinel提供了两个服务组件：
+	一个是 sentinel 用来实现微服务系统中服务熔断、降级等功能。                         这点和hystrix 类似
+	一个是 sentinel dashboard 用来监控微服务系统中流量调用等情况 流控  熔断  降级 配置。 这点和hystrix  dashboard类似<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="1-sentinel-dashboard的安装"><a href="#1-sentinel-dashboard的安装" class="headerlink" title="1. sentinel dashboard的安装"></a>1. sentinel dashboard的安装</h4><pre class="line-numbers language-none"><code class="language-none"># 1.下载
+- https:&#x2F;&#x2F;github.com&#x2F;alibaba&#x2F;Sentinel&#x2F;releases<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604042.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604042.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730210627642"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 2.启动
+- 仪表盘是个jar包可以直接通过java命令启动 如: java -jar 方式运行 默认端口为 8080
+- java -Dserver.port&#x3D;9191 -jar  sentinel-dashboard-1.7.2.jar<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604196.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604196.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730211707791"></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">3</span><span class="token punctuation">.</span>访问web界面
+<span class="token operator">-</span> http<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>localhost<span class="token operator">:</span><span class="token number">9191</span><span class="token operator">/</span>#<span class="token operator">/</span>login<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604997.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604997.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730211812235"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 4.登录
+- 用户名&amp;密码: sentinel<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604095.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604095.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730212001214"></p>
+<h4 id="2-sentinel-实时监控服务"><a href="#2-sentinel-实时监控服务" class="headerlink" title="2.sentinel 实时监控服务"></a>2.sentinel 实时监控服务</h4><pre class="line-numbers language-none"><code class="language-none"># 1.创建项目引入依赖<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token comment">&lt;!--引入nacos client依赖--></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>com.alibaba.cloud<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-cloud-starter-alibaba-nacos-discovery<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+
+<span class="token comment">&lt;!--引入sentinel依赖--></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>com.alibaba.cloud<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-cloud-starter-alibaba-sentinel<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604346.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604346.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730213841674"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 2.配置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-properties" data-language="properties"><code class="language-properties"><span class="token attr-name">server.port</span><span class="token punctuation">=</span><span class="token attr-value">8789</span>
+<span class="token attr-name">spring.application.name</span><span class="token punctuation">=</span><span class="token attr-value">nacosclient</span>
+<span class="token attr-name">spring.cloud.nacos.server-addr</span><span class="token punctuation">=</span><span class="token attr-value">localhost:8848</span>
+<span class="token attr-name">spring.cloud.nacos.discovery.server-addr</span><span class="token punctuation">=</span><span class="token attr-value">$&#123;spring.cloud.nacos.server-addr&#125;</span>
+
+<span class="token attr-name">spring.cloud.sentinel.enabled</span><span class="token punctuation">=</span><span class="token attr-value">true											 # 开启sentinel 默认开启</span>
+<span class="token attr-name">spring.cloud.sentinel.transport.dashboard</span><span class="token punctuation">=</span><span class="token attr-value">localhost:9191 # 连接dashboard</span>
+<span class="token attr-name">spring.cloud.sentinel.transport.port</span><span class="token punctuation">=</span><span class="token attr-value">8719								 # 与dashboard通信的端口</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604135.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604135.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730214440292"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 3.启动服务<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604818.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604818.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730214911616"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 4.访问dashboard界面查看服务监控
+- 发现界面什么都没有? 
+- 默认情况下sentiel为延迟加载,不会在启动之后立即创建服务监控,需要对服务进行调用时才会初始化<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604912.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231604912.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730215003082"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 5.开发服务<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@RestController</span>
+<span class="token annotation punctuation">@Slf4j</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SentinelController</span> <span class="token punctuation">&#123;</span>
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/sentinel/test"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">test</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        log<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"sentinel test"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token string">"sentinel test "</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/sentinel/test1"</span><span class="token punctuation">)</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">test1</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        log<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"sentinel test1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token string">"sentinel test1 "</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605408.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605408.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730215202043"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 6.启动进行调用
+- http:&#x2F;&#x2F;localhost:8789&#x2F;sentinel&#x2F;test<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605660.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605660.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730215227292"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 7.查看监控界面<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605176.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605176.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730215420417"></p>
+<h4 id="3-sentinel-流量控制"><a href="#3-sentinel-流量控制" class="headerlink" title="3.sentinel 流量控制"></a>3.sentinel 流量控制</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">0</span><span class="token punctuation">.</span>说明
+<span class="token operator">-</span> 流量控制（flow control），其原理是监控应用流量的 QPS 或并发线程数等指标，当达到指定的阈值时对流量进行控制，以避免被瞬时的流量高峰冲垮，从而保障应用的高可用性。
+
+<span class="token operator">-</span> 同一个资源可以创建多条限流规则。FlowSlot 会对该资源的所有限流规则依次遍历，直到有规则触发限流或者所有规则遍历完毕。
+
+<span class="token operator">-</span> 一条限流规则主要由下面几个因素组成，我们可以组合这些元素来实现不同的限流效果：
+	resource：资源名，即限流规则的作用对象
+	count<span class="token operator">:</span> 限流阈值
+	grade<span class="token operator">:</span> 限流阈值类型（QPS 或并发线程数）
+	limitApp<span class="token operator">:</span> 流控针对的调用来源，若为 default 则不区分调用来源
+	
+	strategy<span class="token operator">:</span> 调用关系限流策略 <span class="token punctuation">(</span> 直接   关联  链路 <span class="token punctuation">)</span>
+	
+	controlBehavior<span class="token operator">:</span> 流量控制效果（直接拒绝、Warm Up、匀速排队）
+
+<span class="token operator">-</span> 流量控制主要有两种统计类型，一种是统计并发线程数，另外一种则是统计 QPS
+<span class="token operator">-</span> 更多细节参见官网<span class="token operator">:</span>https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>alibaba<span class="token operator">/</span>Sentinel<span class="token operator">/</span>wiki<span class="token operator">/</span><span class="token operator">%</span>E6<span class="token operator">%</span>B5<span class="token operator">%</span><span class="token number">81</span><span class="token operator">%</span>E9<span class="token operator">%</span><span class="token number">87</span><span class="token operator">%</span><span class="token number">8F</span><span class="token operator">%</span>E6<span class="token operator">%</span>8E<span class="token operator">%</span>A7<span class="token operator">%</span>E5<span class="token operator">%</span><span class="token number">88</span><span class="token operator">%</span>B6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h6 id="QPS限流"><a href="#QPS限流" class="headerlink" title="QPS限流"></a>QPS限流</h6><pre class="line-numbers language-none"><code class="language-none"># 1.配置QPS流量控制<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605062.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605062.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730220822573"></p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605602.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605602.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730220846876"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 2.测试
+- 每秒只能最大接收1个请求,超过1个报错<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605373.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605373.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730220950595"></p>
+<h6 id="线程数限流"><a href="#线程数限流" class="headerlink" title="线程数限流"></a>线程数限流</h6><pre class="line-numbers language-none"><code class="language-none"># 1.配置线程数限流<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605352.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605352.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730223510370"></p>
+<pre class="line-numbers language-none"><code class="language-none"># 2.访问测试<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605437.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605437.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200730224844222"></p>
+<h6 id="流控模式"><a href="#流控模式" class="headerlink" title="流控模式"></a>流控模式</h6><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>说明
+<span class="token operator">-</span> 直接<span class="token operator">:</span>标识流量控制规则到达阈值直接触发流量控制
+
+<span class="token operator">-</span> 关联<span class="token operator">:</span> 当两个资源之间具有资源争抢或者依赖关系的时候，这两个资源便具有了关联。比如对数据库同一个字段的读操作和写操作存在争抢，读的速度过高会影响写得速度，写的速度过高会影响读的速度。如果放任读写操作争抢资源，则争抢本身带来的开销会降低整体的吞吐量。可使用关联限流来避免具有关联关系的资源之间过度的争抢，举例来说，read_db 和 write_db 这两个资源分别代表数据库读写，我们可以给 read_db 设置限流规则来达到写优先的目的：设置 strategy 为 RuleConstant<span class="token punctuation">.</span>STRATEGY_RELATE 同时设置 refResource 为 write_db。这样当写库操作过于频繁时，读数据的请求会被限流。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605383.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605383.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200801195347534"></p>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token list punctuation">-</span> 链路限流: https://github.com/alibaba/Sentinel/wiki/%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h6 id="流控效果"><a href="#流控效果" class="headerlink" title="流控效果"></a>流控效果</h6><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"><span class="token operator">-</span> 直接拒绝<span class="token operator">:</span>（RuleConstant<span class="token punctuation">.</span>CONTROL_BEHAVIOR_DEFAULT）方式是默认的流量控制方式，当QPS超过任意规则的阈值后，新的请求就会被立即拒绝，拒绝方式为抛出FlowException。
+
+<span class="token operator">-</span> Warm Up<span class="token operator">:</span>（RuleConstant<span class="token punctuation">.</span>CONTROL_BEHAVIOR_WARM_UP）方式，即预热<span class="token operator">/</span>冷启动方式。当系统长期处于低水位的情况下，当流量突然增加时，直接把系统拉升到高水位可能瞬间把系统压垮。通过<span class="token string-literal singleline"><span class="token string">"冷启动"</span></span>，让通过的流量缓慢增加，在一定时间内逐渐增加到阈值上限，给冷系统一个预热的时间，避免冷系统被压垮。
+	更多<span class="token operator">:</span>https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>alibaba<span class="token operator">/</span>Sentinel<span class="token operator">/</span>wiki<span class="token operator">/</span><span class="token operator">%</span>E9<span class="token operator">%</span><span class="token number">99</span><span class="token operator">%</span><span class="token number">90</span><span class="token operator">%</span>E6<span class="token operator">%</span>B5<span class="token operator">%</span><span class="token number">81</span><span class="token operator">--</span><span class="token operator">-</span><span class="token operator">%</span>E5<span class="token operator">%</span><span class="token number">86</span><span class="token operator">%</span>B7<span class="token operator">%</span>E5<span class="token operator">%</span><span class="token number">90</span><span class="token operator">%</span>AF<span class="token operator">%</span>E5<span class="token operator">%</span>8A<span class="token operator">%</span>A8
+	
+	
+<span class="token operator">-</span> 匀速排队<span class="token operator">:</span><span class="token punctuation">(</span>RuleConstant<span class="token punctuation">.</span>CONTROL_BEHAVIOR_RATE_LIMITER）方式会严格控制请求通过的间隔时间，也即是让请求以均匀的速度通过，对应的是漏桶算法。 只能对请求进行排队等待
+	更多<span class="token operator">:</span>https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>alibaba<span class="token operator">/</span>Sentinel<span class="token operator">/</span>wiki<span class="token operator">/</span><span class="token operator">%</span>E6<span class="token operator">%</span>B5<span class="token operator">%</span><span class="token number">81</span><span class="token operator">%</span>E9<span class="token operator">%</span><span class="token number">87</span><span class="token operator">%</span><span class="token number">8F</span><span class="token operator">%</span>E6<span class="token operator">%</span>8E<span class="token operator">%</span>A7<span class="token operator">%</span>E5<span class="token operator">%</span><span class="token number">88</span><span class="token operator">%</span>B6<span class="token operator">-</span><span class="token operator">%</span>E5<span class="token operator">%</span>8C<span class="token operator">%</span><span class="token number">80</span><span class="token operator">%</span>E9<span class="token operator">%</span><span class="token number">80</span><span class="token operator">%</span><span class="token number">9F</span><span class="token operator">%</span>E6<span class="token operator">%</span>8E<span class="token operator">%</span><span class="token number">92</span><span class="token operator">%</span>E9<span class="token operator">%</span><span class="token number">98</span><span class="token operator">%</span><span class="token number">9F</span><span class="token operator">%</span>E6<span class="token operator">%</span>A8<span class="token operator">%</span>A1<span class="token operator">%</span>E5<span class="token operator">%</span>BC<span class="token operator">%</span><span class="token number">8F</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+<h4 id="4-熔断降级"><a href="#4-熔断降级" class="headerlink" title="4.熔断降级"></a>4.熔断降级</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">0</span><span class="token punctuation">.</span>说明
+<span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>alibaba<span class="token operator">/</span>Sentinel<span class="token operator">/</span>wiki<span class="token operator">/</span><span class="token operator">%</span>E7<span class="token operator">%</span><span class="token number">86</span><span class="token operator">%</span><span class="token number">94</span><span class="token operator">%</span>E6<span class="token operator">%</span><span class="token number">96</span><span class="token operator">%</span>AD<span class="token operator">%</span>E9<span class="token operator">%</span><span class="token number">99</span><span class="token operator">%</span>8D<span class="token operator">%</span>E7<span class="token operator">%</span>BA<span class="token operator">%</span>A7
+<span class="token operator">-</span> 除了流量控制以外，对调用链路中不稳定的资源进行熔断降级也是保障高可用的重要措施之一。由于调用关系的复杂性，如果调用链路中的某个资源不稳定，最终会导致请求发生堆积。Sentinel <span class="token operator">*</span><span class="token operator">*</span>熔断降级<span class="token operator">*</span><span class="token operator">*</span>会在调用链路中某个资源出现不稳定状态时（例如调用超时或异常比例升高），对这个资源的调用进行限制，让请求快速失败，避免影响到其它的资源而导致级联错误。当资源被降级后，在接下来的降级时间窗口之内，对该资源的调用都自动熔断（默认行为是抛出 `DegradeException`）。<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h6 id="降级策略"><a href="#降级策略" class="headerlink" title="降级策略"></a>降级策略</h6><ul>
+<li>平均响应时间 (DEGRADE_GRADE_RT)：当 1s 内持续进入 N 个请求，对应时刻的平均响应时间（秒级）均超过阈值（count，以 ms 为单位），那么在接下的时间窗口（DegradeRule 中的 timeWindow，以 s 为单位）之内，对这个方法的调用都会自动地熔断（抛出 DegradeException）。注意 Sentinel 默认统计的 RT 上限是 4900 ms，超出此阈值的都会算作 4900 ms，若需要变更此上限可以通过启动配置项 -Dcsp.sentinel.statistic.max.rt=xxx 来配置。</li>
+</ul>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605067.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605067.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200802142932522"></p>
+<ul>
+<li>异常比例 (DEGRADE_GRADE_EXCEPTION_RATIO)：当资源的每秒请求量 &gt;= N（可配置），并且每秒异常总数占通过量的比值超过阈值（DegradeRule 中的 count）之后，资源进入降级状态，即在接下的时间窗口（DegradeRule 中的 timeWindow，以 s 为单位）之内，对这个方法的调用都会自动地返回。异常比率的阈值范围是 [0.0, 1.0]，代表 0% - 100%。</li>
+</ul>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605105.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605105.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200802143052470"></p>
+<ul>
+<li>异常数 (DEGRADE_GRADE_EXCEPTION_COUNT)：当资源近 1 分钟的异常数目超过阈值之后会进行熔断。注意由于统计时间窗口是分钟级别的，若 timeWindow 小于 60s，则结束熔断状态后仍可能再进入熔断状态。</li>
+</ul>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605301.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605301.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200802143314524"></p>
+<h4 id="5-SentinelResource注解"><a href="#5-SentinelResource注解" class="headerlink" title="5.SentinelResource注解"></a>5.SentinelResource注解</h4><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">0</span><span class="token punctuation">.</span>说明
+<span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>github<span class="token punctuation">.</span>com<span class="token operator">/</span>alibaba<span class="token operator">/</span>Sentinel<span class="token operator">/</span>wiki<span class="token operator">/</span><span class="token operator">%</span>E6<span class="token operator">%</span>B3<span class="token operator">%</span>A8<span class="token operator">%</span>E8<span class="token operator">%</span>A7<span class="token operator">%</span>A3<span class="token operator">%</span>E6<span class="token operator">%</span><span class="token number">94</span><span class="token operator">%</span>AF<span class="token operator">%</span>E6<span class="token operator">%</span>8C<span class="token operator">%</span><span class="token number">81</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605222.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231605222.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200802150527319"></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@GetMapping</span><span class="token punctuation">(</span><span class="token string">"/sentinel/test1"</span><span class="token punctuation">)</span>
+   <span class="token annotation punctuation">@SentinelResource</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token string">"aa"</span><span class="token punctuation">,</span>blockHandler <span class="token operator">=</span> <span class="token string">"fallBack"</span><span class="token punctuation">,</span>fallback <span class="token operator">=</span> <span class="token string">"fall"</span><span class="token punctuation">)</span>
+   <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">test1</span><span class="token punctuation">(</span><span class="token keyword">int</span> id<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+       log<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"sentinel test1"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token keyword">if</span><span class="token punctuation">(</span>id<span class="token operator">&lt;</span><span class="token number">0</span><span class="token punctuation">)</span>		
+           <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">RuntimeException</span><span class="token punctuation">(</span><span class="token string">"非法参数!!!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">&#125;</span>
+       <span class="token keyword">return</span> <span class="token string">"sentinel test1 :"</span><span class="token operator">+</span>id<span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+	<span class="token comment">//降级异常处理</span>
+   <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">fallBack</span><span class="token punctuation">(</span><span class="token keyword">int</span> id<span class="token punctuation">,</span><span class="token class-name">BlockException</span> e<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+           <span class="token keyword">if</span><span class="token punctuation">(</span>e <span class="token keyword">instanceof</span> <span class="token class-name">FlowException</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+               <span class="token keyword">return</span> <span class="token string">"当前服务已被流控! "</span><span class="token operator">+</span>e<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getCanonicalName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token punctuation">&#125;</span>
+           <span class="token keyword">return</span> <span class="token string">"当前服务已被降级处理! "</span><span class="token operator">+</span>e<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getCanonicalName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span>
+	<span class="token comment">//异常处理</span>
+   <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">fall</span><span class="token punctuation">(</span><span class="token keyword">int</span> id<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+       <span class="token keyword">return</span> <span class="token string">"当前服务已不可用!"</span><span class="token punctuation">;</span>
+   <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="5-整合环境公共依赖"><a href="#5-整合环境公共依赖" class="headerlink" title="5.整合环境公共依赖"></a>5.整合环境公共依赖</h2><p><strong>spring boot 2.2+</strong></p>
+<p><strong>springcloud Hoxton+</strong></p>
+<p><strong>springcloud alibaba 2.2.1+</strong></p>
+<pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">00</span><span class="token punctuation">.</span>整合思路分析
+
+<span class="token operator">-</span> springcloud  				eureka consul ribbon openfeign hystix config<span class="token operator">+</span>bus gateway
+<span class="token operator">-</span> springcloudalibaba	nacos服务注册中&amp;统一配置中心   sentinel 服务熔断 限流 <span class="token operator">..</span><span class="token punctuation">.</span>
+
+整合思路<span class="token operator">:</span>
+	<span class="token number">1</span><span class="token punctuation">.</span>服务注册中心  	nacos
+	<span class="token number">2</span><span class="token punctuation">.</span>统一配置中心  	nacos
+	<span class="token number">3</span><span class="token punctuation">.</span>服务熔断组件  	sentinel
+	<span class="token number">4</span><span class="token punctuation">.</span>服务间通信组件  openfeign <span class="token operator">+</span> ribbon 
+	<span class="token number">5</span><span class="token punctuation">.</span>服务网关组件    gateway
+
+# <span class="token number">0</span><span class="token punctuation">.</span>构建项目并引入依赖<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml">
+ <span class="token comment">&lt;!--继承springboot父项目--></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>parent</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-boot-starter-parent<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>2.2.5.RELEASE<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>parent</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>properties</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>java.version</span><span class="token punctuation">></span></span>1.8<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>java.version</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>spring-cloud.version</span><span class="token punctuation">></span></span>Hoxton.SR6<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>spring-cloud.version</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>spring.cloud.alibaba.version</span><span class="token punctuation">></span></span>2.2.1.RELEASE<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>spring.cloud.alibaba.version</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>properties</span><span class="token punctuation">></span></span>
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencyManagement</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependencies</span><span class="token punctuation">></span></span>
+    <span class="token comment">&lt;!--引入springcloud alibaba--></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>com.alibaba.cloud<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-cloud-alibaba-dependencies<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>$&#123;spring.cloud.alibaba.version&#125;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>type</span><span class="token punctuation">></span></span>pom<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>type</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>scope</span><span class="token punctuation">></span></span>import<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>scope</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token comment">&lt;!--引入springcloud--></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.springframework.cloud<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-cloud-dependencies<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>$&#123;spring-cloud.version&#125;<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>type</span><span class="token punctuation">></span></span>pom<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>type</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>scope</span><span class="token punctuation">></span></span>import<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>scope</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencies</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependencyManagement</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<hr>
+
+      </div>
+      <div class="post-tags-categories">
+        
+        <div class="tags">
+          
+            <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="">
+              微服务
+            </a>
+          
+        </div>
+        
+      </div>
+      
+        <div class="copyright">
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+    <strong>作者:  </strong>高小天</a>
+    </li>
+    <li class="post-copyright-link">
+    <strong>文章链接:  </strong>
+    <a href="/2020/08/26/Spring Cloud Alibaba/" target="_blank" title="Spring Cloud Alibaba">https://gaoyang.world/2020/08/26/Spring Cloud Alibaba/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明:   </strong>
+      本网站所有文章除特别声明外,均采用 <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">CC BY-NC-ND 4.0</a>
+      许可协议。转载请注明出处!
+    </li>
+  </ul>
+<div>
+      
+    </article>
+    <!-- 上一篇文章和下一篇文章 -->
+    
+      <!-- 文章详情页的上一页和下一页 -->
+<div class="post-nav">
+
+
+
+  
+  <div class="post-nav-prev post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="/medias/14.jpg" class="lazyload placeholder" data-srcset="/medias/14.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="">
+    </div>
+    <a href="/2020/11/18/count(1)%E5%92%8Ccount()%20%E5%93%AA%E4%B8%AA%E6%95%88%E7%8E%87%E9%AB%98%EF%BC%9F/" class="post-nav-link">
+      <div class="title">
+        <i class="fas fa-angle-left"></i> 上一篇:
+        <div class="title-text">count()</div>
+      </div>
+      
+      <!-- <div class="content">
+        
+
+新罕布什尔州县桥 (©Denis Tangney Jr)
+
+想去,还是要好好学习,才能去想去的地方~
+
+
+ coun
+      </div> -->
+    </a>
+  </div>
+
+
+
+  
+  <div class="post-nav-next post-nav-item">
+    <div class="post-nav-img" style="background-size: cover; 
+      background-position: center center;">
+      <img class="lazyload lazyload placeholder" src="/medias/8.jpg" class="lazyload placeholder" data-srcset="/medias/8.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" src="" alt="">
+    </div>
+    <a href="/2020/08/26/shiro/" class="post-nav-link">
+      <div class="title">
+        下一篇: <i class="fas fa-angle-right"></i>
+        <div class="title-text">Shiro</div>
+      </div>
+      <!-- <div class="content">
+        [TOC]
+课程知识点1、权限系统的整体概念
+2、shiro权限框架的核心组件
+3、springboot下shiro的使
+      </div> -->
+    </a>
+  </div>
+
+</div>
+
+    
+    
+
+    <!-- 打赏 -->
+    
+      <div id="appDonate" class="post-donate">
+  <div id="donate_board" class="donate_bar center" ref="donate">
+    <a id="btn_donate" class="btn_donate" href="javascript:;" title="打赏" @click="showDialogDrawer()"></a>
+  </div>
+  <transition name="fade">
+    <div 
+      class="donate-box-mask"
+      v-cloak 
+      v-show="visible"
+      @click="cancelDialogDrawer()"
+    >
+    </div>
+  </transition>
+  <transition name="bounce">
+    <div class="donate-box" v-cloak v-show="visible">
+      <div class="donate-box_close">
+        <i class="fas fa-times" aria-hidden="true" @click="cancelDialogDrawer" pointer></i>
+      </div>
+      <div class="donate-box_title">
+        <h4>
+          你的赏识是我前进的动力
+        </h4>
+      </div>
+      <div class="donate-box_tab">
+        <div class="Alipay" pointer :class="{'active': tabActive === 'Alipay'}" @click="changeTabActive('Alipay')">
+          支付宝
+        </div>
+        <div class="WeChatpay" pointer :class="{'active': tabActive === 'WeChatpay'}" @click="changeTabActive('WeChatpay')">
+          微信
+        </div>
+      </div>
+      <div class="donate-box_img">
+        <div class="AlipayImg" v-show="tabActive === 'Alipay'">
+          <img src="/medias/zfb.jpg" class="lazyload placeholder" data-srcset="/medias/zfb.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="支付宝打赏" />
+        </div> 
+        <div class="WeChatpayImg" v-show="tabActive === 'WeChatpay'">
+          <img src="/medias/wx.jpg" class="lazyload placeholder" data-srcset="/medias/wx.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="微信打赏" />
+        </div>
+      </div>
+    </div>
+  </transition>
+</div>
+
+<script>
+  var body = document.body || document.documentElement || window;
+  var vm = new Vue({
+    el: '#appDonate',
+    data: {
+      visible: false,
+      tabActive: 'Alipay',
+      top: 0,
+    },
+    computed: {
+    },
+    mounted() {
+    },
+    methods: {
+      showDialogDrawer() {
+        this.visible = true;
+        // 防止页面滚动，只能让弹框滚动
+        // function getScroll() {
+        //   return {
+        //     left: window.pageXOffset || document.documentElement.scrollLeft || document.body.scrollLeft || 0,
+        //     top: window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
+        //   };
+        // }
+        this.top = $(document).scrollTop() // or getScroll().top
+        // console.log('aa', $('.main-content'));
+        body.style.cssText = 'overflow: hidden;';
+      },
+      cancelDialogDrawer() {
+        this.visible = false;
+        body.removeAttribute('style');
+        $(document).scrollTop(this.top)
+      },
+      changeTabActive(name) {
+        this.tabActive = name;
+      }
+    },
+    created() {}
+  })
+</script>
+    
+
+    <!-- 分享 -->
+    
+      <!-- https://github.com/overtrue/share.js -->
+<!-- 文章详情页的分享 -->
+<div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+
+<script src="/js/shareJs/social-share.min.js"></script>
+</script>
+
+<style>
+  .social-share {
+    margin: 20px 0;
+  }
+</style>
+
+
+    
+    
+    <!-- 评论 -->
+    <!-- 评论 -->
+
+  <div id="myComment">
+    
+      <div id="gitment-container"></div>
+
+    
+  </div>
+
+<!-- comment script in themes\hexo-theme-bamboo\layout\_partial\scripts\index.ejs -->
+
+
+  </div>
+
+  <!-- 目录 -->
+  <!-- 文章详情页右侧目录 -->
+
+
+<script>
+  function closeToc(init) {
+    $(".toc-aside").css({'width': 0, 'padding': 0, 'transition': init ?  'noe' : 'width 0.3s' });
+    $(".toc-content").css({'width': 0});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'none'});
+    $(".main-content").css({'width': '75%', 'margin': '10px auto'});
+  };
+  function openToc() {
+    $(".main-content").css({'width': '65%', 'margin-right': '10px', 'margin-left': 'calc(35% - 350px)'});
+    $(".toc-aside").css({'width': '300px', 'padding': '0 10px', 'transition': 'width 0.3s'});
+    $(".toc-content").css({'width': '300px'});
+    $(".toc-aside-title span, .toc-aside-title i").css({'display': 'inline-block'});
+  }
+  function openBtnClickFn () {
+    let openOrCloseBtn = $('.toc-aside .toc-aside-title .toc-open-close');
+    let open = eval('false' || 'true');
+    openOrCloseBtn.click(function() {
+      if (open) {
+        closeToc();
+        open = false;
+      } else {
+        openToc();
+        open = true;
+      }
+    });
+  };
+  openBtnClickFn();
+  initCloseTocWidth(true);
+
+  function initCloseTocWidth(init) {
+    if (window.innerWidth >= 992) {
+      let isClose = true;
+      isClose && closeToc(init)
+    }
+  }
+
+  document.addEventListener('pjax:complete', function () {
+    $(".toc-aside").css({'transition': 'no'});
+  })
+  document.addEventListener('pjax:complete', function () {
+    openBtnClickFn();
+  })
+  
+</script>
+
+  <!-- 图片放大 Wrap images with fancybox support -->
+  <script src="/js/wrapImage.js"></script>
+</div>
+
+<!-- 文章详情页背景图 -->
+<div id="appBgSwiper" style="position: fixed;left: 0;top: 0;width: 100%;height: 100%;z-index: -2;"
+	:style="{'background-color': bgColor ? bgColor : 'transparent'}">
+	<transition-group tag="ul" :name="names">
+		<li v-for='(image,index) in img' :key='index' v-show="index === mark" class="bg-swiper-box">
+			<img :src="image" class="bg-swiper-img no-lazy">
+		</li>
+	</transition-group>
+</div>
+<script>
+	var vm = new Vue({
+		el: '#appBgSwiper',
+		data: {
+			names: '' || 'fade' || 'fade', // translate-fade fade
+			mark: 0,
+			img: [],
+			bgColor: '',
+			time: null
+		},
+		methods: {   //添加方法
+			change(i, m) {
+				if (i > m) {
+					// this.names = 'fade';
+				} else if (i < m) {
+					// this.names = 'fade';
+				} else {
+					return;
+				}
+				this.mark = i;
+			},
+			prev() {
+				// this.names = 'fade';
+				this.mark--;
+				if (this.mark === -1) {
+					this.mark = 3;
+					return
+				}
+			},
+			next() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			autoPlay() {
+				// this.names = 'fade';
+				this.mark++;
+				if (this.mark === this.img.length) {
+					this.mark = 0;
+					return
+				}
+			},
+			play() {
+				let bgImgDelay = '' || '180000'
+				let delay = parseInt(bgImgDelay) || 180000;
+				this.time = setInterval(this.autoPlay, delay);
+			},
+			enter() {
+				clearInterval(this.time);
+			},
+			leave() {
+				this.play();
+			}
+		},
+		created() {
+			this.play()
+		},
+		beforeDestroy() {
+			clearInterval(this.time);
+		},
+		mounted() {
+			let prop = '' || '';
+			let isImg = prop.includes('.bmp') || prop.includes('.jpg') || prop.includes('.png') || prop.includes('.tif') || prop.includes('.gif') || prop.includes('.pcx') || prop.includes('.tga') || prop.includes('.exif') || prop.includes('.fpx') || prop.includes('.psd') || prop.includes('.cdr') || prop.includes('.pcd') || prop.includes('.dxf') || prop.includes('.ufo') || prop.includes('.eps') || prop.includes('.ai') || prop.includes('.raw') || prop.includes('.WMF') || prop.includes('.webp') || prop.includes('.jpeg') || prop.includes('http://') || prop.includes('https://')
+			if (isImg) {
+				let img = prop.split(',');
+				let configRoot = '/'
+				let arrImg = [];
+				img.forEach(el => {
+					var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
+					var objExp = new RegExp(Expression);
+
+					if (objExp.test(el)) {
+						// http or https
+						arrImg.push(el);
+					} else {
+						// 非http or https开头
+						// 本地文件
+						let firstStr = el.charAt(0);
+						if (firstStr == '/') {
+							el = el.substr(1); // 删除第一个字符 '/',因为 configRoot最后一个字符为 /
+						}
+						el = configRoot + el;
+						arrImg.push(el);
+					}
+				})
+				this.img = arrImg;
+			} else {
+				this.bgColor = prop;
+			}
+		}
+	})
+</script>
+
+<style>
+	.bg-swiper-box {
+		position: absolute;
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.bg-swiper-img {
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+	}
+</style>
+
+
+
+
+  <script>
+  function loadMermaid() {
+    if (document.getElementsByClassName('mermaid').length) {
+      if (window.mermaidJsLoad) mermaid.init()
+      else {
+        loadScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(() => {
+          window.mermaidJsLoad = true
+          mermaid.initialize({
+            theme: 'default',
+          })
+          if ('true') {
+            mermaid.init();
+          }
+        })
+      }
+    }
+  };
+  document.addEventListener("DOMContentLoaded", function () {
+    loadMermaid();
+  })
+
+  document.addEventListener('pjax:complete', function () {
+    loadMermaid();
+  })
+  
+</script>
+
+
+      </main>
+    </div>
+
+    <!-- 页脚 -->
+    
+  
+  <div class="footer bg-color">
+    <div class="footer-main">
+      
+        
+          <div class="link">
+            
+          </div>
+        
+      
+        
+          <div class="footer-copyright">
+            <p>Copyright © 2019 - 2020  </p>
+
+          </div>
+        
+      
+        
+          
+            <!-- 不蒜子统计 -->
+            <!-- 不蒜子统计 -->
+<span id="busuanzi_container_site_pv">
+      <i class="fas fa-eye" aria-hidden="true"></i>本站总访问量：<span id="busuanzi_value_site_pv"></span> 次
+</span>
+<span class="post-meta-divider">|</span>
+<span id="busuanzi_container_site_uv" style='display:none'>
+      <i class="fas fa-users" aria-hidden="true"></i>本站访客数：<span id="busuanzi_value_site_uv"></span> 人
+</span>
+
+          
+        
+      
+        
+          <div class="footer-custom">
+            
+          </div>
+        
+      
+    </div>
+  </div>
+
+
+
+    <!-- 渲染暗黑按钮 -->
+    
+      <div class="dark">
+  <div class="dark-content">
+    <i class="fas fa-moon" aria-hidden="true"></i>
+    <!-- <span>关灯</span> -->
+  </div>
+  
+</div>
+
+<script>
+  $(function() {
+    let isDark = JSON.parse(localStorage.getItem('dark'))  || JSON.parse('false');
+    if (isDark) {
+      $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+    }
+    $('.dark').click(function() {
+      if ($(document.body).is('.darkModel')) {
+        $(document.body).removeClass('darkModel');
+        localStorage.setItem('dark', false);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      } else {
+        $(document.body).addClass('darkModel');
+        localStorage.setItem('dark', true);
+        $(".dark-content").replaceWith(
+          `
+          <div class='dark-content'>
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+          </div>
+          `
+        );
+      }
+    })
+  })
+</script>
+    
+    <!-- 渲染回到顶部按钮 -->
+    
+      <div class="goTop top-btn-color" pointer>
+  <i class="fas fa-arrow-up" aria-hidden="true"></i>
+</div>
+<script src="/js/goTop.js"></script>
+
+    
+    <!-- 渲染左下角音乐播放器 -->
+    
+      <link rel="stylesheet" href="/js/aplayer/APlayer@1.10.1.min.css">
+<style>
+.aplayer .aplayer-lrc p {
+  
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px !important;
+}
+
+.aplayer .aplayer-lrc p.aplayer-lrc-current {
+  
+  font-size: 15px;
+  color: #42b983;
+}
+
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+  left: -66px !important;
+}
+
+.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+  left: 0px !important;
+}
+
+
+</style>
+<meting-js  
+  class=""
+  server="tencent"
+  type="playlist"
+  id="8062553743"
+  fixed='true'
+  autoplay='false'
+  theme='#42b983'
+  loop='all'
+  order='random'
+  preload='auto'
+  volume='0.7'
+  list-folded='true'
+>
+</meting-js>
+
+<!-- <style>
+  #aplayer {
+    position: fixed;
+    left: 0;
+    bottom: 300px;
+  }
+</style> -->
+<script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+    
+
+    <!-- 图片放大 -->
+    
+      <script src="/js/fancybox/jquery.fancybox.min.js"></script>
+    
+
+    <!-- 百度解析 -->
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <!-- 背景彩带 -->
+    
+      <script type="text/javascript" size="100" alpha='0.4' zIndex="-1" src="/js/ribbon.min.js"></script>
+    
+
+    <script src="/js/utils/index.js"></script>
+    <script src="/js/app.js"></script>
+    
+    <!-- 文章目录所需js -->
+<link href="/js/tocbot/tocbot.css" rel="stylesheet">
+<script src="/js/tocbot/tocbot.min.js"></script>
+
+<script>
+  var headerEl = 'h2, h3, h4',  //headers 
+    content = '.post-detail',//文章容器
+    idArr = {};  //标题数组以确定是否增加索引id
+  //add #id
+  var option = {
+    // Where to render the table of contents.
+    tocSelector: '.toc',
+    // Where to grab the headings to build the table of contents.
+    contentSelector: content,
+    // Which headings to grab inside of the contentSelector element.
+    headingSelector: headerEl,
+    scrollSmooth: true,
+    scrollSmoothOffset: -80,
+    headingsOffset: -($(window).height() * 0.4 - 45),
+    positionFixedSelector: '.toc-main',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    activeLinkClass: 'is-active-link',
+    // onClick: function (e) {},
+  }
+  if ($('.toc').length > 0) {
+
+    $(content).children(headerEl).each(function () {
+      //去除空格以及多余标点
+      var headerId = $(this).text().replace(/[\s|\~|`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\_|\+|\=|\||\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?|\：|\，|\。]/g, '');
+
+      headerId = headerId.toLowerCase();
+      if (idArr[headerId]) {
+        //id已经存在
+        $(this).attr('id', headerId + '-' + idArr[headerId]);
+        idArr[headerId]++;
+      }
+      else {
+        //id未存在
+        idArr[headerId] = 1;
+        $(this).attr('id', headerId);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      tocbot.init(option);
+      mobileTocClick();
+    });
+
+  }
+
+  window.tocScrollFn = function () {
+    return bamboo.throttle(function () {
+      findHeadPosition();
+    }, 100)()
+  }
+  window.addEventListener('scroll', tocScrollFn);
+
+  const findHeadPosition = function (top) {
+    if ($('.toc-list').length <= 0) {
+      return false;
+    }
+    setTimeout(() => {  // or DOMContentLoaded 
+      autoScrollToc();
+    }, 0);
+  }
+
+  const autoScrollToc = function () {
+    const $activeItem = document.querySelector('.is-active-link');
+    const $cardToc = document.querySelector('.toc-content');
+    const activePosition = $activeItem.getBoundingClientRect().top
+    const sidebarScrollTop = $cardToc.scrollTop
+    if (activePosition > (document.documentElement.clientHeight - 100)) {
+      $cardToc.scrollTop = sidebarScrollTop + 150
+    }
+    if (activePosition < 100) {
+      $cardToc.scrollTop = sidebarScrollTop - 150
+    }
+  }
+
+  document.addEventListener('pjax:send', function () {
+    if ($('.toc').length) {
+      tocbot.destroy();
+    }
+  });
+
+  document.addEventListener('pjax:complete', function () {
+    if ($('.toc').length) {
+      tocbot.init(option);
+      mobileTocClick();
+    }
+  });
+  
+  // 手机端toc按钮点击出现目录
+  const mobileTocClick = function () {
+    const $cardTocLayout = document.getElementsByClassName('toc-aside')[0];
+    const $cardToc = $cardTocLayout.getElementsByClassName('toc-content')[0];
+    let right = '45px';
+    if (window.innerWidth >= 551 && window.innerWidth <= 992) {
+      right = '100px'
+    }
+    const mobileToc = {
+      open: () => {
+        $cardTocLayout.style.cssText = 'animation: toc-open .3s; opacity: 1; right: ' + right
+      },
+
+      close: () => {
+        $cardTocLayout.style.animation = 'toc-close .2s'
+        setTimeout(() => {
+          $cardTocLayout.style.cssText = "opacity:''; animation: ''; right: ''"
+        }, 100)
+      }
+    }
+    document.getElementById('toc-mobile-btn').addEventListener('click', () => {
+      if (window.getComputedStyle($cardTocLayout).getPropertyValue('opacity') === '0') mobileToc.open()
+      else mobileToc.close()
+    })
+
+    $cardToc.addEventListener('click', (e) => {
+      if (window.innerWidth < 992) { // 小于992px的时候
+        mobileToc.close()
+      }
+    })
+  }
+</script>
+
+<style>
+  .is-position-fixed {
+    position: sticky !important;
+    top: 74px;
+  }
+
+  .toc-main ul {
+    counter-reset: show-list;
+  }
+
+  .toc-main ul li::before {
+    content: counter(item)".";
+    display: block;
+    position: absolute;
+    left: 12px;
+    top: 0;
+  }
+</style> 
+
+<!-- 设置导航背景 -->
+<script>
+  let setHeaderClass = () => {
+    const headerMenuTransparent = true;
+    if (!headerMenuTransparent) { return; }
+    const nav = $('#navHeader');
+    const navTop = nav.outerHeight();
+    const winTop = $(window).scrollTop();
+    if(winTop > navTop) {
+      nav.addClass('header-bg-color');
+    }
+    else {
+      nav.removeClass('header-bg-color');
+    }
+  };
+
+  let scrollCollect = () => {
+    return bamboo.throttle(function (e) {
+      setHeaderClass();
+    }, 200)()
+  }
+
+  let initHeaderBg = () => {
+    setHeaderClass();
+  }
+
+  setHeaderClass();
+  window.addEventListener('scroll', scrollCollect);
+
+  document.addEventListener('pjax:send', function () {
+    window.removeEventListener('scroll', scrollCollect)
+  })
+  document.addEventListener('pjax:complete', function () {
+    window.addEventListener('scroll', scrollCollect);
+    setHeaderClass();
+  })
+</script> 
+
+<!-- 渲染issues标签里的内容 -->
+<script>
+  function loadIssuesJS() {
+    if ($(".post-detail").find(".issues-api").length == 0) {
+      return;
+    } 
+    loadScript('/js/issues/index.js');
+  };
+  $(function () {
+    loadIssuesJS();
+  });
+  document.addEventListener('pjax:complete', function () {
+    if (typeof IssuesAPI == "undefined") {
+      loadIssuesJS();
+    }
+  })
+</script>
+
+<!-- 输入框打字特效 -->
+<!-- 输入框打字特效 -->
+
+  <script src="/js/activate-power-mode.js"></script>
+  <script>
+    POWERMODE.colorful = true;  // 打开随机颜色特效
+    POWERMODE.shake = false;    // 关闭输入框抖动
+    document.body.addEventListener('input', POWERMODE);//监听打字事件
+  </script>
+
+
+<!-- markdown代码一键复制功能 -->
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.css">
+  <script src="https://cdn.jsdelivr.net/npm/v-plugs-ayu/lib/ayu.umd.min.js"></script>
+  <script src="/js/clipboard/clipboard.min.js"></script>
+  <div id="appCopy">
+  </div>
+  <script data-pjax>
+    var vm = new Vue({
+      el: '#appCopy',
+      data: {
+      },
+      computed: {
+      },
+      mounted() {
+        const that = this;
+        var copy = '复制';
+        /* code */
+        var initCopyCode = function () {
+          var copyHtml = '';
+          copyHtml += '<button class="btn-copy" data-clipboard-snippet="" style="position:absolute;top:0;right:0;z-index:1;">';
+          copyHtml += '<i class="fas fa-copy"></i><span>' + copy + '</span>';
+          copyHtml += '</button>';
+          $(".post-detail pre").not('.gutter pre').wrap("<div class='codeBox' style='position:relative;width:100%;'></div>")
+          $(".post-detail pre").not('.gutter pre').before(copyHtml);
+          new ClipboardJS('.btn-copy', {
+            target: function (trigger) {
+              return trigger.nextElementSibling;
+            }
+          });
+        }
+        initCopyCode();
+        $('.btn-copy').unbind('click').bind('click', function () {
+          doSomething();
+        })
+        $(document).unbind('keypress').bind('keypress', function (e) {
+          if (e.ctrlKey && e.keyCode == 67) {
+            doSomething();
+          }
+        })
+
+        function doSomething() {
+          that.$notify({
+            title: "成功",
+            content: "代码已复制，请遵守相关授权协议。",
+            type: 'success'
+          })
+        }
+      },
+      methods: {
+      },
+      created() { }
+    })
+  </script>
+  
+
+<!-- 图片懒加载 -->
+<script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.1.0/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazyload",
+    threshold: 0
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    lazyLoadInstance.update();
+  });
+  document.addEventListener('pjax:complete', function () {
+    lazyLoadInstance.update();
+  });
+</script>
+
+
+<!-- 卡片滚动动画 -->
+   
+
+<!-- 评论所需js -->
+
+  
+    <script type="text/javascript">
+  var utteranceCommon = {};
+
+  function check_utterance() {
+    let isDark = JSON.parse(localStorage.getItem('dark')) || JSON.parse('false');
+    if (isDark) {
+      utteranceCommon.Theme = 'github-dark';
+    } else {
+      utteranceCommon.Theme = 'github-light';
+    }
+
+    return document.getElementById("gitment-container");
+  }
+  comment_el = '#gitment-container';
+  load_utterance = function () {
+    if ($(comment_el).length) {
+      // 匿名函数，防止污染全局变量
+      const HEAD = check_utterance();
+
+      var utterances = document.createElement('script');
+      utterances.type = 'text/javascript';
+      utterances.async = true;
+      utterances.setAttribute('issue-term', 'pathname')
+      utterances.setAttribute('theme', utteranceCommon.Theme)
+      utterances.setAttribute('repo', '')
+      utterances.crossorigin = 'anonymous';
+      utterances.src = 'https://utteranc.es/client.js';
+      // content 是要插入评论的地方
+      document.getElementById('gitment-container').appendChild(utterances);
+
+    }
+  }
+
+  function dark_utterance() {
+    const HEAD = check_utterance();
+    if (!HEAD) return;
+    const message = {
+      type: 'set-theme',
+      theme: utteranceCommon.Theme
+    };
+    const utteranceIframe = document.querySelector('iframe');
+    utteranceIframe.contentWindow.postMessage(message, 'https://utteranc.es');
+  }
+
+  $(document).ready(load_utterance);
+  document.addEventListener('pjax:complete', function () {
+    load_utterance();
+  });
+
+  $('.dark').click(function () {
+    setTimeout(() => {
+      dark_utterance();
+    });
+  })
+
+</script>
+
+<style>
+  .utterances {
+    max-width: inherit !important;
+  }
+</style>
+  
+
+
+<!-- 鼠标点击特效 -->
+<!-- 爱心点击 -->
+
+  
+    <canvas class="fireworks" style="position: fixed;left: 0;top: 0;z-index: 999; pointer-events: none;" ></canvas>
+    <script src="//cdn.bootcss.com/animejs/2.2.0/anime.min.js"></script>
+    <script src="/js/cursor/explosion.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" data-pjax></script>
+
+
+    <!-- pjax -->
+    
+
+<!-- pjax -->
+
+
+  <script src="/js/pjax@0.2.8/index.js"></script>
+  
+    <!-- 样式位于：source/css/_third-party/pjaxanimate.styl -->
+
+<div class="pjax-animate">
+  
+    <div class="loading-circle"><div id="loader-circle"></div></div>
+    <script>
+      window.ShowLoading = function() {
+        $(".loading-circle").css("display", "block");
+      };
+      window.HideLoading = function() {
+        $(".loading-circle").css("display", "none");
+      }
+    </script>
+  
+	<script>
+    document.addEventListener('pjax:complete', function () {
+      window.HideLoading();
+    })
+    document.addEventListener('pjax:send', function () {
+      window.ShowLoading();
+    })
+    document.addEventListener('pjax:error', function () {
+      window.HideLoading();
+    })
+	</script>
+</div>
+
+  
+
+  <script>
+    var pjax = new Pjax({
+      elements: 'a[href]:not([href^="#"]):not([href="javascript:void(0)"]):not([no-pjax])',   // 拦截正常带链接的 a 标签
+      selectors: ["#pjax-container","title"],                                   // 根据实际需要确认重载区域
+      cacheBust: false,   // url 地址追加时间戳，用以避免浏览器缓存
+      timeout: 5000
+    });
+
+    document.addEventListener('pjax:send', function (e) {
+
+      try {
+        var currentUrl = window.location.pathname;
+        var targetUrl = e.triggerElement.href;
+        var banUrl = [""];
+        if (banUrl[0] != "") {
+          banUrl.forEach(item => {
+            if(currentUrl.indexOf(item) != -1 || targetUrl.indexOf(item) != -1) {
+              window.location.href = targetUrl;
+            }
+          });
+        }
+      } catch (error) {}
+
+      $(window).unbind('resize');
+      $(window).unbind('scroll');
+      $(document).unbind('scroll');
+      $(document).unbind('click');
+      $('body').unbind('click');
+
+    })
+    
+    document.addEventListener('pjax:complete', function () {
+      $('script[data-pjax], .pjax-reload script').each(function () {
+        $(this).parent().append($(this).remove());
+      });
+    });
+
+    document.addEventListener('pjax:error', function (e) {
+      window.location.href = e.triggerElement.href;
+    })
+    
+    // 刷新不从顶部开始
+    document.addEventListener("DOMContentLoaded", function () {
+      history.scrollRestoration = 'auto';
+    })
+  </script>
+
+
+
+  </body>
+</html>
