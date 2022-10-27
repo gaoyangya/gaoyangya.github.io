@@ -11,7 +11,7 @@
   <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-  <title>MySQL索引下推 | gy的小站</title>
+  <title>反射 | gy的小站</title>
 
   <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
   <link rel="stylesheet" href="https://at.alicdn.com/t/font_1911880_c1nvbyezg17.css">
@@ -685,21 +685,21 @@
 
 
 <div class="post-detail-header" id="thumbnail_canvas" style="background-repeat: no-repeat; background-size: cover; 
-  background-position: center center;position: relative;background-image:url('/medias/1.jpg')">
+  background-position: center center;position: relative;background-image:url('/medias/10.jpg')">
   <div class="post-detail-header-mask"></div>
   <canvas id="header_canvas"style="position:absolute;bottom:0;pointer-events:none;"></canvas>
   
   <div class="post-detail-header_info-box">
     <div class="title-box">
       <span class="title">
-        MySQL索引下推
+        反射
       </span>
     </div>
     
     
       
         <span class="post-detail-header_date">
-          <i class="fas fa-calendar"></i> 发表于：2021-10-13 |
+          <i class="fas fa-calendar"></i> 发表于：2021-09-27 |
         </span>
       
 
@@ -707,12 +707,8 @@
         <span class="post-detail-header_categories">
           <i class="iconfont iconbookmark1"></i> 分类：
           
-            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-detail-header_category">
-              后端
-            </a>
-          
-            <a href="/categories/%E5%90%8E%E7%AB%AF/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="post-detail-header_category">
-              数据库
+            <a href="/categories/%E5%8F%8D%E5%B0%84/" class="post-detail-header_category">
+              反射
             </a>
           
         </span>
@@ -736,57 +732,295 @@
   <div class="main-content">
     <article class="post post-detail">
       <div class="post-content">
-        <p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161117424.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161117424.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
-<p>- 思维导图 -</p>
-<blockquote>
-<p><strong>回表操作</strong></p>
-</blockquote>
-<p>对于数据库来说，只要涉及到索引，必然绕不过去回表操作。当然这也是我们今天所讲内容的前调基础。</p>
-<p>说到回表，我们需要从索引开始说起。别担心，不会长篇大论，这里只是简单讲下主键索引与普通索引，目的是让大家对回表操作有个认识。如果你对回表操作很熟悉了，那么可以跳过这一段。</p>
-<p>这里我们只以 Innodb 存储引擎作为讲解对象。</p>
-<p><strong>主键索引</strong></p>
-<p>主键索引在底层的数据存储是通过 B+ 树来实现的。简单来说，就是除叶子节之外的其他节点都存储的是主键值。而叶子节点上存储的是整行的数据。</p>
-<p>大体结构如下图所示。</p>
-<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161117603.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161117603.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
-<p><strong>非主键索引</strong></p>
-<p>除了主键索引外，其它的索引都被称为非主键索引。与主键索引不同的是，非主键索引的叶子节点上存储的是主键的值。</p>
-<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161117573.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161117573.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
-<p>那让我们再回到开始的问题，什么是回表操作？</p>
-<p>当我们在非主键索引上查找一行数据的时候，此时的查找方式是先搜索非主键索引树，拿到对应的主键值，再到主键索引树上查找对应的行数据。</p>
-<p>这种操作就叫作回表操作。</p>
-<p>好了，这里你应该了解了什么是回表操作了。简单来讲，就是在非主键索引树上拿到对应的主键值，然后回到主键索引上找到对应的行数据。</p>
-<p>这样做的前提条件是，所要查找的字段不存在于非主键索引树上。</p>
-<blockquote>
-<p><strong>低版本操作</strong></p>
-</blockquote>
-<p>讲完了回表操作，让我们继续回到这篇文章的主题——索引下推。</p>
-<p>其实在 Mysql 5.6 版本之前是没有索引下推这个功能的，从 5.6 版本后才加上了这个优化项。所以在引出索引下推前还是先回顾下没有这个功能时是怎样一种处理方式。</p>
-<p>我们以一个真实例子来进行讲解。</p>
-<p>在这里有张用户表 user，记录着用户的姓名，性别，身高，年龄等信息。表中 id 是自增主键，(name,sex) 是联合索引。在这里用 1 表示男，2 表示女。现在需要查找所有姓王的男性信息。</p>
-<p>SQL 实现起来很简单：</p>
-<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161118187.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161118187.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
-<p>但是它的实现原理是什么呢？</p>
-<p>根据联合索引最左前缀原则，我们在非主键索引树上找到第一个满足条件的值时，通过叶子节点记录的主键值再回到主键索引树上查找到对应的行数据，再对比是否为当前所要查找的性别。</p>
-<p>整个原理可以用下边的图进行表示。</p>
-<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161118990.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161118990.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
-<p>看到了吧，低版本中需要每条数据都进行回表，增加了树的搜索次数。如果遇到所要查找的数据量很大的话，性能必然有所缺失。</p>
-<blockquote>
-<p><strong>高版本操作</strong></p>
-</blockquote>
-<p>讲完了低版本操作，让我们继续回到这篇文章的主题——索引下推。</p>
-<p>知道了痛点，那么怎么解决。很简单，只有符合条件了再进行回表。结合我们的例子来说就是当满足了性别 sex = 1 了，再回表查找。这样原本可能需要进行回表查找 4 次，现在可能只需要 2 次就可以了。</p>
-<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161118793.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210161118793.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
-<p>所以本质来说，索引下推就是只有符合条件再进行回表，对索引中包含的字段先进行判断，不符合条件的跳过。减少了不必要的回表操作。</p>
-<blockquote>
-<p><strong>总结</strong></p>
-</blockquote>
-<p><strong>回表操作</strong></p>
+        <h2 id="一、什么是java反射？"><a href="#一、什么是java反射？" class="headerlink" title="一、什么是java反射？"></a>一、什么是java反射？</h2><p>在java的面向对象编程过程中，通常我们需要先知道一个Class类，然后<code>new 类名()</code>方式来获取该类的对象。也就是说我们需要在写代码的时候（编译期或者编译期之前）就知道我们要实例化哪一个类，运行哪一个方法，这种通常被称为<strong>「静态的类加载」</strong>。</p>
+<p>但是在有些场景下，我们事先是不知道我们的代码的具体行为的。比如，我们定义一个服务任务工作流，每一个服务任务都是对应的一个类的一个方法。</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210271456612.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210271456612.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
 <ul>
-<li>当所要查找的字段不在非主键索引树上时，需要通过叶子节点的主键值去主键索引上获取对应的行数据，这个过程称为回表操作。</li>
+<li>服务任务B执行哪一个类的哪一个方法，是由服务任务A的执行结果决定的</li>
+<li>服务任务C执行哪一个类的哪一个方法，是由服务任务A和B的执行结果决定的</li>
+<li>并且用户不希望服务任务的功能在代码中写死，希望通过配置的方式执行不同的程序</li>
 </ul>
-<p><strong>索引下推</strong></p>
+<p>面对这个情况，我们就不能用代码<code>new 类名()</code>来实现了，因为你不知道用户具体要怎么做配置，这一秒他希望服务任务A执行Xxxx类的x方法，下一秒他可能希望执行Yyyy类的y方法。当然你也可以说提需求嘛，用户改一次需求，我改一次代码。这种方式也能需求，但对于用户和程序员个人而言都是痛苦，那么有没有一种方法<strong>「在运行期动态的改变程序的调用行为的方法」</strong>呢？这就是要为大家介绍的“<strong>「java反射机制」</strong>”。</p>
+<p>那么java的反射机制能够做那些事呢？大概是这样几种：</p>
 <ul>
-<li>索引下推主要是减少了不必要的回表操作。对于查找出来的数据，先过滤掉不符合条件的，其余的再去主键索引树上查找。</li>
+<li>在程序运行期动态的根据<code>package名.类名</code>实例化类对象</li>
+<li>在程序运行期动态获取类对象的信息，包括对象的成本变量和方法</li>
+<li>在程序运行期动态使用对象的成员变量属性</li>
+<li>在程序运行期动态调用对象的方法（私有方法也可以调用）</li>
+</ul>
+<h2 id="二、Hello-World"><a href="#二、Hello-World" class="headerlink" title="二、Hello World"></a><strong>二、Hello World</strong></h2><p>我们定义一个类叫做Student</p>
+<pre class="line-numbers language-none"><code class="language-none">package com.zimug.java.reflection;
+
+public class Student &#123;
+    public String nickName;
+    private Integer age;
+
+    public void dinner()&#123;
+        System.out.println(&quot;吃晚餐！&quot;);
+    &#125;
+
+    private void sleep(int minutes)&#123;
+        System.out.println(&quot;睡&quot; + minutes + &quot;分钟&quot;);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果不用反射的方式，我相信只要学过java的朋友肯定会调用dinner方法</p>
+<pre class="line-numbers language-none"><code class="language-none">Student student &#x3D; new Student();
+student.dinner();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>如果是反射的方式我们该怎么调用呢？</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;获取Student类信息
+Class cls &#x3D; Class.forName(&quot;com.zimug.java.reflection.Student&quot;);
+&#x2F;&#x2F;对象实例化
+Object obj &#x3D; cls.getDeclaredConstructor().newInstance();
+&#x2F;&#x2F;根据方法名获取并执行方法
+Method dinnerMethod &#x3D; cls.getDeclaredMethod(&quot;dinner&quot;);
+dinnerMethod.invoke(obj);  &#x2F;&#x2F;打印：吃晚餐！<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>通过上面的代码我们看到，com.zimug.java.reflection.Student类名和dinner方法名是字符串。既然是字符串我们就可以通过配置文件，或数据库、或什么其他的灵活配置方法来执行这段程序了。这就是反射最基础的使用方式。</p>
+<h2 id="三、类加载与反射关系"><a href="#三、类加载与反射关系" class="headerlink" title="三、类加载与反射关系"></a>三、类加载与反射关系</h2><p>java的类加载机制还是挺复杂的，我们这里为了不混淆重点，只为大家介绍和“反射”有关系的一部分内容。</p>
+<p>java执行编译的时候将java文件编译成字节码class文件,类加载器在类加载阶段将class文件加载到内存，并实例化一个java.lang.Class的对象。比如：对于Student类在加载阶段</p>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210271456720.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210271456720.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
+<ul>
+<li>在内存(方法区或叫代码区)中实例化一个Class对象，注意是Class对象不是Student对象</li>
+<li>一个Class类（字节码文件）对应一个Class对象</li>
+<li>该Class对象保存了Student类的基础信息，比如这个Student类有几个字段（Filed）？有几个构造方法（Constructor）？有几个方法（Method）？有哪些注解（Annotation）？等信息。</li>
+</ul>
+<p>有了上面的关于Student类的基本信息对象（java.lang.Class对象）,在运行期就可以根据这些信息来实例化Student类的对象。</p>
+<ul>
+<li>在运行期你可以直接new一个Student对象</li>
+<li>也可以使用反射的方法构造一个Student对象</li>
+</ul>
+<p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210271457886.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210271457886.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="图片"></p>
+<p>但是无论你new多少个Student对象，不论你反射构建多少个Student对象，保存Student类信息的java.lang.Class对象都只有一个。下面的代码可以证明。</p>
+<pre class="line-numbers language-none"><code class="language-none">Class cls &#x3D; Class.forName(&quot;com.zimug.java.reflection.Student&quot;);
+Class cls2 &#x3D; new Student().getClass();
+
+System.out.println(cls &#x3D;&#x3D; cls2); &#x2F;&#x2F;比较Class对象的地址，输出结果是true<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="四、操作反射的java类"><a href="#四、操作反射的java类" class="headerlink" title="四、操作反射的java类"></a>四、操作反射的java类</h2><p>了解了上面的这些基础信息，我们就可以更深入学习反射类相关的类和方法了：</p>
+<ul>
+<li>java.lang.Class:  代表一个类</li>
+<li>java.lang.reflect.Constructor: 代表类的构造方法</li>
+<li>java.lang.reflect.Method: 代表类的普通方法</li>
+<li>java.lang.reflect.Field: 代表类的成员变量</li>
+<li>Java.lang.reflect.Modifier:  修饰符，方法的修饰符，成员变量的修饰符。</li>
+<li>java.lang.annotation.Annotation：在类、成员变量、构造方法、普通方法上都可以加注解</li>
+</ul>
+<h3 id="4-1-获取Class对象的三种方法"><a href="#4-1-获取Class对象的三种方法" class="headerlink" title="4.1.获取Class对象的三种方法"></a>4.1.获取Class对象的三种方法</h3><h4 id="「Class-forName-方法获取Class对象」"><a href="#「Class-forName-方法获取Class对象」" class="headerlink" title="「Class.forName()方法获取Class对象」"></a><strong>「<code>Class.forName()</code>方法获取Class对象」</strong></h4><pre class="line-numbers language-none"><code class="language-none">&#x2F;**
+* Class.forName方法获取Class对象，这也是反射中最常用的获取对象的方法，因为字符串传参增强了配置实现的灵活性
+*&#x2F;
+Class cls &#x3D; Class.forName(&quot;com.zimug.java.reflection.Student&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="「类名-class获取Class对象」"><a href="#「类名-class获取Class对象」" class="headerlink" title="「类名.class获取Class对象」"></a><strong>「<code>类名.class</code>获取Class对象」</strong></h4><pre class="line-numbers language-none"><code class="language-none">&#x2F;**
+* &#96;类名.class&#96;的方式获取Class对象
+*&#x2F;
+Class clz &#x3D; User.class;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="「类对象-getClass-方式获取Class对象」"><a href="#「类对象-getClass-方式获取Class对象」" class="headerlink" title="「类对象.getClass()方式获取Class对象」"></a><strong>「<code>类对象.getClass()</code>方式获取Class对象」</strong></h4><pre class="line-numbers language-none"><code class="language-none">&#x2F;**
+* &#96;类对象.getClass()&#96;方式获取Class对象
+*&#x2F;
+User user &#x3D; new User();
+Class clazz &#x3D; user.getClass();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>虽然有三种方法可以获取某个类的Class对象，但是只有第一种可以被称为“反射”。</p>
+<h3 id="4-2-获取Class类对象的基本信息"><a href="#4-2-获取Class类对象的基本信息" class="headerlink" title="4.2.获取Class类对象的基本信息"></a>4.2.获取Class类对象的基本信息</h3><pre class="line-numbers language-none"><code class="language-none">Class cls &#x3D; Class.forName(&quot;com.zimug.java.reflection.Student&quot;);
+
+&#x2F;&#x2F;获取类的包名+类名
+System.out.println(cls.getName());          &#x2F;&#x2F;com.zimug.java.reflection.Student
+&#x2F;&#x2F;获取类的父类
+Class cls &#x3D; Class.forName(&quot;com.zimug.java.reflection.Student&quot;);
+&#x2F;&#x2F;这个类型是不是一个注解？
+System.out.println(cls.isAnnotation());     &#x2F;&#x2F;false
+&#x2F;&#x2F;这个类型是不是一个枚举？
+System.out.println(cls.isEnum());      &#x2F;&#x2F;false
+&#x2F;&#x2F;这个类型是不是基础数据类型？
+System.out.println(cls.isPrimitive()); &#x2F;&#x2F;false<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>Class类对象信息中几乎包括了所有的你想知道的关于这个类型定义的信息，更多的方法就不一一列举了。还可以通过下面的方法</p>
+<ul>
+<li>获取Class类对象代表的类实现了哪些接口：getInterfaces()</li>
+<li>获取Class类对象代表的类使用了哪些注解：getAnnotations()</li>
+</ul>
+<h3 id="4-3-获得Class对象的成员变量"><a href="#4-3-获得Class对象的成员变量" class="headerlink" title="4.3. 获得Class对象的成员变量"></a>4.3. 获得Class对象的成员变量</h3><p>结合上文中的Student类的定义理解下面的代码</p>
+<pre class="line-numbers language-none"><code class="language-none">Class cls &#x3D; Class.forName(&quot;com.zimug.java.reflection.Student&quot;);
+
+Field[] fields &#x3D; cls.getFields();
+for (Field field : fields) &#123;
+System.out.println(field.getName());      &#x2F;&#x2F;nickName
+&#125;
+
+fields &#x3D; cls.getDeclaredFields();
+for (Field field : fields) &#123;
+System.out.println(field.getName());      &#x2F;&#x2F;nickName 换行  age
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>getFields()方法获取类的非私有的成员变量，数组，包含从父类继承的成员变量</li>
+<li>getDeclaredFields方法获取所有的成员变量，数组，但是不包含从父类继承而来的成员变量</li>
+</ul>
+<h3 id="4-4-获取Class对象的方法"><a href="#4-4-获取Class对象的方法" class="headerlink" title="4.4.获取Class对象的方法"></a>4.4.获取Class对象的方法</h3><ul>
+<li>getMethods() :  获取Class对象代表的类的所有的非私有方法，数组，<strong>「包含从父类继承而来的方法」</strong></li>
+<li>getDeclaredMethods() :  获取Class对象代表的类定义的所有的方法，数组，<strong>「但是不包含从父类继承而来的方法」</strong></li>
+<li>getMethod(methodName): 获取Class对象代表的类的指定方法名的非私有方法</li>
+<li>getDeclaredMethod(methodName): 获取Class对象代表的类的指定方法名的方法</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">Class cls &#x3D; Class.forName(&quot;com.zimug.java.reflection.Student&quot;);
+
+Method[] methods &#x3D; cls.getMethods();
+System.out.println(&quot;Student对象的非私有方法&quot;);
+for (Method m : methods) &#123;
+    System.out.print(m.getName() + &quot;,&quot;);
+&#125;
+System.out.println(&quot;  end&quot;);
+
+
+Method[] allMethods &#x3D; cls.getDeclaredMethods();
+System.out.println(&quot;Student对象的所有方法&quot;);
+for (Method m : allMethods) &#123;
+    System.out.print(m.getName() + &quot;,&quot;);
+&#125;
+System.out.println(&quot;  end&quot;);
+
+
+Method dinnerMethod &#x3D; cls.getMethod(&quot;dinner&quot;);
+System.out.println(&quot;dinner方法的参数个数&quot; + dinnerMethod.getParameterCount());
+
+Method sleepMethod &#x3D; cls.getDeclaredMethod(&quot;sleep&quot;,int.class);
+System.out.println(&quot;sleep方法的参数个数&quot; + sleepMethod.getParameterCount());
+System.out.println(&quot;sleep方法的参数对象数组&quot; + Arrays.toString(sleepMethod.getParameters()));
+System.out.println(&quot;sleep方法的参数返回值类型&quot; + sleepMethod.getReturnType());<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>上面代码的执行结果如下：</p>
+<pre class="line-numbers language-none"><code class="language-none">Student对象的非私有方法
+dinner,wait,wait,wait,equals,toString,hashCode,getClass,notify,notifyAll,  end
+
+Student对象的所有方法
+dinner,sleep,  end
+
+dinner方法的参数个数0
+sleep方法的参数个数1
+sleep方法的参数对象数组[int arg0]
+sleep方法的参数返回值类型void<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>可以看到getMethods获取的方法中包含Object父类中定义的方法，但是不包含本类中定义的私有方法sleep。另外我们还可以获取方法的参数及返回值信息：</p>
+<ul>
+<li><p>获取参数相关的属性：</p>
+</li>
+<li><ul>
+<li>获取方法参数个数：getParameterCount()</li>
+<li>获取方法参数数组对象：getParameters() ，返回值是java.lang.reflect.Parameter数组</li>
+</ul>
+</li>
+<li><p>获取返回值相关的属性</p>
+</li>
+<li><ul>
+<li>获取方法返回值的数据类型：getReturnType()</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-5-方法的调用"><a href="#4-5-方法的调用" class="headerlink" title="4.5.方法的调用"></a>4.5.方法的调用</h3><p>实际在上文中已经演示了方法的调用，如下invoke调用dinner方法</p>
+<pre class="line-numbers language-none"><code class="language-none">Method dinnerMethod &#x3D; cls.getDeclaredMethod(&quot;dinner&quot;);
+dinnerMethod.invoke(obj);  &#x2F;&#x2F;打印：吃晚餐！<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>dinner方法是无参的那么有参数的方法怎么调用?看看invoke方法定义，第一个参数是Method对象，无论后面<code> Object... args</code>有多少参数就按照方法定义依次传参就可以了。</p>
+<pre class="line-numbers language-none"><code class="language-none">public Object invoke(Object obj, Object... args)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="4-6-创建类的对象-实例化对象"><a href="#4-6-创建类的对象-实例化对象" class="headerlink" title="4.6.创建类的对象(实例化对象)"></a>4.6.创建类的对象(实例化对象)</h3><pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;获取Student类信息
+Class cls &#x3D; Class.forName(&quot;com.zimug.java.reflection.Student&quot;);
+&#x2F;&#x2F;对象实例化
+Student student &#x3D; (Student)cls.getDeclaredConstructor().newInstance();
+&#x2F;&#x2F;下面的这种方法是已经Deprecated了，不建议使用。但是在比较旧的JDK版本中仍然是唯一的方式。
+&#x2F;&#x2F;Student student &#x3D; (Student)cls.newInstance();<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="五、反射的常用场景"><a href="#五、反射的常用场景" class="headerlink" title="五、反射的常用场景"></a>五、反射的常用场景</h2><ul>
+<li>通过配置信息调用类的方法</li>
+<li>结合注解实现特殊功能</li>
+<li>按需加载jar包或class</li>
+</ul>
+<h3 id="5-1-通过配置信息调用类的方法"><a href="#5-1-通过配置信息调用类的方法" class="headerlink" title="5.1. 通过配置信息调用类的方法"></a>5.1. 通过配置信息调用类的方法</h3><p>将上文的hello world中的代码封装一下，你知道类名className和方法名methodName是不是就可以调用方法了？至于你将className和 methodName配置到文件，还是nacos，还是数据库，自己决定吧！</p>
+<pre class="line-numbers language-none"><code class="language-none">public void invokeClassMethod(String className,String methodName) throws ClassNotFoundException, 
+            NoSuchMethodException, 
+            InvocationTargetException, 
+            InstantiationException, 
+            IllegalAccessException &#123;
+        &#x2F;&#x2F;获取类信息
+        Class cls &#x3D; Class.forName(className);
+        &#x2F;&#x2F;对象实例化
+        Object obj &#x3D; cls.getDeclaredConstructor().newInstance();
+        &#x2F;&#x2F;根据方法名获取并执行方法
+        Method dinnerMethod &#x3D; cls.getDeclaredMethod(methodName);
+        dinnerMethod.invoke(obj);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="5-2-结合注解实现特殊功能"><a href="#5-2-结合注解实现特殊功能" class="headerlink" title="5.2.结合注解实现特殊功能"></a>5.2.结合注解实现特殊功能</h3><p>大家如果学习过mybatis plus都应该学习过这样的一个注解TableName，这个注解表示当前的实例类Student对应的数据库中的哪一张表。如下问代码所示，Student所示该类对应的是t_student这张表。</p>
+<pre class="line-numbers language-none"><code class="language-none">@TableName(&quot;t_student&quot;)
+public class Student &#123;
+    public String nickName;
+    private Integer age;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>下面我们自定义TableName这个注解</p>
+<pre class="line-numbers language-none"><code class="language-none">@Target(ElementType.TYPE)  &#x2F;&#x2F;表示TableName可作用于类、接口或enum Class, 或interface
+@Retention(RetentionPolicy.RUNTIME) &#x2F;&#x2F;表示运行时由JVM加载
+public @interface TableName &#123;
+       String value() ;   &#x2F;&#x2F;则使用@TableName注解的时候： @TableName(”t_student”);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>有了这个注解，我们就可以扫描某个路径下的java文件，至于类注解的扫描我们就不用自己开发了，引入下面的maven坐标就可以</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;dependency&gt;
+    &lt;groupId&gt;org.reflections&lt;&#x2F;groupId&gt;
+    &lt;artifactId&gt;reflections&lt;&#x2F;artifactId&gt;
+    &lt;version&gt;0.9.10&lt;&#x2F;version&gt;
+&lt;&#x2F;dependency&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>看下面代码：先扫描包，从包中获取标注了TableName注解的类，再对该类打印注解value信息</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F; 要扫描的包
+String packageName &#x3D; &quot;com.zimug.java.reflection&quot;;
+Reflections f &#x3D; new Reflections(packageName);
+&#x2F;&#x2F; 获取扫描到的标记注解的集合
+Set&lt;Class&lt;?&gt;&gt; set &#x3D; f.getTypesAnnotatedWith(TableName.class);
+for (Class&lt;?&gt; c : set) &#123;
+&#x2F;&#x2F; 循环获取标记的注解
+TableName annotation &#x3D; c.getAnnotation(TableName.class);
+&#x2F;&#x2F; 打印注解中的内容
+System.out.println(c.getName() + &quot;类，TableName注解value&#x3D;&quot; + annotation.value());<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>输出结果是：</p>
+<pre class="line-numbers language-none"><code class="language-none">com.zimug.java.reflection.Student类，TableName注解value&#x3D;t_student<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>有的朋友会问这有什么用？这有大用处了。有了类定义与数据库表的对应关系，你还能通过反射获取类的成员变量，之后你是不是就可以根据表明t_student和字段名nickName，age构建增删改查的SQL了？全都构建完毕，是不是就是一个基础得Mybatis plus了？</p>
+<p>反射和注解结合使用，可以演化出许许多多的应用场景，特别是在架构优化方面，等待你去发觉啊！</p>
+<h3 id="5-3-按需加载jar包或class"><a href="#5-3-按需加载jar包或class" class="headerlink" title="5.3.按需加载jar包或class"></a>5.3.按需加载jar包或class</h3><p>在某些场景下，我们可能不希望JVM的加载器一次性的把所有的jar包装载到JVM虚拟机中，因为这样会影响项目的启动和初始化效率，并且占用较多的内存。我们希望按需加载，需要用到哪些jar，按照程序动态运行的需求取加载这些jar。</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;按路径加载jar包
+File file &#x3D; new File(&quot;D:&#x2F;com&#x2F;zimug&#x2F;commons-lang3.jar&quot;);
+URL url &#x3D; file.toURI().toURL();
+&#x2F;&#x2F;创建类加载器
+ClassLoader classLoader &#x3D; new URLClassLoader(new URL[]&#123;url&#125;);
+
+Class cls &#x3D; classLoader.loadClass(&quot;org.apache.commons.lang3.StringUtils&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>同样的把.class文件放在一个路径下，我们也是可以动态加载到的</p>
+<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;java的.class文件所在路径
+File file &#x3D; new File(&quot;D:&#x2F;com&#x2F;zimug&quot;);
+URL url &#x3D; file.toURI().toURL();
+&#x2F;&#x2F;创建类加载器
+ClassLoader classLoader &#x3D; new URLClassLoader(new URL[]&#123;url&#125;);
+&#x2F;&#x2F;加载指定类，package全路径
+Class&lt;?&gt; cls &#x3D; classLoader.loadClass(&quot;com.zimug.java.reflection.Student&quot;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>类的动态加载能不能让你想到些什么？是不是可以实现代码修改，不需要重新启动容器？对的，就是这个原理，因为一个类的Class对象只有一个，所以不管你重新加载多少次，都是使用最后一次加载的class对象（上文讲过哦）。</p>
+<h2 id="六、反射的优缺点"><a href="#六、反射的优缺点" class="headerlink" title="六、反射的优缺点"></a>六、反射的优缺点</h2><ul>
+<li><p>优点：自由，使用灵活，不受类的访问权限限制。可以根据指定类名、方法名来实现方法调用，非常适合实现业务的灵活配置。</p>
+</li>
+<li><p>缺点：</p>
+</li>
+<li><ul>
+<li>也正因为反射不受类的访问权限限制，其安全性低，很大部分的java安全问题都是反射导致的。</li>
+<li>相对于正常的对象的访问调用，反射因为存在类和方法的实例化过程，性能也相对较低</li>
+<li>破坏java类封装性，类的信息隐藏性和边界被破坏</li>
+</ul>
+</li>
 </ul>
 
       </div>
@@ -794,8 +1028,8 @@
         
         <div class="tags">
           
-            <a href="/tags/%E5%BA%95%E5%B1%82/" class="">
-              底层
+            <a href="/tags/%E5%8F%8D%E5%B0%84/" class="">
+              反射
             </a>
           
         </div>
@@ -809,7 +1043,7 @@
     </li>
     <li class="post-copyright-link">
     <strong>文章链接:  </strong>
-    <a href="/2021/10/13/MySQL索引下推/" target="_blank" title="MySQL索引下推">https://gaoyang.world/2021/10/13/MySQL索引下推/</a>
+    <a href="/2021/09/27/反射/" target="_blank" title="反射">https://gaoyang.world/2021/09/27/反射/</a>
     </li>
     <li class="post-copyright-license">
       <strong>版权声明:   </strong>
@@ -831,17 +1065,21 @@
   <div class="post-nav-prev post-nav-item">
     <div class="post-nav-img" style="background-size: cover; 
       background-position: center center;">
-      <img class="lazyload lazyload placeholder" src="/medias/14.jpg" class="lazyload placeholder" data-srcset="/medias/14.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="">
+      <img class="lazyload lazyload placeholder" src="/medias/1.jpg" class="lazyload placeholder" data-srcset="/medias/1.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="">
     </div>
-    <a href="/2021/10/14/Netty01-nio/" class="post-nav-link">
+    <a href="/2021/10/13/MySQL%E7%B4%A2%E5%BC%95%E4%B8%8B%E6%8E%A8/" class="post-nav-link">
       <div class="title">
         <i class="fas fa-angle-left"></i> 上一篇:
-        <div class="title-text">NIO 基础</div>
+        <div class="title-text">MySQL索引下推</div>
       </div>
       
       <!-- <div class="content">
-        一. NIO 基础non-blocking io 非阻塞 IO
-1. 三大组件1.1 Channel &amp; Buf
+        
+- 思维导图 -
+
+回表操作
+
+对于数据库来说，只要涉及到索引，必然绕不过去回表操作。当然这也是我们今天所讲内容的前调
       </div> -->
     </a>
   </div>
@@ -852,15 +1090,18 @@
   <div class="post-nav-next post-nav-item">
     <div class="post-nav-img" style="background-size: cover; 
       background-position: center center;">
-      <img class="lazyload lazyload placeholder" src="/medias/10.jpg" class="lazyload placeholder" data-srcset="/medias/10.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" src="" alt="">
+      <img class="lazyload lazyload placeholder" src="/medias/7.jpg" class="lazyload placeholder" data-srcset="/medias/7.jpg" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" src="" alt="">
     </div>
-    <a href="/2021/09/27/%E5%8F%8D%E5%B0%84/" class="post-nav-link">
+    <a href="/2021/09/27/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9F%A5%E8%AF%86%E7%82%B9%E8%AF%A6%E8%A7%A3(%E9%99%84%E6%BA%90%E7%A0%81)/" class="post-nav-link">
       <div class="title">
         下一篇: <i class="fas fa-angle-right"></i>
-        <div class="title-text">反射</div>
+        <div class="title-text">多线程知识点详解</div>
       </div>
       <!-- <div class="content">
-        一、什么是java反射？在java的面向对象编程过程中，通常我们需要先知道一个Class类，然后new 类名()方式来获
+        多线程知识点详解(附源码)
+即使再小的帆也能远航~
+
+一 、目录 多线程概念Thread类创建线程的三种方式线程的生命周
       </div> -->
     </a>
   </div>
