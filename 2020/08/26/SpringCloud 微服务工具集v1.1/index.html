@@ -1027,7 +1027,6 @@ eureka<span class="token punctuation">.</span>client<span class="token punctuati
 <span class="token operator">-</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>www<span class="token punctuation">.</span>consul<span class="token punctuation">.</span>io<span class="token operator">/</span>downloads<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
 <p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231544219.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231544219.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200710103539186"></p>
-<p>![image-20200710104357091](SpringCloud 微服务工具集v1.1.assets/image-20200710104357091.png)</p>
 <pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>安装consul
 <span class="token operator">-</span> 官方安装视频地址<span class="token operator">:</span> https<span class="token operator">:</span><span class="token operator">/</span><span class="token operator">/</span>learn<span class="token punctuation">.</span>hashicorp<span class="token punctuation">.</span>com<span class="token operator">/</span>consul<span class="token operator">/</span>getting<span class="token operator">-</span>started<span class="token operator">/</span>install<span class="token punctuation">.</span>html
 <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">.</span>解压之后发现consul只有一个脚本文件<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
@@ -1786,26 +1785,26 @@ log<span class="token punctuation">.</span><span class="token function">info</sp
 </ul>
 <pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>编写网关配置<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<pre class="line-numbers language-yml" data-language="yml"><code class="language-yml"><span class="token key atrule">spring</span><span class="token punctuation">:</span>
-  <span class="token key atrule">application</span><span class="token punctuation">:</span>
-    <span class="token key atrule">name</span><span class="token punctuation">:</span> gateway
-  <span class="token key atrule">cloud</span><span class="token punctuation">:</span>
-    <span class="token key atrule">consul</span><span class="token punctuation">:</span>
-      <span class="token key atrule">host</span><span class="token punctuation">:</span> localhost
-      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">8500</span>
-    <span class="token key atrule">gateway</span><span class="token punctuation">:</span>
-      <span class="token key atrule">routes</span><span class="token punctuation">:</span>
-        <span class="token punctuation">-</span> <span class="token key atrule">id</span><span class="token punctuation">:</span> user_route	<span class="token comment"># 指定路由唯一标识,理论上是可以随便写,但是一般是server.name</span>
-          <span class="token key atrule">uri</span><span class="token punctuation">:</span> http<span class="token punctuation">:</span>//localhost<span class="token punctuation">:</span>9999/ <span class="token comment"># 指定路由服务的地址</span>
-          <span class="token key atrule">predicates</span><span class="token punctuation">:</span>   <span class="token comment">#断言</span>
-            <span class="token punctuation">-</span> Path=/user/<span class="token important">**</span>	  <span class="token comment"># 指定路由规则,只有路径是这个,才可以通过</span>
+<pre class="line-numbers language-yml" data-language="yml"><code class="language-yml">spring:
+  application:
+    name: gateway
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+    gateway:
+      routes:
+        - id: user_route	# 指定路由唯一标识,理论上是可以随便写,但是一般是server.name
+          uri: http:&#x2F;&#x2F;localhost:9999&#x2F; # 指定路由服务的地址
+          predicates:   #断言
+            - Path&#x3D;&#x2F;user&#x2F;**	  # 指定路由规则,只有路径是这个,才可以通过
 
-        <span class="token punctuation">-</span> <span class="token key atrule">id</span><span class="token punctuation">:</span> product_route
-          <span class="token key atrule">uri</span><span class="token punctuation">:</span> http<span class="token punctuation">:</span>//localhost<span class="token punctuation">:</span>9998/
-          <span class="token key atrule">predicates</span><span class="token punctuation">:</span>
-            <span class="token punctuation">-</span> Path=/product/<span class="token important">**</span>
-<span class="token key atrule">server</span><span class="token punctuation">:</span>
-  <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">8989</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+        - id: product_route
+          uri: http:&#x2F;&#x2F;localhost:9998&#x2F;
+          predicates:
+            - Path&#x3D;&#x2F;product&#x2F;**
+server:
+  port: 8989<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">3</span><span class="token punctuation">.</span>启动gateway网关项目
 <span class="token operator">-</span> 直接启动报错<span class="token operator">:</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
@@ -1839,11 +1838,11 @@ log<span class="token punctuation">.</span><span class="token function">info</sp
 <h6 id="2-查看网关路由规则列表"><a href="#2-查看网关路由规则列表" class="headerlink" title="2.查看网关路由规则列表"></a>2.查看网关路由规则列表</h6><pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">1</span><span class="token punctuation">.</span>说明
 <span class="token operator">-</span> gateway提供路由访问规则列表的web界面<span class="token punctuation">,</span>但是默认是关闭的<span class="token punctuation">,</span>如果想要查看服务路由规则可以在配置文件中开启<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-<pre class="line-numbers language-yml" data-language="yml"><code class="language-yml"><span class="token key atrule">management</span><span class="token punctuation">:</span>
-  <span class="token key atrule">endpoints</span><span class="token punctuation">:</span>
-    <span class="token key atrule">web</span><span class="token punctuation">:</span>
-      <span class="token key atrule">exposure</span><span class="token punctuation">:</span>
-        <span class="token key atrule">include</span><span class="token punctuation">:</span> <span class="token string">"*"</span>   <span class="token comment">#开启所有web端点暴露</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-yml" data-language="yml"><code class="language-yml">management:
+  endpoints:
+    web:
+      exposure:
+        include: &quot;*&quot;   #开启所有web端点暴露<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown"><span class="token list punctuation">-</span> 访问路由管理列表地址
 <span class="token list punctuation">-</span> http://localhost:8989/actuator/gateway/routes<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
@@ -1854,29 +1853,29 @@ log<span class="token punctuation">.</span><span class="token function">info</sp
 
 # <span class="token number">2</span><span class="token punctuation">.</span>动态路由以及负载均衡转发配置<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 
-<pre class="line-numbers language-yml" data-language="yml"><code class="language-yml"><span class="token key atrule">spring</span><span class="token punctuation">:</span>
-  <span class="token key atrule">application</span><span class="token punctuation">:</span>
-    <span class="token key atrule">name</span><span class="token punctuation">:</span> gateway
-  <span class="token key atrule">cloud</span><span class="token punctuation">:</span>
-    <span class="token key atrule">consul</span><span class="token punctuation">:</span>
-      <span class="token key atrule">host</span><span class="token punctuation">:</span> localhost
-      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">8500</span>
-    <span class="token key atrule">gateway</span><span class="token punctuation">:</span>
-      <span class="token key atrule">routes</span><span class="token punctuation">:</span>
-        <span class="token punctuation">-</span> <span class="token key atrule">id</span><span class="token punctuation">:</span> user_route
-          <span class="token comment">#uri: http://localhost:9999/</span>
-          <span class="token key atrule">uri</span><span class="token punctuation">:</span> lb<span class="token punctuation">:</span>//users							<span class="token comment"># lb代表转发后台服务使用负载均衡,users代表服务注册中心上的服务名</span>
-          <span class="token key atrule">predicates</span><span class="token punctuation">:</span>
-            <span class="token punctuation">-</span> Path=/user/<span class="token important">**</span>
+<pre class="line-numbers language-yml" data-language="yml"><code class="language-yml">spring:
+  application:
+    name: gateway
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+    gateway:
+      routes:
+        - id: user_route
+          #uri: http:&#x2F;&#x2F;localhost:9999&#x2F;
+          uri: lb:&#x2F;&#x2F;users							# lb代表转发后台服务使用负载均衡,users代表服务注册中心上的服务名
+          predicates:
+            - Path&#x3D;&#x2F;user&#x2F;**
 
-        <span class="token punctuation">-</span> <span class="token key atrule">id</span><span class="token punctuation">:</span> product_route
-          <span class="token comment">#uri: http://localhost:9998/</span>
-          <span class="token key atrule">uri</span><span class="token punctuation">:</span> lb<span class="token punctuation">:</span>//products          <span class="token comment"># lb(loadbalance)代表负载均衡转发路由</span>
-          <span class="token key atrule">predicates</span><span class="token punctuation">:</span>
-            <span class="token punctuation">-</span> Path=/product/<span class="token important">**</span>
-      <span class="token key atrule">discovery</span><span class="token punctuation">:</span>
-        <span class="token key atrule">locator</span><span class="token punctuation">:</span>
-          <span class="token key atrule">enabled</span><span class="token punctuation">:</span> <span class="token boolean important">true</span> 							<span class="token comment">#开启根据服务名动态获取路由</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+        - id: product_route
+          #uri: http:&#x2F;&#x2F;localhost:9998&#x2F;
+          uri: lb:&#x2F;&#x2F;products          # lb(loadbalance)代表负载均衡转发路由
+          predicates:
+            - Path&#x3D;&#x2F;product&#x2F;**
+      discovery:
+        locator:
+          enabled: true 							#开启根据服务名动态获取路由<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231551839.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231551839.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200721110013966"></p>
 <p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231551397.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231551397.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200721110040104"></p>
@@ -1897,23 +1896,23 @@ log<span class="token punctuation">.</span><span class="token function">info</sp
 
 <pre class="line-numbers language-kotlin" data-language="kotlin"><code class="language-kotlin"># <span class="token number">2</span><span class="token punctuation">.</span>使用predicate<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<pre class="line-numbers language-yml" data-language="yml"><code class="language-yml"><span class="token key atrule">spring</span><span class="token punctuation">:</span>
-  <span class="token key atrule">application</span><span class="token punctuation">:</span>
-    <span class="token key atrule">name</span><span class="token punctuation">:</span> gateway
-  <span class="token key atrule">cloud</span><span class="token punctuation">:</span>
-    <span class="token key atrule">consul</span><span class="token punctuation">:</span>
-      <span class="token key atrule">host</span><span class="token punctuation">:</span> localhost
-      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">8500</span>
-    <span class="token key atrule">gateway</span><span class="token punctuation">:</span>
-      <span class="token key atrule">routes</span><span class="token punctuation">:</span>
-        <span class="token punctuation">-</span> <span class="token key atrule">id</span><span class="token punctuation">:</span> user_route
-          <span class="token comment">#uri: http://localhost:9999/</span>
-          <span class="token key atrule">uri</span><span class="token punctuation">:</span> lb<span class="token punctuation">:</span>//users
-          <span class="token key atrule">predicates</span><span class="token punctuation">:</span>
-            <span class="token punctuation">-</span> Path=/user/<span class="token important">**</span>
-            <span class="token punctuation">-</span> After=2020<span class="token punctuation">-</span>07<span class="token punctuation">-</span>21T11<span class="token punctuation">:</span>39<span class="token punctuation">:</span>33.993+08<span class="token punctuation">:</span>00<span class="token punctuation">[</span>Asia/Shanghai<span class="token punctuation">]</span>
-            <span class="token punctuation">-</span> Cookie=username<span class="token punctuation">,</span><span class="token punctuation">[</span>A<span class="token punctuation">-</span>Za<span class="token punctuation">-</span>z0<span class="token punctuation">-</span><span class="token number">9</span><span class="token punctuation">]</span>+
-            <span class="token punctuation">-</span>  Header=X<span class="token punctuation">-</span>Request<span class="token punctuation">-</span>Id<span class="token punctuation">,</span> \d+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-yml" data-language="yml"><code class="language-yml">spring:
+  application:
+    name: gateway
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+    gateway:
+      routes:
+        - id: user_route
+          #uri: http:&#x2F;&#x2F;localhost:9999&#x2F;
+          uri: lb:&#x2F;&#x2F;users
+          predicates:
+            - Path&#x3D;&#x2F;user&#x2F;**
+            - After&#x3D;2020-07-21T11:39:33.993+08:00[Asia&#x2F;Shanghai]
+            - Cookie&#x3D;username,[A-Za-z0-9]+
+            -  Header&#x3D;X-Request-Id, \d+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><img src="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231551049.png" class="lazyload placeholder" data-srcset="https://gy-blog.oss-cn-beijing.aliyuncs.com/pic/202210231551049.png" srcset="https://img2.baidu.com/it/u=2037979560,2772131037&fm=26&fmt=auto&gp=0.jpg" alt="image-20200721152720455"></p>
 <h6 id="5-常用的Filter以及自定义filter"><a href="#5-常用的Filter以及自定义filter" class="headerlink" title="5.常用的Filter以及自定义filter"></a>5.常用的Filter以及自定义filter</h6><p>Route filters allow the modification of the incoming HTTP request or outgoing HTTP response in some manner. Route filters are scoped to a particular route. Spring Cloud Gateway includes many built-in GatewayFilter Factories.</p>
